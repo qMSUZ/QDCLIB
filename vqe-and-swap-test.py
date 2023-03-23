@@ -134,11 +134,14 @@ def counts_to_distr(counts):
     num_of_shots = sum(counts.values())
     return {int(k, 2): v/num_of_shots for k, v in counts.items()}
 
-def create_variational_circuit(qubits, parameters, formval, layers):
+def create_variational_circuit(qubits, parameters, formval, layers, withoutfinalmeasurement=0, extraqubits=0, userinit=0, initial_state=None):
     
-    circ = QuantumCircuit(len(qubits), len(qubits))
+    circ = QuantumCircuit(len(qubits)+extraqubits, len(qubits))
     
     offsetidx=0
+
+    if userinit==1:
+        circ.initialize(initial_state, circ.qubits)
 
 # ----------------------------------- form 0
 # 
@@ -175,8 +178,9 @@ def create_variational_circuit(qubits, parameters, formval, layers):
     
         circ.barrier()
     
-        for idx in range (0, len(qubits)):
-            circ.measure(qubits[idx], qubits[idx])
+        if withoutfinalmeasurement==0:
+            for idx in range (0, len(qubits)):
+                circ.measure(qubits[idx], qubits[idx])
 
 # ----------------------------------- form 1    
 # linear entanglement
@@ -216,9 +220,9 @@ def create_variational_circuit(qubits, parameters, formval, layers):
 
         circ.barrier()
 
-
-        for idx in range (0, len(qubits)):
-            circ.measure(qubits[idx], qubits[idx])
+        if withoutfinalmeasurement==0:
+            for idx in range (0, len(qubits)):
+                circ.measure(qubits[idx], qubits[idx])
         
 # ----------------------------------- form 2
 # full entanglement
@@ -262,8 +266,9 @@ def create_variational_circuit(qubits, parameters, formval, layers):
 
         circ.barrier()
 
-        for idx in range (0, len(qubits)):
-            circ.measure(qubits[idx], qubits[idx])
+        if withoutfinalmeasurement==0:
+            for idx in range (0, len(qubits)):
+                circ.measure(qubits[idx], qubits[idx])
 
 # ----------------------------------- form 3
 # 
@@ -291,8 +296,9 @@ def create_variational_circuit(qubits, parameters, formval, layers):
     
             circ.barrier()
 
-        for idx in range (0, len(qubits)):
-            circ.measure(qubits[idx], qubits[idx])
+        if withoutfinalmeasurement==0:
+            for idx in range (0, len(qubits)):
+                circ.measure(qubits[idx], qubits[idx])
 
     if formval == 4:
 
@@ -329,8 +335,9 @@ def create_variational_circuit(qubits, parameters, formval, layers):
 
         circ.barrier()
 
-        for idx in range (0, len(qubits)):
-            circ.measure(qubits[idx], qubits[idx])
+        if withoutfinalmeasurement==0:
+            for idx in range (0, len(qubits)):
+                circ.measure(qubits[idx], qubits[idx])
             
     if formval == 5:
         for idx in range (0, len(qubits)):
@@ -365,8 +372,9 @@ def create_variational_circuit(qubits, parameters, formval, layers):
          
         offsetidx=offsetidx+len(qubits)        
         
-        for idx in range (0, len(qubits)):
-            circ.measure(qubits[idx], qubits[idx])
+        if withoutfinalmeasurement==0:
+            for idx in range (0, len(qubits)):
+                circ.measure(qubits[idx], qubits[idx])
 
             
     return circ
@@ -984,10 +992,84 @@ def test_data_tuned(_class, _case, _n_case, verbose=0):
     return _ngoodprobe, _nfalseprobe
 
 
+def get_value(output_distr, i):
+    v = output_distr.get(i)
+    if v==None:
+        return 0
+    return output_distr.get(i)
+
+
+#
+# to finalise
+#    
 def test_data_with_swap(_class, _case, _n_case, verbose=0):
+
+    
+    _class=0; _case=6; _n_case=-1; verbose=1
 
     _ngoodprobe=0
     _nfalseprobe=0   
+    idx=0
+
+    vq0=np.zeros((40, 2))
+    vq1=np.zeros((40, 2))
+
+    filename='angles_Q{}_case_{}_vqe_q{}_l{}_type{}'.format(_class, _case, len(qubits),layers, circuit_type)
+        
+    target_params, output_distribution_loaded = load_angles('data/'+filename)
+    output_distribution = array_to_dict(output_distribution_loaded)
+
+    if verbose>=1:
+        print("case", _case)
+
+    # test with class 0    
+    for idx in range(40):
+        initial_state_zero=np.zeros(2**6)    
+        initial_state_zero[0]=1
+        initial_quantum_state=np.kron(Q0[idx], initial_state_zero, )
+    
+        qc=None
+        qc = create_variational_circuit(qubits, target_params, circuit_type, layers, 
+                                        withoutfinalmeasurement=1, 
+                                        extraqubits=6, userinit=1, initial_state=initial_quantum_state)
+        
+        # swap test add
+        qc.h(3)
+        qc.h(4)
+        qc.h(5)
+        
+        qc.cswap(3, 0, 6)
+        qc.cswap(4, 1, 7)
+        qc.cswap(5, 2, 8)
+        
+        qc.h(3)
+        qc.h(4)
+        qc.h(5)
+        
+        qc.measure(3, 0)
+        qc.measure(4, 1)
+        qc.measure(5, 2)
+        
+            
+        #qc.draw()
+        #qc.draw(output='mpl')
+        #qc.draw(output='latex')
+        #qc.draw(output='latex_source')
+    
+        result = backend.run(qc).result()
+        output_distr = counts_to_distr(result.get_counts())
+        
+        z0=get_value(output_distr,0)+get_value(output_distr,1)+get_value(output_distr,2)+get_value(output_distr,3)
+        z1=get_value(output_distr,0)+get_value(output_distr,1)+get_value(output_distr,4)+get_value(output_distr,5)
+        z2=get_value(output_distr,0)+get_value(output_distr,2)+get_value(output_distr,4)+get_value(output_distr,6)
+        vq0[idx,0]=idx
+        vq0[idx,1]=max(max(z0,z1), z2)
+        #print(idx, "probs", max(max(z0,z1), z2), (z0+z1+z2)/3 , z0,z1,z2)
+        #print(idx, "probe", get_value(output_distr,0))
+
+    vq0=vq0[vq0[:, 1].argsort()]
+
+    # rest of code to finish
 
     return _ngoodprobe, _nfalseprobe
 
@@ -1182,6 +1264,13 @@ print("n_Q1_cluster6=", n_Q1_cluster6)
 
 print("")
     
+ngoodprobe00=ngoodprobe01=ngoodprobe02=ngoodprobe03=ngoodprobe04=ngoodprobe05=ngoodprobe06=0
+ngoodprobe10=ngoodprobe11=ngoodprobe12=ngoodprobe13=ngoodprobe14=ngoodprobe15=ngoodprobe16=0
+
+nfalse00=nfalse01=nfalse02=nfalse03=nfalse04=nfalse05=nfalse06=0
+nfalse10=nfalse11=nfalse12=nfalse13=nfalse14=nfalse15=nfalse16=0
+
+
 print("-------- CLASS 0 -------- ")
 [ngoodprobe00, nfalse00]=test_data_with_swap(0, 0, n_Q0_cluster0, 1) ; print("")
 [ngoodprobe01, nfalse01]=test_data_with_swap(0, 1, n_Q0_cluster1, 1) ; print("")
@@ -1191,14 +1280,14 @@ print("-------- CLASS 0 -------- ")
 [ngoodprobe05, nfalse05]=test_data_with_swap(0, 5, n_Q0_cluster5, 1) ; print("")
 [ngoodprobe06, nfalse06]=test_data_with_swap(0, 6, n_Q0_cluster6, 1) ; print("")
 
-print("-------- CLASS 1 -------- ")
-[ngoodprobe10, nfalse10]=test_data_with_swap(1, 0, n_Q1_cluster0, 1) ; print("")
-[ngoodprobe11, nfalse11]=test_data_with_swap(1, 1, n_Q1_cluster1, 1) ; print("")
-[ngoodprobe12, nfalse12]=test_data_with_swap(1, 2, n_Q1_cluster2, 1) ; print("")
-[ngoodprobe13, nfalse13]=test_data_with_swap(1, 3, n_Q1_cluster3, 1) ; print("")
-[ngoodprobe14, nfalse14]=test_data_with_swap(1, 4, n_Q1_cluster4, 1) ; print("")
-[ngoodprobe15, nfalse15]=test_data_with_swap(1, 5, n_Q1_cluster5, 1) ; print("")
-[ngoodprobe16, nfalse16]=test_data_with_swap(1, 6, n_Q1_cluster6, 1) ; print("")
+# print("-------- CLASS 1 -------- ")
+# [ngoodprobe10, nfalse10]=test_data_with_swap(1, 0, n_Q1_cluster0, 1) ; print("")
+# [ngoodprobe11, nfalse11]=test_data_with_swap(1, 1, n_Q1_cluster1, 1) ; print("")
+# [ngoodprobe12, nfalse12]=test_data_with_swap(1, 2, n_Q1_cluster2, 1) ; print("")
+# [ngoodprobe13, nfalse13]=test_data_with_swap(1, 3, n_Q1_cluster3, 1) ; print("")
+# [ngoodprobe14, nfalse14]=test_data_with_swap(1, 4, n_Q1_cluster4, 1) ; print("")
+# [ngoodprobe15, nfalse15]=test_data_with_swap(1, 5, n_Q1_cluster5, 1) ; print("")
+# [ngoodprobe16, nfalse16]=test_data_with_swap(1, 6, n_Q1_cluster6, 1) ; print("")
 
 
 ngoodprobe0 = ngoodprobe00+ngoodprobe01+ngoodprobe02+ngoodprobe03+ngoodprobe04+ngoodprobe05+ngoodprobe06
