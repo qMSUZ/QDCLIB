@@ -1005,7 +1005,7 @@ def get_value(output_distr, i):
 def test_data_with_swap(_class, _case, _n_case, verbose=0):
 
     
-    _class=0; _case=6; _n_case=-1; verbose=1
+    #_class=0; _case=0; _n_case=4; verbose=1
 
     _ngoodprobe=0
     _nfalseprobe=0   
@@ -1022,11 +1022,12 @@ def test_data_with_swap(_class, _case, _n_case, verbose=0):
     if verbose>=1:
         print("case", _case)
 
+    initial_state_zero=np.zeros(2**6)    
+    initial_state_zero[0]=1
+
     # test with class 0    
     for idx in range(40):
-        initial_state_zero=np.zeros(2**6)    
-        initial_state_zero[0]=1
-        initial_quantum_state=np.kron(Q0[idx], initial_state_zero, )
+        initial_quantum_state=np.kron( Q0[idx], initial_state_zero)
     
         qc=None
         qc = create_variational_circuit(qubits, target_params, circuit_type, layers, 
@@ -1063,13 +1064,174 @@ def test_data_with_swap(_class, _case, _n_case, verbose=0):
         z1=get_value(output_distr,0)+get_value(output_distr,1)+get_value(output_distr,4)+get_value(output_distr,5)
         z2=get_value(output_distr,0)+get_value(output_distr,2)+get_value(output_distr,4)+get_value(output_distr,6)
         vq0[idx,0]=idx
-        vq0[idx,1]=max(max(z0,z1), z2)
+        #vq0[idx,1]=max(max(z0,z1), z2)
+        vq0[idx,1]=(z0+z1+z2)/3
         #print(idx, "probs", max(max(z0,z1), z2), (z0+z1+z2)/3 , z0,z1,z2)
         #print(idx, "probe", get_value(output_distr,0))
 
-    vq0=vq0[vq0[:, 1].argsort()]
+    vq0_ordered=vq0[vq0[:, 1].argsort()]
+
+    # test with class 1
+    for idx in range(40):
+        initial_quantum_state=np.kron( Q1[idx], initial_state_zero)
+        
+        qc=None
+        qc = create_variational_circuit(qubits, target_params, circuit_type, layers, 
+                                        withoutfinalmeasurement=1, 
+                                        extraqubits=6, userinit=1, initial_state=initial_quantum_state)
+        
+        # swap test add
+        qc.h(3)
+        qc.h(4)
+        qc.h(5)
+        
+        qc.cswap(3, 0, 6)
+        qc.cswap(4, 1, 7)
+        qc.cswap(5, 2, 8)
+        
+        qc.h(3)
+        qc.h(4)
+        qc.h(5)
+        
+        qc.measure(3, 0)
+        qc.measure(4, 1)
+        qc.measure(5, 2)
+        
+            
+        #qc.draw()
+        #qc.draw(output='mpl')
+        #qc.draw(output='latex')
+        #qc.draw(output='latex_source')
+        
+        result = backend.run(qc).result()
+        output_distr = counts_to_distr(result.get_counts())
+        
+        z0=get_value(output_distr,0)+get_value(output_distr,1)+get_value(output_distr,2)+get_value(output_distr,3)
+        z1=get_value(output_distr,0)+get_value(output_distr,1)+get_value(output_distr,4)+get_value(output_distr,5)
+        z2=get_value(output_distr,0)+get_value(output_distr,2)+get_value(output_distr,4)+get_value(output_distr,6)
+        vq1[idx,0]=idx
+        #vq1[idx,1]=max(max(z0,z1), z2)
+        vq1[idx,1]=(z0+z1+z2)/3
+        #print(idx, "probs", max(max(z0,z1), z2), (z0+z1+z2)/3 , z0,z1,z2)
+        #print(idx, "probe", get_value(output_distr,0))
+
+    vq1_ordered=vq1[vq1[:, 1].argsort()]
 
     # rest of code to finish
+    if verbose>=1:
+        print("vq0 ordered")
+        print(vq0_ordered[-_n_case:])
+        print("vq1 ordered")
+        print(vq1_ordered[-_n_case:])
+
+    vq0_predict=np.zeros(40)
+    vq1_predict=np.zeros(40)
+    
+    if  _class==0:
+        _threshold_one=vq0_ordered[-_n_case,1]
+
+    if  _class==1:
+        _threshold_one=vq1_ordered[-_n_case,1]
+
+    for idx in range(0, 40):
+        if vq0[idx,1] >= _threshold_one:
+            vq0_predict[idx]=1
+            
+    vq0_predict_idx = np.where( vq0_predict == 1 )
+
+    for idx in range(0, 40):
+        if vq1[idx,1] >= _threshold_one:
+            vq1_predict[idx]=1
+
+    vq1_predict_idx = np.where( vq1_predict == 1 )
+
+    if  _class==0:
+        _ngoodprobe=sum(vq0_predict)
+
+    if  _class==1:
+        _ngoodprobe=sum(vq1_predict)
+        
+    if verbose>=1 and _class==0:
+        print("Accuracy in class %d for case %d: %0.1f%% (%d/%d)" % ( _class, _case, (_ngoodprobe / _n_case)*100, sum(vq0_predict),_n_case)) 
+
+    if verbose>=1 and _class==1:
+        print("Accuracy in class %d for case %d: %0.1f%% (%d/%d)" % ( _class, _case, (_ngoodprobe / _n_case)*100, sum(vq1_predict),_n_case)) 
+        
+    if verbose>=1:
+        print("predicted indexes:")
+        if _class==0:
+            print("vq0_predict_idx=",vq0_predict_idx)
+
+        if _class==1:
+            print("vq1_predict_idx=",vq1_predict_idx)
+    
+        
+        if _class==0 and _case==0:
+            print("Q0_cluster0_idx=",Q0_cluster0_idx)
+    
+        if _class==0 and _case==1:
+            print("Q0_cluster1_idx=",Q0_cluster1_idx)
+    
+        if _class==0 and _case==2:
+            print("Q0_cluster2_idx=",Q0_cluster2_idx)
+    
+        if _class==0 and _case==3:
+            print("Q0_cluster3_idx=",Q0_cluster3_idx)
+    
+        if _class==0 and _case==4:
+            print("Q0_cluster4_idx=",Q0_cluster4_idx)
+    
+        if _class==0 and _case==5:
+            print("Q0_cluster5_idx=",Q0_cluster5_idx)
+            
+        if _class==0 and _case==6:
+            print("Q0_cluster6_idx=",Q0_cluster6_idx)
+    
+    
+    
+        if _class==1 and _case==0:
+            print("Q1_cluster0_idx=",Q1_cluster0_idx)
+    
+        if _class==1 and _case==1:
+            print("Q1_cluster1_idx=",Q1_cluster1_idx)
+    
+        if _class==1 and _case==2:
+            print("Q1_cluster2_idx=",Q1_cluster2_idx)
+    
+        if _class==1 and _case==3:
+            print("Q1_cluster3_idx=",Q1_cluster3_idx)
+
+        if _class==1 and _case==4:
+            print("Q1_cluster4_idx=",Q1_cluster4_idx)
+
+        if _class==1 and _case==5:
+            print("Q1_cluster5_idx=",Q1_cluster5_idx)
+
+        if _class==1 and _case==6:
+            print("Q1_cluster6_idx=",Q1_cluster6_idx)
+
+        print("")
+
+        if  _class==0:
+            _nfalseprobe=sum(vq1_predict)
+
+        if  _class==1:
+            _nfalseprobe=sum(vq0_predict)
+
+
+        if verbose>=1 and _class==0:    
+            print("False probes in all class 1: %0.1f%% (%d/40)" % ((sum(vq1_predict) / 40)*100, sum(vq1_predict))) 
+    
+        if verbose>=1 and _class==1:    
+            print("False probes in all class 0: %0.1f%% (%d/40)" % ((sum(vq0_predict) / 40)*100, sum(vq0_predict))) 
+    
+        if _class==1:
+            print("predicted indexes for all class 0")
+            print("vq1_predict_idx=",vq0_predict_idx)
+    
+        if _class==0:
+            print("predicted indexes for all class 1")
+            print("vq1_predict_idx=",vq1_predict_idx)
 
     return _ngoodprobe, _nfalseprobe
 
@@ -1148,6 +1310,14 @@ Q0_cluster3_mean = np.mean(Q0_cluster3, axis=0)
 Q0_cluster4_mean = np.mean(Q0_cluster4, axis=0)
 Q0_cluster5_mean = np.mean(Q0_cluster5, axis=0)
 Q0_cluster6_mean = np.mean(Q0_cluster6, axis=0)
+
+print("Q0_cluster0_mean=", np.linalg.norm(Q0_cluster0_mean))
+print("Q0_cluster1_mean=", np.linalg.norm(Q0_cluster1_mean))
+print("Q0_cluster2_mean=", np.linalg.norm(Q0_cluster2_mean))
+print("Q0_cluster3_mean=", np.linalg.norm(Q0_cluster3_mean))
+print("Q0_cluster4_mean=", np.linalg.norm(Q0_cluster4_mean))
+print("Q0_cluster5_mean=", np.linalg.norm(Q0_cluster5_mean))
+print("Q0_cluster6_mean=", np.linalg.norm(Q0_cluster6_mean))
 
 n_Q0_cluster0 = Q0_cluster0.shape[0]
 n_Q0_cluster1 = Q0_cluster1.shape[0]
@@ -1237,9 +1407,9 @@ target_params = params
 
 backend = Aer.get_backend("aer_simulator")
 
-# start = time.time()
-# train_data_and_save_angles_to_file()
-# elapsed = time.time() - start
+#start = time.time()
+#train_data_and_save_angles_to_file()
+#elapsed = time.time() - start
 
 print("")
 
@@ -1273,11 +1443,11 @@ nfalse10=nfalse11=nfalse12=nfalse13=nfalse14=nfalse15=nfalse16=0
 
 print("-------- CLASS 0 -------- ")
 [ngoodprobe00, nfalse00]=test_data_with_swap(0, 0, n_Q0_cluster0, 1) ; print("")
-[ngoodprobe01, nfalse01]=test_data_with_swap(0, 1, n_Q0_cluster1, 1) ; print("")
-[ngoodprobe02, nfalse02]=test_data_with_swap(0, 2, n_Q0_cluster2, 1) ; print("")
-[ngoodprobe03, nfalse03]=test_data_with_swap(0, 3, n_Q0_cluster3, 1) ; print("")
-[ngoodprobe04, nfalse04]=test_data_with_swap(0, 4, n_Q0_cluster4, 1) ; print("")
-[ngoodprobe05, nfalse05]=test_data_with_swap(0, 5, n_Q0_cluster5, 1) ; print("")
+#[ngoodprobe01, nfalse01]=test_data_with_swap(0, 1, n_Q0_cluster1, 1) ; print("")
+#[ngoodprobe02, nfalse02]=test_data_with_swap(0, 2, n_Q0_cluster2, 1) ; print("")
+#[ngoodprobe03, nfalse03]=test_data_with_swap(0, 3, n_Q0_cluster3, 1) ; print("")
+#[ngoodprobe04, nfalse04]=test_data_with_swap(0, 4, n_Q0_cluster4, 1) ; print("")
+#[ngoodprobe05, nfalse05]=test_data_with_swap(0, 5, n_Q0_cluster5, 1) ; print("")
 [ngoodprobe06, nfalse06]=test_data_with_swap(0, 6, n_Q0_cluster6, 1) ; print("")
 
 # print("-------- CLASS 1 -------- ")
@@ -1285,9 +1455,9 @@ print("-------- CLASS 0 -------- ")
 # [ngoodprobe11, nfalse11]=test_data_with_swap(1, 1, n_Q1_cluster1, 1) ; print("")
 # [ngoodprobe12, nfalse12]=test_data_with_swap(1, 2, n_Q1_cluster2, 1) ; print("")
 # [ngoodprobe13, nfalse13]=test_data_with_swap(1, 3, n_Q1_cluster3, 1) ; print("")
-# [ngoodprobe14, nfalse14]=test_data_with_swap(1, 4, n_Q1_cluster4, 1) ; print("")
+#[ngoodprobe14, nfalse14]=test_data_with_swap(1, 4, n_Q1_cluster4, 1) ; print("")
 # [ngoodprobe15, nfalse15]=test_data_with_swap(1, 5, n_Q1_cluster5, 1) ; print("")
-# [ngoodprobe16, nfalse16]=test_data_with_swap(1, 6, n_Q1_cluster6, 1) ; print("")
+#[ngoodprobe16, nfalse16]=test_data_with_swap(1, 6, n_Q1_cluster6, 1) ; print("")
 
 
 ngoodprobe0 = ngoodprobe00+ngoodprobe01+ngoodprobe02+ngoodprobe03+ngoodprobe04+ngoodprobe05+ngoodprobe06
