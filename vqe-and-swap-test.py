@@ -1138,18 +1138,29 @@ def test_data_with_swap(_class, _case, _n_case, verbose=0):
             vq0_predict[idx]=1
             
     vq0_predict_idx = np.where( vq0_predict == 1 )
+    vq0_predict_idx_verification = np.where( vq0_predict == 1 )
 
     for idx in range(0, 40):
         if vq1[idx,1] >= _threshold_one:
             vq1_predict[idx]=1
 
-    vq1_predict_idx = np.where( vq1_predict == 1 )
+    vq0_predict_idx_verification=np.delete(vq0_predict_idx[0], np.argwhere(vq0_predict_idx[0] == vq0_predict_idx[0]))
 
+    vq1_predict_idx = np.where( vq1_predict == 1 )
+    vq1_predict_idx_verification = np.where( vq1_predict == 1 )
+    vq1_predict_idx_verification=np.delete(vq1_predict_idx[0], np.argwhere(vq1_predict_idx[0] == vq1_predict_idx[0]))
+    
     if  _class==0:
-        _ngoodprobe=sum(vq0_predict)
+        if vq0_predict_idx_verification.size==0:
+            _ngoodprobe=sum(vq0_predict)
+        else:
+            _ngoodprobe=-vq0_predict_idx_verification.size
 
     if  _class==1:
-        _ngoodprobe=sum(vq1_predict)
+        if vq1_predict_idx_verification.size==0:
+            _ngoodprobe=sum(vq1_predict)
+        else:
+            _ngoodprobe=-vq1_predict_idx_verification.size
         
     if verbose>=1 and _class==0:
         print("Accuracy in class %d for case %d: %0.1f%% (%d/%d)" % ( _class, _case, (_ngoodprobe / _n_case)*100, sum(vq0_predict),_n_case)) 
@@ -1284,8 +1295,8 @@ common_params = {
 cluster_for_Q0_r = KMeans(n_clusters=7, tol=1e7, **common_params).fit(Q0_r)
 cluster_for_Q1_r = KMeans(n_clusters=7, tol=1e7, **common_params).fit(Q1_r)
 
-cluster_for_Q0 = KMeans(n_clusters=7, **common_params).fit(Q0)
-cluster_for_Q1 = KMeans(n_clusters=7, **common_params).fit(Q1)
+cluster_for_Q0 = KMeans(n_clusters=7, tol=1e9, **common_params).fit(Q0)
+cluster_for_Q1 = KMeans(n_clusters=7, tol=1e9, **common_params).fit(Q1)
 
 Q0_cluster0 = get_vectors_for_label(0, cluster_for_Q0.labels_, Q0, 40)
 Q0_cluster1 = get_vectors_for_label(1, cluster_for_Q0.labels_, Q0, 40)
@@ -1384,7 +1395,7 @@ if circuit_type == 5:
 #        params = np.random.rand(18)
 
 np.random.seed(999999)
-#np.random.seed(111111)
+#np. random.seed(111111)
 
 target_distr = {0: 0,
                 1: 0,
@@ -1448,10 +1459,10 @@ print("-------- CLASS 0 -------- ")
 #[ngoodprobe03, nfalse03]=test_data_with_swap(0, 3, n_Q0_cluster3, 1) ; print("")
 #[ngoodprobe04, nfalse04]=test_data_with_swap(0, 4, n_Q0_cluster4, 1) ; print("")
 #[ngoodprobe05, nfalse05]=test_data_with_swap(0, 5, n_Q0_cluster5, 1) ; print("")
-[ngoodprobe06, nfalse06]=test_data_with_swap(0, 6, n_Q0_cluster6, 1) ; print("")
+#[ngoodprobe06, nfalse06]=test_data_with_swap(0, 6, n_Q0_cluster6, 1) ; print("")
 
 # print("-------- CLASS 1 -------- ")
-# [ngoodprobe10, nfalse10]=test_data_with_swap(1, 0, n_Q1_cluster0, 1) ; print("")
+[ngoodprobe10, nfalse10]=test_data_with_swap(1, 0, n_Q1_cluster0, 1) ; print("")
 # [ngoodprobe11, nfalse11]=test_data_with_swap(1, 1, n_Q1_cluster1, 1) ; print("")
 # [ngoodprobe12, nfalse12]=test_data_with_swap(1, 2, n_Q1_cluster2, 1) ; print("")
 # [ngoodprobe13, nfalse13]=test_data_with_swap(1, 3, n_Q1_cluster3, 1) ; print("")
