@@ -1183,13 +1183,6 @@ def test_data_with_swap(_class, _case, _n_case, verbose=0):
         if _class==0 and _case==1:
             print("Q0_cluster1_idx=",Q0_cluster1_idx)
 
-        if _class==0 and _case==0x1a:
-            print("Q0_cluster1a_idx=",Q0_cluster1a_idx)
-
-        if _class==0 and _case==0x1b:
-            print("Q0_cluster1b_idx=",Q0_cluster1b_idx)
-
-
         if _class==0 and _case==2:
             print("Q0_cluster2_idx=",Q0_cluster2_idx)
     
