@@ -1035,8 +1035,8 @@ common_params = {
     "random_state": random_state,
 }
 
-cluster_for_Q0_r = KMeans(n_clusters=7, tol=1e7, **common_params).fit(Q0_r)
-cluster_for_Q1_r = KMeans(n_clusters=7, tol=1e7, **common_params).fit(Q1_r)
+cluster_for_Q0_r = KMeans(n_clusters=7, tol=1e-7, **common_params).fit(Q0_r)
+cluster_for_Q1_r = KMeans(n_clusters=7, tol=1e-7, **common_params).fit(Q1_r)
 
 cluster_for_Q0 = KMeans(n_clusters=7, **common_params).fit(Q0)
 cluster_for_Q1 = KMeans(n_clusters=7, **common_params).fit(Q1)

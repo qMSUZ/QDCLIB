@@ -1182,7 +1182,14 @@ def test_data_with_swap(_class, _case, _n_case, verbose=0):
     
         if _class==0 and _case==1:
             print("Q0_cluster1_idx=",Q0_cluster1_idx)
-    
+
+        if _class==0 and _case==0x1a:
+            print("Q0_cluster1a_idx=",Q0_cluster1a_idx)
+
+        if _class==0 and _case==0x1b:
+            print("Q0_cluster1b_idx=",Q0_cluster1b_idx)
+
+
         if _class==0 and _case==2:
             print("Q0_cluster2_idx=",Q0_cluster2_idx)
     
@@ -1276,27 +1283,27 @@ def entanglement_detection_in_data(Q0, Q1):
 print("read data")
 df, Q, labels_for_Q, Q0, Q1 = read_data()
 
+# random_state = 170
+# common_params = {
+#     "n_init": "auto",
+#     "random_state": random_state,
+# }
+
+#pca = decomposition.PCA(n_components=2)
+#Q0_r = pca.fit(Q0).transform(Q0)
+#Q1_r = pca.fit(Q1).transform(Q1)
+
 random_state = 170
 common_params = {
     "n_init": "auto",
     "random_state": random_state,
 }
 
-pca = decomposition.PCA(n_components=2)
-Q0_r = pca.fit(Q0).transform(Q0)
-Q1_r = pca.fit(Q1).transform(Q1)
+#cluster_for_Q0_r = KMeans(n_clusters=7, tol=1e-7, **common_params).fit(Q0_r)
+#cluster_for_Q1_r = KMeans(n_clusters=7, tol=1e-7, **common_params).fit(Q1_r)
 
-random_state = 170
-common_params = {
-    "n_init": "auto",
-    "random_state": random_state,
-}
-
-cluster_for_Q0_r = KMeans(n_clusters=7, tol=1e7, **common_params).fit(Q0_r)
-cluster_for_Q1_r = KMeans(n_clusters=7, tol=1e7, **common_params).fit(Q1_r)
-
-cluster_for_Q0 = KMeans(n_clusters=7, tol=1e9, **common_params).fit(Q0)
-cluster_for_Q1 = KMeans(n_clusters=7, tol=1e9, **common_params).fit(Q1)
+cluster_for_Q0 = KMeans(n_clusters=7, **common_params).fit(Q0)
+cluster_for_Q1 = KMeans(n_clusters=7, **common_params).fit(Q1)
 
 Q0_cluster0 = get_vectors_for_label(0, cluster_for_Q0.labels_, Q0, 40)
 Q0_cluster1 = get_vectors_for_label(1, cluster_for_Q0.labels_, Q0, 40)
@@ -1418,9 +1425,9 @@ target_params = params
 
 backend = Aer.get_backend("aer_simulator")
 
-#start = time.time()
-#train_data_and_save_angles_to_file()
-#elapsed = time.time() - start
+# start = time.time()
+# train_data_and_save_angles_to_file()
+# elapsed = time.time() - start
 
 print("")
 
@@ -1461,14 +1468,14 @@ print("-------- CLASS 0 -------- ")
 #[ngoodprobe05, nfalse05]=test_data_with_swap(0, 5, n_Q0_cluster5, 1) ; print("")
 #[ngoodprobe06, nfalse06]=test_data_with_swap(0, 6, n_Q0_cluster6, 1) ; print("")
 
-# print("-------- CLASS 1 -------- ")
+print("-------- CLASS 1 -------- ")
 [ngoodprobe10, nfalse10]=test_data_with_swap(1, 0, n_Q1_cluster0, 1) ; print("")
-# [ngoodprobe11, nfalse11]=test_data_with_swap(1, 1, n_Q1_cluster1, 1) ; print("")
-# [ngoodprobe12, nfalse12]=test_data_with_swap(1, 2, n_Q1_cluster2, 1) ; print("")
-# [ngoodprobe13, nfalse13]=test_data_with_swap(1, 3, n_Q1_cluster3, 1) ; print("")
+#[ngoodprobe11, nfalse11]=test_data_with_swap(1, 1, n_Q1_cluster1, 1) ; print("")
+#[ngoodprobe12, nfalse12]=test_data_with_swap(1, 2, n_Q1_cluster2, 1) ; print("")
+#[ngoodprobe13, nfalse13]=test_data_with_swap(1, 3, n_Q1_cluster3, 1) ; print("")
 #[ngoodprobe14, nfalse14]=test_data_with_swap(1, 4, n_Q1_cluster4, 1) ; print("")
-# [ngoodprobe15, nfalse15]=test_data_with_swap(1, 5, n_Q1_cluster5, 1) ; print("")
-#[ngoodprobe16, nfalse16]=test_data_with_swap(1, 6, n_Q1_cluster6, 1) ; print("")
+#[ngoodprobe15, nfalse15]=test_data_with_swap(1, 5, n_Q1_cluster5, 1) ; print("")
+[ngoodprobe16, nfalse16]=test_data_with_swap(1, 6, n_Q1_cluster6, 1) ; print("")
 
 
 ngoodprobe0 = ngoodprobe00+ngoodprobe01+ngoodprobe02+ngoodprobe03+ngoodprobe04+ngoodprobe05+ngoodprobe06
