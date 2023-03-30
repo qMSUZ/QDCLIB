@@ -1273,6 +1273,11 @@ def entanglement_detection_in_data(Q0, Q1):
             print("Q1 part:", part)
 
 
+
+# kmeans variant for quantum states
+def kmeans_quantum_states(qX, n_clusters):
+    pass
+
 print("read data")
 df, Q, labels_for_Q, Q0, Q1 = read_data()
 
@@ -1295,8 +1300,8 @@ common_params = {
 #cluster_for_Q0_r = KMeans(n_clusters=7, tol=1e-7, **common_params).fit(Q0_r)
 #cluster_for_Q1_r = KMeans(n_clusters=7, tol=1e-7, **common_params).fit(Q1_r)
 
-cluster_for_Q0 = KMeans(n_clusters=7, **common_params).fit(Q0)
-cluster_for_Q1 = KMeans(n_clusters=7, **common_params).fit(Q1)
+cluster_for_Q0 = KMeans(n_clusters=7, tol=1e-8, **common_params).fit(Q0)
+cluster_for_Q1 = KMeans(n_clusters=7, tol=1e-8, **common_params).fit(Q1)
 
 Q0_cluster0 = get_vectors_for_label(0, cluster_for_Q0.labels_, Q0, 40)
 Q0_cluster1 = get_vectors_for_label(1, cluster_for_Q0.labels_, Q0, 40)
@@ -1468,7 +1473,7 @@ print("-------- CLASS 1 -------- ")
 #[ngoodprobe13, nfalse13]=test_data_with_swap(1, 3, n_Q1_cluster3, 1) ; print("")
 #[ngoodprobe14, nfalse14]=test_data_with_swap(1, 4, n_Q1_cluster4, 1) ; print("")
 #[ngoodprobe15, nfalse15]=test_data_with_swap(1, 5, n_Q1_cluster5, 1) ; print("")
-[ngoodprobe16, nfalse16]=test_data_with_swap(1, 6, n_Q1_cluster6, 1) ; print("")
+#[ngoodprobe16, nfalse16]=test_data_with_swap(1, 6, n_Q1_cluster6, 1) ; print("")
 
 
 ngoodprobe0 = ngoodprobe00+ngoodprobe01+ngoodprobe02+ngoodprobe03+ngoodprobe04+ngoodprobe05+ngoodprobe06
