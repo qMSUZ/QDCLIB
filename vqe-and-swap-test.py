@@ -1272,8 +1272,41 @@ def entanglement_detection_in_data(Q0, Q1):
         else:
             print("Q1 part:", part)
 
+#
+# non-optimised k-means spherical clustering 
+# routine
+#
+
+def cosine_distance( _u, _v ):
+    _distance = 1.0 - np.dot(_u, _v) / (np.linalg.norm(_u) * np.linalg.norm(_v))
+    return _distance
 
 
+def kmeans_spherical(_X, _n_clusters, _max_iteration=128):
+    _n_probes = _X.shape[0]
+    _distances = np.zeros( (_n_probes, _n_clusters) )
+    centers = _X[np.random.choice(_n_probes, _n_clusters, replace=False)]
+    closest = np.argmin(_distances, axis=1)
+
+    _iteration=0
+    while _iteration<_max_iteration:
+        old_closest = closest
+        
+        for idx in range(_n_probes):
+            for ncnt in range(_n_clusters):
+                _distances[idx,ncnt] = cosine_distance(_X[idx], centers[ncnt])
+        
+        closest = np.argmin(_distances, axis=1)
+        
+        for i in range(_n_clusters):
+            centers[i,:] = _X[closest == i].mean(axis=0)
+            centers[i,:] = centers[i,:] / np.linalg.norm(centers[i,:])
+        
+        if all(closest == old_closest):
+            break
+        
+        _iteration = _iteration + 1
+    return closest, centers 
 # kmeans variant for quantum states
 def kmeans_quantum_states(qX, n_clusters):
     pass
@@ -1460,7 +1493,7 @@ nfalse10=nfalse11=nfalse12=nfalse13=nfalse14=nfalse15=nfalse16=0
 print("-------- CLASS 0 -------- ")
 [ngoodprobe00, nfalse00]=test_data_with_swap(0, 0, n_Q0_cluster0, 1) ; print("")
 #[ngoodprobe01, nfalse01]=test_data_with_swap(0, 1, n_Q0_cluster1, 1) ; print("")
-#[ngoodprobe02, nfalse02]=test_data_with_swap(0, 2, n_Q0_cluster2, 1) ; print("")
+[ngoodprobe02, nfalse02]=test_data_with_swap(0, 2, n_Q0_cluster2, 1) ; print("")
 #[ngoodprobe03, nfalse03]=test_data_with_swap(0, 3, n_Q0_cluster3, 1) ; print("")
 #[ngoodprobe04, nfalse04]=test_data_with_swap(0, 4, n_Q0_cluster4, 1) ; print("")
 #[ngoodprobe05, nfalse05]=test_data_with_swap(0, 5, n_Q0_cluster5, 1) ; print("")
