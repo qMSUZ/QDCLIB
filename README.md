@@ -1,1 +1,1 @@
-# QDCLIB -- QDCLIB -- Quantum Distance Classificator
+# QDCLIB -- Quantum Distance Classificator
