@@ -1,1 +1,1 @@
-# VQEClassification
+# QDCLIB -- QDCLIB -- Quantum Distance Classificator
