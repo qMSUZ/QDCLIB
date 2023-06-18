@@ -9,30 +9,55 @@
 # *                              by Joanna Wiśniewska                       *
 # *                                  <Joanna.Wisniewska@wat.edu.pl>         *
 # *                                                                         *
+# *   Part of the Quantum Distance Classifier:                              *
+# *         https://github.com/qMSUZ/QDCLIB                                 *
 # *                                                                         *
-# *   Part of the VQEClassification:                                        *
-# *         https://github.com/qMSUZ/QDCLIB                      *
+# *   Licensed under the EUPL-1.2-or-later, see LICENSE file.               *
 # *                                                                         *
-# *   This program is free software; you can redistribute it and/or modify  *
-# *   it under the terms of the GNU General Public License as published by  *
-# *   the Free Software Foundation; either version 3 of the License, or     *
-# *   (at your option) any later version.                                   *
+# *   Licensed under the EUPL, Version 1.2 or - as soon they will be        *
+# *   approved by the European Commission - subsequent versions of the      *
+# *   EUPL (the "Licence");                                                 *
 # *                                                                         *
-# *   This program is distributed in the hope that it will be useful,       *
-# *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
-# *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
-# *   GNU General Public License for more details.                          *
+# *   You may not use this work except in compliance with the Licence.      *
+# *   You may obtain a copy of the Licence at:                              *
 # *                                                                         *
-# *   You should have received a copy of the GNU General Public License     *
-# *   along with this program; if not, write to the                         *
-# *   Free Software Foundation, Inc.,                                       *
-# *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+# *   https://joinup.ec.europa.eu/software/page/eupl                        *
+# *                                                                         *
+# *   Unless required by applicable law or agreed to in writing,            *
+# *   software distributed under the Licence is distributed on an           *
+# *   "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,          *
+# *   either express or implied. See the Licence for the specific           *
+# *   language governing permissions and limitations under the Licence.     *
+# *                                                                         *
 # ***************************************************************************/
+
+import matplotlib.pyplot as plt
 
 import numpy as np
 import pandas as pd
 import math as math
 import sympy as sympy
+
+COSINE_DISTANCE = 1000
+
+# klasy wyjątków z EntDetectora
+
+class DimensionError(Exception):
+    """DimensionError"""
+    def __init__(self, message):
+        self.message = message
+
+class ArgumentValueError(Exception):
+    """ArgumentValueError"""
+    def __init__(self, message):
+        self.message = message
+
+class DensityMatrixDimensionError(Exception):
+    """DensityMatrixDimensionError"""
+    def __init__(self, message):
+        self.message = message
+
+
 
 def convert_data_to_vector_states(inputDF, cols=0):
     """
@@ -139,3 +164,222 @@ def convert_data_to_vector_state(dataTuple):
 
 
 
+def cosine_distance( uvector, vvector ):
+    """
+    Calculate a cosine distance between two vectors
+
+    Parameters
+    ----------
+    uvector : TYPE
+        DESCRIPTION.
+    vvector : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    distance_value : TYPE
+        DESCRIPTION.
+
+    """
+    distance_value = 1.0 - np.dot(uvector, vvector) / ( np.linalg.norm(uvector) * np.linalg.norm(vvector) )
+    distance_value = np.linalg.norm(distance_value)
+    return distance_value
+
+def create_zero_vector( _n_dim=3 ):
+    """
+    
+    Parameters
+    ----------
+    _n_dim : TYPE, optional
+        DESCRIPTION. The default is 3.
+
+    Returns
+    -------
+    _vector_zero : TYPE
+        DESCRIPTION.
+
+    Examples
+    --------
+    """
+    
+    _vector_zero = np.zeros( (_n_dim) )
+    
+    return _vector_zero
+
+def create_one_vector( _axis=0, _n_dim=3 ):
+    """
+
+    Parameters
+    ----------
+    _axis : TYPE, optional
+        DESCRIPTION. The default is 0.
+    _n_dim : TYPE, optional
+        DESCRIPTION. The default is 3.
+
+    Returns
+    -------
+    _vector_one : TYPE
+        DESCRIPTION.
+
+    """
+    
+    _vector_one = np.zeros( (_n_dim) )
+    _vector_one[ _axis ] = 1.0  
+    
+    return _vector_one
+
+
+def create_spherical_probes( _n_points, _n_dim=3):
+    """
+    
+
+    Parameters
+    ----------
+    _n_points : TYPE
+        DESCRIPTION.
+    _n_dim : TYPE, optional
+        DESCRIPTION. The default is 3.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
+    
+    if _n_points > 0:
+        _unit_vectors = np.random.randn( _n_dim, _n_points )
+        _unit_vectors /= np.linalg.norm( _unit_vectors, axis=0 )
+    else:
+        raise ValueError("The number of points must be positive integer number!")
+        return None
+    
+    return _unit_vectors.T
+
+def create_fcused_spherical_probes( _n_points, _n_focus_point, _n_dim=3):
+    # a tu chodzi oto ze owszem losujemy punkty
+    # ale już domylnie skupione wokól kilku puntków,
+    # choć zakładamy że same punkty będą wylosowanane
+    pass
+
+def slerp(p0, p1, t):
+    """
+
+    Parameters
+    ----------
+    p0 : TYPE
+        DESCRIPTION.
+    p1 : TYPE
+        DESCRIPTION.
+    t : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
+    # p0,p1 to wektory to można sprawdzić
+    # czy są tych samych wymiarów,
+    # a jak nie to wyjątkiem ;-) DimensionError, podobnie jak w EntDetectorze
+    omega = np.arccos(np.dot(p0/np.linalg.norm(p0), p1/np.linalg.norm(p1)))
+    so = np.sin(omega)
+    
+    return np.sin((1.0-t)*omega) / so * p0 + np.sin(t*omega)/so * p1
+
+def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _distance_func=COSINE_DISTANCE):
+    """
+    
+
+    Parameters
+    ----------
+    _X : TYPE
+        DESCRIPTION.
+    _n_clusters : TYPE
+        DESCRIPTION.
+    _max_iteration : TYPE, optional
+        DESCRIPTION. The default is 128.
+
+    Returns
+    -------
+    closest : TYPE
+        DESCRIPTION.
+    centers : TYPE
+        DESCRIPTION.
+
+    """
+    _n_probes = _X.shape[0]
+    _distances = np.zeros( (_n_probes, _n_clusters) )
+    centers = _X[np.random.choice(_n_probes, _n_clusters, replace=False)]
+    closest = np.argmin(_distances, axis=1)
+
+    _iteration=0
+    while _iteration<_max_iteration:
+        old_closest = closest
+        
+        for idx in range(_n_probes):
+            for ncnt in range(_n_clusters):
+                if _distance_func == COSINE_DISTANCE: 
+                    _distances[idx,ncnt] = cosine_distance(_X[idx], centers[ncnt])
+        
+        closest = np.argmin(_distances, axis=1)
+        
+        for i in range(_n_clusters):
+            centers[i,:] = _X[closest == i].mean(axis=0)
+            centers[i,:] = centers[i,:] / np.linalg.norm(centers[i,:])
+        
+        if all(closest == old_closest):
+            break
+        
+        _iteration = _iteration + 1
+    return closest, centers 
+
+def kmeans_quantum_states(_qX, _n_clusters, _verification=0, _distance_func=COSINE_DISTANCE):
+    """
+    
+
+    Parameters
+    ----------
+    qX : TYPE
+        DESCRIPTION.
+    _n_clusters : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    closest : TYPE
+        DESCRIPTION.
+    centers : TYPE
+        DESCRIPTION.
+
+    """
+    # vectors qX should be treated as quantum pure states
+    # but verification in performed when 
+    # verification == 1
+    closest, centers = kmeans_spherical(_qX, _n_clusters)
+    return closest, centers 
+
+
+def create_circle_plot_for_2d_data(_qX):
+    # shape _qX to check
+
+    fig, ax = plt.subplots()
+    circle = plt.Circle( (0,0), 1,  color='r', fill=False)
+    ax.scatter( _qX[:,0], _qX[:,1])
+    ax.add_patch(circle)
+    
+    return fig
+
+def create_circle_plot_with_centers_for_2d_data(_qX, _n_clusters, _centers, _labels):
+    # shape _qX to check
+    
+    fig, ax = plt.subplots()
+    circle = plt.Circle( (0,0), 1,  color='r', fill=False)
+    ax.scatter( _qX[:,0], _qX[:,1], c=_labels)
+    ax.scatter(_centers[:, 0], _centers[:, 1], marker='x', color='g')
+    for idx in range(_n_clusters):
+        ax.annotate("", xy=(_centers[idx, 0], _centers[idx, 1]), xytext=(0, 0), arrowprops=dict(arrowstyle="->"))
+    ax.add_patch(circle)
+
+    return fig
