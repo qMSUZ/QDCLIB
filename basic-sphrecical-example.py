@@ -52,18 +52,22 @@ print(" " * 4,np.linalg.norm(d, axis=1))
 # Scatter plot of 2D data 
 #
 fig, ax = plt.subplots()
+ax.set_aspect('equal')
 circle = plt.Circle( (0,0), 1,  color='r', fill=False)
 ax.scatter( d[:,0], d[:,1])
 ax.add_patch(circle)
 fig.show()
 
 n_clusters = 3
-labels, centers = qdcl.kmeans_quantum_states( d, n_clusters )
+labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, 0, _func_distance=qdcl.COSINE_DISTANCE )
+#labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, 0, qdcl.DOT_DISTANCE )
+#labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, 0, qdcl.FIDELITY_DISTANCE )
 
 print("Norms of each point in centers:")
 print(" " * 4,np.linalg.norm(centers, axis=1))
 
 fig, ax = plt.subplots()
+ax.set_aspect('equal')
 circle = plt.Circle( (0,0), 1,  color='r', fill=False)
 ax.scatter( d[:,0], d[:,1], c=labels)
 ax.scatter(centers[:, 0], centers[:, 1], marker='x', color='g')
@@ -72,7 +76,7 @@ for idx in range(n_clusters):
 ax.add_patch(circle)
 fig.show()
 
-
-
-
-
+num_label=1
+for dd in d[labels==num_label]:
+    print("", qdcl.cosine_distance(centers[num_label] , dd))
+    #print("", qdcl.dot_product_as_distance(centers[num_label] , dd))

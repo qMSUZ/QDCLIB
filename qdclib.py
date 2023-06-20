@@ -76,6 +76,7 @@ def create_circle_plot_for_2d_data(_qX):
     # shape _qX to check
 
     fig, ax = plt.subplots()
+    ax.set_aspect('equal')
     circle = plt.Circle( (0,0), 1,  color='r', fill=False)
     ax.scatter( _qX[:,0], _qX[:,1])
     ax.add_patch(circle)
@@ -86,6 +87,7 @@ def create_circle_plot_with_centers_for_2d_data(_qX, _n_clusters, _centers, _lab
     # shape _qX to check
     
     fig, ax = plt.subplots()
+    ax.set_aspect('equal')
     circle = plt.Circle( (0,0), 1,  color='r', fill=False)
     ax.scatter( _qX[:,0], _qX[:,1], c=_labels)
     ax.scatter(_centers[:, 0], _centers[:, 1], marker='x', color='g')
