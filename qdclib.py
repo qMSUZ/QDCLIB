@@ -33,12 +33,15 @@
 
 import matplotlib.pyplot as plt
 
+
 import numpy as np
 import pandas as pd
 import math as math
 import sympy as sympy
 
 COSINE_DISTANCE = 1000
+DOT_DISTANCE = 1001
+FIDELITY_DISTANCE = 1002
 
 # klasy wyjątków z EntDetectora
 
@@ -58,24 +61,60 @@ class DensityMatrixDimensionError(Exception):
         self.message = message
 
 
+class BlochVisualization:
 
-def convert_data_to_vector_states(inputDF, cols=0):
+    def __init__( self,  background=False, font_size=16 ):
+        pass
+
+    def show ( self ):
+        pass
+    
+    def save_to_file(self, filename = None):
+        pass
+
+def create_circle_plot_for_2d_data(_qX):
+    # shape _qX to check
+
+    fig, ax = plt.subplots()
+    circle = plt.Circle( (0,0), 1,  color='r', fill=False)
+    ax.scatter( _qX[:,0], _qX[:,1])
+    ax.add_patch(circle)
+    
+    return fig
+
+def create_circle_plot_with_centers_for_2d_data(_qX, _n_clusters, _centers, _labels):
+    # shape _qX to check
+    
+    fig, ax = plt.subplots()
+    circle = plt.Circle( (0,0), 1,  color='r', fill=False)
+    ax.scatter( _qX[:,0], _qX[:,1], c=_labels)
+    ax.scatter(_centers[:, 0], _centers[:, 1], marker='x', color='g')
+    for idx in range(_n_clusters):
+        ax.annotate("", xy=(_centers[idx, 0], _centers[idx, 1]), xytext=(0, 0), arrowprops=dict(arrowstyle="->"))
+    ax.add_patch(circle)
+
+    return fig
+    
+def convert_data_to_vector_states_double_norm(inputDF, cols=0):
     """
-        Create quantum states - input data from Pandas Data Frame
+        Create quantum states - input data comes from a Pandas Data Frame, 
+        each variable is normalized to avoid domination of some variables 
+        (approach known from the classical machine learning), finally, 
+        each observation is normalized (to generate correct quantum state). 
 
         Parameters
         ----------
         inputDF : pandas.DataFrame
             File of input data.
         cols : interger
-            If we would like to fetch fewer columns than the file contains,
-            this number should be assigned to the variable (if cols==0,
-            then all columns will be used).
+            If we would like to fetch fewer columns than the file contains, 
+            this number should be assigned to the variable (if cols==0, 
+            then all columns will be used). 
 
         Returns
         -------
         Qtab : numpy array
-            Numpy array of noemalized quantum states.
+            Numpy array of normalized quantum states.
 
         Examples
         --------
@@ -94,10 +133,9 @@ def convert_data_to_vector_states(inputDF, cols=0):
     else:
         raise ValueError("The number of variables is incorrect!")
         return None
-    # Classical normalization
+    #classical normalization
     Ktab=pd.DataFrame(inputDF).to_numpy()
-    
-    # Intervals
+    #intervals
     maxs=np.amax(Ktab, axis=0)
     mins=np.amin(Ktab, axis=0)
     intervals=maxs-mins
@@ -118,6 +156,59 @@ def convert_data_to_vector_states(inputDF, cols=0):
             sum_all+=KNtab[i,j]
         for j in range(b):
             Qtab[i,j]=sympy.sqrt(KNtab[i,j]/sum_all)
+    return Qtab
+
+def convert_data_to_vector_states(inputDF, cols=0):
+    """
+        Create quantum states - input data from Pandas Data Frame
+
+        Parameters
+        ----------
+        inputDF : pandas.DataFrame
+            File of input data.
+        cols : interger
+            If we would like to fetch fewer columns than the file contains, 
+            this number should be assigned to the variable (if cols==0, 
+            then all columns will be used).
+
+        Returns
+        -------
+        Qtab : numpy array
+            Numpy array of normalized quantum states.
+
+        Examples
+        --------
+        From file 'name.xlsx', four columns were fetched to produce 2-qubit states.
+        >>> df = pd.read_excel(r'name.xlsx')
+        >>> print(convert_data_to_vector_states(df,4))
+        [[0.32438643 0.94034392 0.00251242 0.10256923]
+         [0.38518862 0.91692333 0.00243558 0.10428524]
+         [0.39649659 0.91048255 0.00235002 0.11750089]
+         [0.40813284 0.91291981 0.00223538 0.        ]...
+    """
+    a,b=inputDF.shape
+    if cols==0:
+        print("The number of variables is:", b)
+    elif b>cols and cols>0:
+        b=cols
+        print("The number of variables is:", b)
+    else:
+        raise ValueError("The number of variables is incorrect!")
+        return None
+    Ktab=pd.DataFrame(inputDF).to_numpy()
+    #quantum normalization
+    if math.ceil(math.log2(b)) != math.floor(math.log2(b)):
+        c=math.ceil(math.log2(b))
+        c=2**c
+        Qtab=np.zeros(shape=(a,c))
+    else:
+        Qtab=np.ndarray(shape=(a,b))
+    for i in range(a):
+        sum_all=0
+        for j in range(b):
+            sum_all+=Ktab[i,j]
+        for j in range(b):
+            Qtab[i,j]=sympy.sqrt(Ktab[i,j]/sum_all)
     return Qtab
 
 
@@ -184,6 +275,13 @@ def cosine_distance( uvector, vvector ):
     distance_value = 1.0 - np.dot(uvector, vvector) / ( np.linalg.norm(uvector) * np.linalg.norm(vvector) )
     distance_value = np.linalg.norm(distance_value)
     return distance_value
+
+def dot_product_as_distance( uvector, vvector ):
+    return 1.0 - np.linalg.norm( np.vdot( vvector, uvector ) )
+
+def fidelity_as_distance( uvector, vvector ):
+    return 1.0 - (np.linalg.norm( np.vdot( vvector, uvector ) )**2)
+
 
 def create_zero_vector( _n_dim=3 ):
     """
@@ -288,7 +386,7 @@ def slerp(p0, p1, t):
     
     return np.sin((1.0-t)*omega) / so * p0 + np.sin(t*omega)/so * p1
 
-def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _distance_func=COSINE_DISTANCE):
+def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _func_distance=COSINE_DISTANCE):
     """
     
 
@@ -315,14 +413,20 @@ def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _distance_func=COSINE_
     closest = np.argmin(_distances, axis=1)
 
     _iteration=0
-    while _iteration<_max_iteration:
+    
+    while _iteration < _max_iteration:
         old_closest = closest
         
         for idx in range(_n_probes):
             for ncnt in range(_n_clusters):
-                if _distance_func == COSINE_DISTANCE: 
-                    _distances[idx,ncnt] = cosine_distance(_X[idx], centers[ncnt])
-        
+                if _func_distance==COSINE_DISTANCE:
+                    _distances[idx,ncnt] = cosine_distance( _X[idx], centers[ncnt] )
+                if _func_distance==DOT_DISTANCE:
+                    _distances[idx,ncnt] = dot_product_as_distance( _X[idx], centers[ncnt] )
+                if _func_distance==FIDELITY_DISTANCE:
+                    _distances[idx,ncnt] = fidelity_as_distance( _X[idx], centers[ncnt] )
+
+
         closest = np.argmin(_distances, axis=1)
         
         for i in range(_n_clusters):
@@ -335,7 +439,7 @@ def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _distance_func=COSINE_
         _iteration = _iteration + 1
     return closest, centers 
 
-def kmeans_quantum_states(_qX, _n_clusters, _verification=0, _distance_func=COSINE_DISTANCE):
+def kmeans_quantum_states(_qX, _n_clusters, _verification=0, _func_distance=COSINE_DISTANCE):
     """
     
 
@@ -354,32 +458,10 @@ def kmeans_quantum_states(_qX, _n_clusters, _verification=0, _distance_func=COSI
         DESCRIPTION.
 
     """
+
+    closest, centers = kmeans_spherical( _qX, _n_clusters, 128, _func_distance )
+        
     # vectors qX should be treated as quantum pure states
     # but verification in performed when 
     # verification == 1
-    closest, centers = kmeans_spherical(_qX, _n_clusters)
     return closest, centers 
-
-
-def create_circle_plot_for_2d_data(_qX):
-    # shape _qX to check
-
-    fig, ax = plt.subplots()
-    circle = plt.Circle( (0,0), 1,  color='r', fill=False)
-    ax.scatter( _qX[:,0], _qX[:,1])
-    ax.add_patch(circle)
-    
-    return fig
-
-def create_circle_plot_with_centers_for_2d_data(_qX, _n_clusters, _centers, _labels):
-    # shape _qX to check
-    
-    fig, ax = plt.subplots()
-    circle = plt.Circle( (0,0), 1,  color='r', fill=False)
-    ax.scatter( _qX[:,0], _qX[:,1], c=_labels)
-    ax.scatter(_centers[:, 0], _centers[:, 1], marker='x', color='g')
-    for idx in range(_n_clusters):
-        ax.annotate("", xy=(_centers[idx, 0], _centers[idx, 1]), xytext=(0, 0), arrowprops=dict(arrowstyle="->"))
-    ax.add_patch(circle)
-
-    return fig
