@@ -62,6 +62,7 @@ n_clusters = 3
 labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, 0, _func_distance=qdcl.COSINE_DISTANCE )
 #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, 0, qdcl.DOT_DISTANCE )
 #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, 0, qdcl.FIDELITY_DISTANCE )
+#labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, 0, qdcl.TRACE_DISTANCE )
 
 print("Norms of each point in centers:")
 print(" " * 4,np.linalg.norm(centers, axis=1))

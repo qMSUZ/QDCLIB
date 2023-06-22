@@ -42,6 +42,7 @@ import sympy as sympy
 COSINE_DISTANCE = 1000
 DOT_DISTANCE = 1001
 FIDELITY_DISTANCE = 1002
+TRACE_DISTANCE = 1003
 
 # klasy wyjątków z EntDetectora
 
@@ -282,8 +283,43 @@ def dot_product_as_distance( uvector, vvector ):
     return 1.0 - np.linalg.norm( np.vdot( vvector, uvector ) )
 
 def fidelity_as_distance( uvector, vvector ):
-    return 1.0 - (np.linalg.norm( np.vdot( vvector, uvector ) )**2)
+    """
+    
+    for two pure states
 
+    Parameters
+    ----------
+    uvector : TYPE
+        DESCRIPTION.
+    vvector : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
+    return 1.0 - ( np.linalg.norm( np.vdot( vvector, uvector ) ) ** 2.0 )
+
+def trace_distance( uvector, vvector ):
+    """
+    for pure states
+
+    Parameters
+    ----------
+    uvector : TYPE
+        DESCRIPTION.
+    vvector : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
+    return np.sqrt( 1.0 - ( np.linalg.norm( np.vdot( vvector, uvector ) ) ** 2.0 ) )
 
 def create_zero_vector( _n_dim=3 ):
     """
@@ -356,7 +392,7 @@ def create_spherical_probes( _n_points, _n_dim=3):
     
     return _unit_vectors.T
 
-def create_fcused_spherical_probes( _n_points, _n_focus_point, _n_dim=3):
+def create_focused_spherical_probes( _n_points, _n_focus_point, _n_dim=3):
     # a tu chodzi oto ze owszem losujemy punkty
     # ale już domylnie skupione wokól kilku puntków,
     # choć zakładamy że same punkty będą wylosowanane
@@ -427,6 +463,8 @@ def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _func_distance=COSINE_
                     _distances[idx,ncnt] = dot_product_as_distance( _X[idx], centers[ncnt] )
                 if _func_distance==FIDELITY_DISTANCE:
                     _distances[idx,ncnt] = fidelity_as_distance( _X[idx], centers[ncnt] )
+                if _func_distance==TRACE_DISTANCE:
+                    _distances[idx,ncnt] = trace_distance( _X[idx], centers[ncnt] )
 
 
         closest = np.argmin(_distances, axis=1)
@@ -467,3 +505,6 @@ def kmeans_quantum_states(_qX, _n_clusters, _verification=0, _func_distance=COSI
     # but verification in performed when 
     # verification == 1
     return closest, centers 
+
+def create_distance_table(_data, _centers, _labels):
+    pass
