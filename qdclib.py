@@ -368,7 +368,6 @@ def create_one_vector( _axis=0, _n_dim=3 ):
 def create_spherical_probes( _n_points, _n_dim=3):
     """
     
-
     Parameters
     ----------
     _n_points : TYPE
@@ -424,10 +423,9 @@ def slerp(p0, p1, t):
     
     return np.sin((1.0-t)*omega) / so * p0 + np.sin(t*omega)/so * p1
 
-def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _func_distance=COSINE_DISTANCE):
+def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _func_distance=None):
     """
     
-
     Parameters
     ----------
     _X : TYPE
@@ -457,19 +455,12 @@ def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _func_distance=COSINE_
         
         for idx in range(_n_probes):
             for ncnt in range(_n_clusters):
-                if _func_distance==COSINE_DISTANCE:
-                    _distances[idx,ncnt] = cosine_distance( _X[idx], centers[ncnt] )
-                if _func_distance==DOT_DISTANCE:
-                    _distances[idx,ncnt] = dot_product_as_distance( _X[idx], centers[ncnt] )
-                if _func_distance==FIDELITY_DISTANCE:
-                    _distances[idx,ncnt] = fidelity_as_distance( _X[idx], centers[ncnt] )
-                if _func_distance==TRACE_DISTANCE:
-                    _distances[idx,ncnt] = trace_distance( _X[idx], centers[ncnt] )
-
+                _distances[ idx, ncnt ] = _func_distance( _X[idx], centers[ncnt] )
 
         closest = np.argmin(_distances, axis=1)
         
         for i in range(_n_clusters):
+            # fix required for other function distances 
             centers[i,:] = _X[closest == i].mean(axis=0)
             centers[i,:] = centers[i,:] / np.linalg.norm(centers[i,:])
         
@@ -479,10 +470,9 @@ def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _func_distance=COSINE_
         _iteration = _iteration + 1
     return closest, centers 
 
-def kmeans_quantum_states(_qX, _n_clusters, _verification=0, _func_distance=COSINE_DISTANCE):
+def kmeans_quantum_states(_qX, _n_clusters, _verification=0, _func_distance=COSINE_DISTANCE, _max_iterations=128):
     """
     
-
     Parameters
     ----------
     qX : TYPE
@@ -499,12 +489,51 @@ def kmeans_quantum_states(_qX, _n_clusters, _verification=0, _func_distance=COSI
 
     """
 
-    closest, centers = kmeans_spherical( _qX, _n_clusters, 128, _func_distance )
-        
     # vectors qX should be treated as quantum pure states
     # but verification in performed when 
     # verification == 1
+
+    if _func_distance==COSINE_DISTANCE:
+        _funcdist = cosine_distance
+
+    if _func_distance==DOT_DISTANCE:
+        _funcdist = dot_product_as_distance
+
+    if _func_distance==FIDELITY_DISTANCE:
+        _funcdist = fidelity_as_distance
+
+    if _func_distance==TRACE_DISTANCE:
+        _funcdist = trace_distance
+
+    closest, centers = kmeans_spherical( _qX, _n_clusters, _max_iterations, _funcdist )
+        
     return closest, centers 
 
-def create_distance_table(_data, _centers, _labels):
-    pass
+def calculate_distance(_data, _vector, _func_distance):
+    distance_table=np.zeros( shape=(_data.shape[0] ) )
+    idx=0
+    for e in _data:
+        distance_table[idx] = _func_distance(e, _vector)
+        #distance_table[idx, 1] = l
+        idx=idx+1
+    
+    return distance_table
+    
+
+def create_distance_table( _data, _centers, _labels, _n_clusters, _func_distance=None ):
+    idx=0
+    distance_table=np.zeros( shape=(_data.shape[0], 2) )
+    for l in range(0, _n_clusters):
+        cntr=_centers[l]
+        for e in _data[_labels==l]:
+            distance_table[idx, 0] = _func_distance(e, cntr)
+            distance_table[idx, 1] = l
+            idx=idx+1
+    
+    return distance_table
+
+def get_distance_for_cluster( _data, _n_cluster ):
+    return _data[ _data[:,1] == _n_cluster ]
+
+
+

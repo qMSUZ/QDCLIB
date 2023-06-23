@@ -58,7 +58,7 @@ ax.scatter( d[:,0], d[:,1])
 ax.add_patch(circle)
 fig.show()
 
-n_clusters = 3
+n_clusters = 4
 labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, 0, _func_distance=qdcl.COSINE_DISTANCE )
 #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, 0, qdcl.DOT_DISTANCE )
 #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, 0, qdcl.FIDELITY_DISTANCE )
@@ -77,7 +77,6 @@ for idx in range(n_clusters):
 ax.add_patch(circle)
 fig.show()
 
-num_label=1
-for dd in d[labels==num_label]:
-    print("", qdcl.cosine_distance(centers[num_label] , dd))
-    #print("", qdcl.dot_product_as_distance(centers[num_label] , dd))
+t = qdcl.create_distance_table( d, centers, labels, n_clusters, qdcl.cosine_distance )
+print("")
+print(t)
