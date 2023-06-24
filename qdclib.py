@@ -32,7 +32,7 @@
 # ***************************************************************************/
 
 import matplotlib.pyplot as plt
-
+from sklearn.datasets import make_blobs
 
 import numpy as np
 import pandas as pd
@@ -391,11 +391,26 @@ def create_spherical_probes( _n_points, _n_dim=3):
     
     return _unit_vectors.T
 
-def create_focused_spherical_probes( _n_points, _n_focus_point, _n_dim=3):
+def create_focused_spherical_probes_2d( _n_points, _n_focus_points, _width_of_cluster=0.1):
     # a tu chodzi oto ze owszem losujemy punkty
     # ale już domylnie skupione wokól kilku puntków,
     # choć zakładamy że same punkty będą wylosowanane
-    pass
+    
+    theta=0
+    theta_delta = (2.0 * np.pi) / _n_focus_points
+    centers_on_circle=[]
+    for i in range(_n_focus_points):
+        theta=theta+theta_delta
+        x=np.sin(theta)
+        y=np.cos(theta)  
+        centers_on_circle.append((x,y))
+    
+    d, labels = make_blobs( n_samples=_n_points, n_features=2, centers=centers_on_circle, cluster_std=_width_of_cluster )
+    
+    for i in range(_n_points):
+        d[i] = d[i] / np.linalg.norm(d[i])
+    
+    return d
 
 def slerp(p0, p1, t):
     """
@@ -470,7 +485,7 @@ def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _func_distance=None):
         _iteration = _iteration + 1
     return closest, centers 
 
-def kmeans_quantum_states(_qX, _n_clusters, _verification=0, _func_distance=COSINE_DISTANCE, _max_iterations=128):
+def kmeans_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _max_iterations=128, _verification=0):
     """
     
     Parameters
@@ -532,8 +547,6 @@ def create_distance_table( _data, _centers, _labels, _n_clusters, _func_distance
     
     return distance_table
 
-def get_distance_for_cluster( _data, _n_cluster ):
+def get_distances_for_cluster( _data, _n_cluster ):
     return _data[ _data[:,1] == _n_cluster ]
-
-
 

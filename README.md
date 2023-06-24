@@ -1,1 +1,3 @@
-# QDCLIB -- Quantum Distance Classificator
+QDCLIB -- Quantum Distance Classificator
+
+public, unreleased state
