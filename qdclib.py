@@ -31,7 +31,10 @@
 # *                                                                         *
 # ***************************************************************************/
 
+import matplotlib
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D, proj3d
+
 from sklearn.datasets import make_blobs
 
 import numpy as np
@@ -64,11 +67,200 @@ class DensityMatrixDimensionError(Exception):
 
 class BlochVisualization:
 
-    def __init__( self,  background=False, font_size=16 ):
+    def __init__( self ):
+        
+        self.additional_points = []
+        self.additional_states = []
+        self.additional_vectors = []
+        
+        self.radius = 2.0
+        self.resolution_of_mesh = 31
+        
+        self.figure = None
+        self.axes = None
+        
+        self.figuresize = [10, 10]
+        self.viewangle = [-60, 30]
+        
+        self.xlabel = ["$x$", ""]
+        self.xlabelpos = [2.5, -2.0]
+
+        self.ylabel = ["$y$", ""]
+        self.ylabelpos = [2.5, -2.0]
+
+        self.zlabel = [r"$\left| 0 \right>$", r"$\left| 1 \right>$"]
+        self.zlabelpos = [2.5, -2.75]   
+        
+        self.main_sphere_color = "#FEFEFE"
+        self.main_sphere_alpha = 0.15
+        
+        self.frame_width = 1.0
+        self.frame_color = "black"
+        self.frame_axes_color = "red"
+        self.frame_alpha = 0.15
+
+        self.main_font_color = "blue"
+        self.main_font_size = 25
+        self.title = "Basic title for Bloch Sphere"
+
+    def make_figure( self ):
+        
+        self.prepare_mesh()
+        f = self.render_bloch_sphere()
+        
+        return f
+    
+    def prepare_mesh( self, _hemisphere = 0 ):
+        if _hemisphere == 0: # north 
+            self.u_angle = np.linspace(-np.pi, np.pi, self.resolution_of_mesh)
+            self.v_angle = np.linspace(0.0, np.pi/2, self.resolution_of_mesh)
+            
+            self.x_dir = np.outer(np.cos(self.u_angle), np.sin(self.v_angle))
+            self.y_dir = np.outer(np.sin(self.u_angle), np.sin(self.v_angle))
+            self.z_dir = np.outer(np.ones(self.u_angle.shape[0]), np.cos(self.v_angle))
+        
+        if _hemisphere == 1: # south
+            self.u_angle = np.linspace(-np.pi, np.pi, self.resolution_of_mesh)
+            self.v_angle = np.linspace(np.pi/2, np.pi, self.resolution_of_mesh)
+            
+            self.x_dir = np.outer(np.cos(self.u_angle), np.sin(self.v_angle))
+            self.y_dir = np.outer(np.sin(self.u_angle), np.sin(self.v_angle))
+            self.z_dir = np.outer(np.ones(self.u_angle.shape[0]), np.cos(self.v_angle))
+    
+    def add_points(self, _points=None):
         pass
 
-    def show ( self ):
+    def add_vectors(self, _points=None):
         pass
+
+    def add_pure_states(self, _states=None):
+        pass
+    
+    def render_hemisphere(self):
+        self.axes.plot_surface(
+           self.radius * self.x_dir,
+           self.radius * self.y_dir,
+           self.radius * self.z_dir,
+           rstride=2,
+           cstride=2,
+           color=self.main_sphere_color,
+           linewidth=0.0,
+           alpha=self.main_sphere_alpha)
+        
+        self.axes.plot_wireframe(
+            self.radius * self.x_dir,
+            self.radius * self.y_dir,
+            self.radius * self.z_dir,
+            rstride=5,
+            cstride=5,
+            color=self.frame_color,
+            alpha=self.frame_alpha,
+        )
+       
+    def render_equator_and_parallel( self ):
+        self.axes.plot(
+            self.radius * np.cos(self.u_angle),
+            self.radius * np.sin(self.u_angle),
+            zs=0,
+            zdir="z",
+            lw=self.frame_width,
+            color=self.frame_color,
+        )
+        
+        self.axes.plot(
+            self.radius * np.cos(self.u_angle),
+            self.radius * np.sin(self.u_angle),
+            zs=0,
+            zdir="x",
+            lw=self.frame_width,
+            color=self.frame_color,
+        )        
+
+        self.axes.plot(
+            self.radius * np.cos(self.u_angle),
+            self.radius * np.sin(self.u_angle),
+            zs=0,
+            zdir="y",
+            lw=self.frame_width,
+            color=self.frame_color,
+        )    
+
+    def render_sphere_axes( self ):
+        span = np.linspace(-2.0, 2.0, 2)
+        zero_span = 0.0 * span
+        self.axes.plot( span, zero_span, 
+                        zs=0, 
+                        zdir="z", 
+                        label="X", 
+                        lw=self.frame_width, 
+                        color=self.frame_axes_color )
+        self.axes.plot( zero_span, span, 
+                        zs=0, 
+                        zdir="z", 
+                        label="Y", 
+                        lw=self.frame_width, 
+                        color=self.frame_axes_color )
+        self.axes.plot( zero_span, span, 
+                        zs=0, 
+                        zdir="y", 
+                        label="Z", 
+                        lw=self.frame_width, 
+                        color=self.frame_axes_color )
+    
+    def render_labels_for_axes( self ):
+        
+        common_opts = { "fontsize" : self.main_font_size,
+                        "color" : self.main_font_color,
+                        "horizontalalignment" : "center",
+                        "verticalalignment" : "center" }
+
+        self.axes.text(0, -self.xlabelpos[0], 0, self.xlabel[0], **common_opts)
+        self.axes.text(0, -self.xlabelpos[1], 0, self.xlabel[1], **common_opts)
+
+        self.axes.text(self.ylabelpos[0], 0, 0, self.ylabel[0], **common_opts)
+        self.axes.text(self.ylabelpos[1], 0, 0, self.ylabel[1], **common_opts)
+
+        self.axes.text(0, 0, self.zlabelpos[0], self.zlabel[0], **common_opts)
+        self.axes.text(0, 0, self.zlabelpos[1], self.zlabel[1], **common_opts)
+    
+    def render_bloch_sphere( self ):        
+        self.figure = plt.figure( figsize=self.figuresize )
+        self.axes = Axes3D( self.figure,
+                            azim=self.viewangle[0],
+                            elev=self.viewangle[1] )
+
+        self.axes.clear()
+        self.axes.set_axis_off()
+        
+        self.figure.add_axes( self. axes )
+
+        self.axes.set_xlim3d( -2.0, 2.0 )
+        self.axes.set_ylim3d( -2.0, 2.0 )
+        self.axes.set_zlim3d( -2.0, 2.0 )
+        self.axes.set_aspect( 'equal' )
+        
+        self.axes.grid(False)
+        
+        self.axes.set_title(self.title, fontsize=self.main_font_size, y=0.95)
+
+        
+        # top/north hemisphare 
+        # for state |0>
+        self.prepare_mesh(0)
+        self.render_hemisphere()
+        
+        # bottom/south hemisphare 
+        # for state |1>        
+        self.prepare_mesh(1)
+        self.render_hemisphere()
+
+        self.render_equator_and_parallel()
+
+        self.render_sphere_axes()
+
+        self.render_labels_for_axes()
+
+        return self.figure
     
     def save_to_file(self, filename = None):
         pass
