@@ -449,6 +449,15 @@ def convert_data_to_vector_state(dataTuple):
     return Qvec
 
 
+def manhattan_distance(uvector, vvector):
+    d=0
+    dim=uvector.shape[0]
+    
+    for idx in range(dim):
+        d = d + np.abs( (uvector[idx] - vvector[idx]) )
+    
+    return d
+
 
 def cosine_distance( uvector, vvector ):
     """
@@ -715,6 +724,12 @@ def kmeans_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _max
     closest, centers = kmeans_spherical( _qX, _n_clusters, _max_iterations, _funcdist )
         
     return closest, centers 
+
+def kmedoids_calculate_costs(_qX, _medoids, _func_distance = None):
+    pass
+
+def kmedoids(_qX, _n_clusters, _max_iterations=128, _func_distance = None):
+    pass
 
 def calculate_distance(_data, _vector, _func_distance):
     distance_table=np.zeros( shape=(_data.shape[0] ) )
