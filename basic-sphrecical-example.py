@@ -45,6 +45,9 @@ import qdclib as qdcl
 #
 
 def example1():
+
+    print("\n\nexample 1\n\n")
+
     d = qdcl.create_spherical_probes(10, 2)
     
     print("Norms of each point in d:")
@@ -84,6 +87,9 @@ def example1():
     print(t)
 
 def example2():
+
+    print("\n\nexample 2\n\n")
+
     n_clusters = 5
     d = qdcl.create_focused_spherical_probes_2d(30, n_clusters, _width_of_cluster=0.15)
     labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
@@ -91,5 +97,25 @@ def example2():
     f=qdcl.create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
     f.show()
 
+def example3():
+
+    print("\n\nexample 3\n\n")
+
+    n_clusters = 5
+    d = qdcl.create_focused_spherical_probes_2d(30, n_clusters, _width_of_cluster=0.15)
+    labels, centers = qdcl.kmedoids( d, n_clusters, _max_iterations=128, _func_distance=qdcl.fidelity_as_distance )
+    
+    f=qdcl.create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
+    f.show()
+
+    dt = qdcl.create_distance_table(d, centers, labels, n_clusters, _func_distance=qdcl.fidelity_as_distance)
+    for i in range(n_clusters):
+        print("distance for cluster", i)
+        print( qdcl.get_distances_for_cluster(dt, i) )
+    
+
+    
 example1()
 example2()
+example3()
+                                

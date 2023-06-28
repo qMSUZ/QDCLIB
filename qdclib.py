@@ -726,12 +726,115 @@ def kmeans_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _max
     return closest, centers 
 
 def kmedoids_calculate_costs(_qX, _medoids, _func_distance = None):
-    pass
+    """
+    
+
+    Parameters
+    ----------
+    _qX : TYPE
+        DESCRIPTION.
+    _medoids : TYPE
+        DESCRIPTION.
+    _func_distance : TYPE, optional
+        DESCRIPTION. The default is None.
+
+    Returns
+    -------
+    clusters : TYPE
+        DESCRIPTION.
+    total_cost_for_clusters : TYPE
+        DESCRIPTION.
+
+    """
+    
+    clusters = {i:[] for i in range(len(_medoids))}
+    total_cost_for_clusters = 0
+
+    for probe in _qX:
+        distances = np.array( [_func_distance(probe, single_center) for single_center in _medoids] )
+        closest_medoid = distances.argmin()
+        clusters[closest_medoid].append(probe)
+        total_cost_for_clusters = total_cost_for_clusters + distances.min()
+
+    clusters = {k:np.array(v) for k,v in clusters.items()}
+    return clusters, total_cost_for_clusters
+
 
 def kmedoids(_qX, _n_clusters, _max_iterations=128, _func_distance = None):
-    pass
+    """
+    
+
+    Parameters
+    ----------
+    _qX : TYPE
+        DESCRIPTION.
+    _n_clusters : TYPE
+        DESCRIPTION.
+    _max_iterations : TYPE, optional
+        DESCRIPTION. The default is 128.
+    _func_distance : TYPE, optional
+        DESCRIPTION. The default is None.
+
+    Returns
+    -------
+    labels : TYPE
+        DESCRIPTION.
+    medoids : TYPE
+        DESCRIPTION.
+
+    """
+    _iteration=0
+    isSwapPerformed = False
+
+    medoids = np.array([_qX[i] for i in range(_n_clusters)])
+    samples = _qX.shape[0]
+    
+    clusters, current_cost = kmedoids_calculate_costs(_qX, medoids, _func_distance)
+    
+    while (isSwapPerformed == False) and (_iteration < _max_iterations):
+        isSwapPerformed = False
+        for i in range(samples):
+            if not i in medoids:
+                for j in range(_n_clusters):
+                    medoids_tmp = medoids.copy()
+                    medoids_tmp[j] = _qX[i]
+                    current_clusters, cost_tmp = kmedoids_calculate_costs(_qX, medoids_tmp, _func_distance)
+    
+                    if cost_tmp < current_cost:
+                        medoids = medoids_tmp
+                        current_cost = cost_tmp
+                        isSwapPerformed = True
+                        
+        _iteration = _iteration + 1
+    
+    # create labels
+    labels=np.zeros(samples)
+    for l in range(_n_clusters):
+        for v in current_clusters[l]:
+            idx=np.where(v == _qX)[0][0]
+            labels[idx]=l
+
+    return labels, medoids
 
 def calculate_distance(_data, _vector, _func_distance):
+    """
+    
+
+    Parameters
+    ----------
+    _data : TYPE
+        DESCRIPTION.
+    _vector : TYPE
+        DESCRIPTION.
+    _func_distance : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    distance_table : TYPE
+        DESCRIPTION.
+
+    """
     distance_table=np.zeros( shape=(_data.shape[0] ) )
     idx=0
     for e in _data:
@@ -743,6 +846,28 @@ def calculate_distance(_data, _vector, _func_distance):
     
 
 def create_distance_table( _data, _centers, _labels, _n_clusters, _func_distance=None ):
+    """
+    
+
+    Parameters
+    ----------
+    _data : TYPE
+        DESCRIPTION.
+    _centers : TYPE
+        DESCRIPTION.
+    _labels : TYPE
+        DESCRIPTION.
+    _n_clusters : TYPE
+        DESCRIPTION.
+    _func_distance : TYPE, optional
+        DESCRIPTION. The default is None.
+
+    Returns
+    -------
+    distance_table : TYPE
+        DESCRIPTION.
+
+    """
     idx=0
     distance_table=np.zeros( shape=(_data.shape[0], 2) )
     for l in range(0, _n_clusters):
@@ -755,5 +880,21 @@ def create_distance_table( _data, _centers, _labels, _n_clusters, _func_distance
     return distance_table
 
 def get_distances_for_cluster( _data, _n_cluster ):
+    """
+    
+
+    Parameters
+    ----------
+    _data : TYPE
+        DESCRIPTION.
+    _n_cluster : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
     return _data[ _data[:,1] == _n_cluster ]
 
