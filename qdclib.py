@@ -558,6 +558,38 @@ def fidelity_as_distance( uvector, vvector, r=0 ):
     """
     return 1.0 - fidelity_measure( vvector, uvector, r )
 
+def bures_distance( uvector, vvector, r=0 ):
+    """
+    Caclutales the Bures distance between two pure states.
+
+    Parameters
+    ----------
+    uvector, vvector : numpy array objects
+        Vectors of complex numbers describing quantum states.
+    r : integer
+        The number of decimals to use while rounding the number (default is 0,
+        i.e. the number is not rounded).
+
+    Returns
+    -------
+    Float
+        The distance between given quantum states.
+    Examples
+    --------
+    A distance between the same states (according to the Fidelity measure):
+    >>> v=np.array([0+1j,0])
+    >>> u=np.array([1,0])
+    >>> print(fidelity_as_distance(u, v))
+        0.0
+    A distance between the orthogonal states:
+    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)]])
+    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)]])
+    >>> print(fidelity_as_distance(u, v))
+        1.0
+
+    """
+    return 2 - 2*math.sqrt(fidelity_measure(uvector, vvector, r))
+
 def trace_distance( uvector, vvector ):
     """
     for pure states
