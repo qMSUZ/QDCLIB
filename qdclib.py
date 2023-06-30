@@ -526,20 +526,19 @@ def fidelity_measure( uvector, vvector, r=0):
     
     return rslt
 
-
 def fidelity_as_distance( uvector, vvector, r=0 ):
     """
     Calculates a distance between two pure states using the Fidelity measure.
     If the states are similar, the distance tends to zero. For orthogonal states
-    the distance is one. The returned value is rounded to five decimals.  
+    the distance is one.
 
     Parameters
     ----------
     uvector, vvector : numpy array objects
-        Vectors of complex numbers desciring quantum states.
+        Vectors of complex numbers describing quantum states.
     r : integer
         The number of decimals to use while rounding the number (default is 0,
-        i.e. that the number is not rounding).
+        i.e. the number is not rounded).
     Returns
     -------
     Float
@@ -558,7 +557,6 @@ def fidelity_as_distance( uvector, vvector, r=0 ):
         1.0
     """
     return 1.0 - fidelity_measure( vvector, uvector, r )
-
 
 def trace_distance( uvector, vvector ):
     """
