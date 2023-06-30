@@ -65,9 +65,9 @@ def example1():
     
     n_clusters = 4
     labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
-    #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, 0, qdcl.DOT_DISTANCE )
-    #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, 0, qdcl.FIDELITY_DISTANCE )
-    #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, 0, qdcl.TRACE_DISTANCE )
+    #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.DOT_DISTANCE )
+    #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.FIDELITY_DISTANCE )
+    #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.TRACE_DISTANCE )
     
     print("Norms of each point in centers:")
     print(" " * 4,np.linalg.norm(centers, axis=1))
@@ -92,7 +92,7 @@ def example2():
 
     n_clusters = 5
     d = qdcl.create_focused_spherical_probes_2d(30, n_clusters, _width_of_cluster=0.15)
-    labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
+    labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.DOT_DISTANCE )
     
     f=qdcl.create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
     f.show()
@@ -116,6 +116,6 @@ def example3():
 
     
 example1()
-example2()
-example3()
+#example2()
+#example3()
                                 

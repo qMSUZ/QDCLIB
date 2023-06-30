@@ -127,10 +127,32 @@ class BlochVisualization:
             self.y_dir = np.outer(np.sin(self.u_angle), np.sin(self.v_angle))
             self.z_dir = np.outer(np.ones(self.u_angle.shape[0]), np.cos(self.v_angle))
     
+    def set_points(self, _points=None):
+        self.additional_points = _points
+        # normalise points
+        # rescale to radius r
+
+    def clear_points(self):
+        self.additional_points = [ ]
+
     def add_points(self, _points=None):
+        # normalise points
+        # rescale to radius r
+        pass
+    
+    def set_vectors(self, _points=None):
+        pass
+
+    def clear_vectors(self):
         pass
 
     def add_vectors(self, _points=None):
+        pass
+
+    def set_pure_states(self, _states=None):
+        pass
+
+    def clear_pure_states(self):
         pass
 
     def add_pure_states(self, _states=None):
@@ -223,6 +245,21 @@ class BlochVisualization:
         self.axes.text(0, 0, self.zlabelpos[0], self.zlabel[0], **common_opts)
         self.axes.text(0, 0, self.zlabelpos[1], self.zlabel[1], **common_opts)
     
+    def render_points( self ):
+        # axis needs reorganisation
+        self.axes.scatter(
+            np.real(self.additional_points[:,1]),
+            np.real(self.additional_points[:,0]),
+            np.real(self.additional_points[:,2]),
+            s=20,
+            alpha=1,
+            edgecolor=None,
+            zdir="z",
+            color="black",
+            marker=".",
+        )
+        #pass
+    
     def render_bloch_sphere( self ):        
         self.figure = plt.figure( figsize=self.figuresize )
         self.axes = Axes3D( self.figure,
@@ -259,6 +296,8 @@ class BlochVisualization:
         self.render_sphere_axes()
 
         self.render_labels_for_axes()
+
+        self.render_points()
 
         return self.figure
     
@@ -686,7 +725,7 @@ def create_focused_spherical_probes_2d( _n_points, _n_focus_points, _width_of_cl
     
     theta=0
     theta_delta = (2.0 * np.pi) / _n_focus_points
-    centers_on_circle=[]
+    centers_on_circle = [ ]
     for i in range(_n_focus_points):
         theta=theta+theta_delta
         x=np.sin(theta)

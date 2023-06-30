@@ -37,7 +37,15 @@ import qdclib as qdcl
 
 
 b = qdcl.BlochVisualization()
+ptns = np.empty((0,3))
+ptns = np.append(ptns, [[ 1, 0, 0]], axis=0) # positive x
+ptns = np.append(ptns, [[-1, 0, 0]], axis=0) # negative x
+ptns = np.append(ptns, [[ 0, 1, 0]], axis=0) # +y
+ptns = np.append(ptns, [[ 0,-1, 0]], axis=0) # -y
+ptns = np.append(ptns, [[ 0, 0, 1]], axis=0) # +z 
+ptns = np.append(ptns, [[ 0, 0,-1]], axis=0) # -z
 
+b.set_points( ptns )
 
 f=b.make_figure()
 f.show()
