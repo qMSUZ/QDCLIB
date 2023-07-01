@@ -42,10 +42,13 @@ import pandas as pd
 import math as math
 import sympy as sympy
 
-COSINE_DISTANCE = 1000
-DOT_DISTANCE = 1001
+COSINE_DISTANCE   = 1000
+DOT_DISTANCE      = 1001
 FIDELITY_DISTANCE = 1002
-TRACE_DISTANCE = 1003
+TRACE_DISTANCE    = 1003
+
+POINTS_DRAW       = 2000
+LINES_DRAW        = 2001
 
 # klasy wyjątków z EntDetectora
 
@@ -64,6 +67,24 @@ class DensityMatrixDimensionError(Exception):
     def __init__(self, message):
         self.message = message
 
+
+def _internal_pauli_x():
+    paulix=np.array([0.0, 1.0, 1.0, 0.0]).reshape(2,2)
+    return paulix
+
+def _internal_pauli_y():
+    pauliy=np.array([0.0, -1.0J, 1.0J, 0.0]).reshape(2,2)
+    return pauliy
+
+def _internal_pauli_z():
+    pauliz=np.array([1.0, 0.0, 0.0, -1.0]).reshape(2,2)
+    return pauliz
+
+def _internal_qdcl_vector_state_to_density_matrix(q):
+    return np.outer(q, np.transpose(q.conj()))
+
+def _internal_qdcl_create_density_matrix_from_vector_state(q):
+    return _internal_qdcl_vector_state_to_density_matrix(q)
 
 class BlochVisualization:
 
@@ -103,12 +124,17 @@ class BlochVisualization:
         self.main_font_size = 25
         self.title = "Basic title for Bloch Sphere"
 
+        self.draw_mode = 0
+
     def make_figure( self ):
         
         self.prepare_mesh()
         f = self.render_bloch_sphere()
         
         return f
+    
+    def set_title(self, _title):
+        self.title = _title
     
     def prepare_mesh( self, _hemisphere = 0 ):
         if _hemisphere == 0: # north 
@@ -128,10 +154,20 @@ class BlochVisualization:
             self.z_dir = np.outer(np.ones(self.u_angle.shape[0]), np.cos(self.v_angle))
     
     def set_points(self, _points=None):
-        self.additional_points = _points
-        # normalise points
+        self.additional_points = _points.copy()
+        
+        for row in range(0, self.additional_points.shape[0]):
+            self.additional_points[row] /= np.linalg.norm(self.additional_points[row])
+            self.additional_points[row] *= (self.radius + 0.01)
+            
         # rescale to radius r
 
+    def reset_draw_mode( self ):
+        self.draw_mode = 0
+
+    def enable_draw_points( self ):
+        self.draw_mode = POINTS_DRAW
+        
     def clear_points(self):
         self.additional_points = [ ]
 
@@ -150,7 +186,19 @@ class BlochVisualization:
         pass
 
     def set_pure_states(self, _states=None):
-        pass
+        ptns = np.empty((0,3))
+        for qstate in _states:
+            qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
+            xcoord = np.trace( _internal_pauli_x() @ qstateden )
+            ycoord = np.trace( _internal_pauli_y() @ qstateden )
+            zcoord = np.trace( _internal_pauli_z() @ qstateden )
+        
+            ptns = np.append(ptns, [[ xcoord, ycoord, zcoord]], axis=0) # for state
+    
+        self.set_points( ptns )
+        
+    def enable_pure_states_draw( self ):
+        self.draw_mode = POINTS_DRAW        
 
     def clear_pure_states(self):
         pass
@@ -251,11 +299,11 @@ class BlochVisualization:
             np.real(self.additional_points[:,1]),
             np.real(self.additional_points[:,0]),
             np.real(self.additional_points[:,2]),
-            s=20,
+            s=200,
             alpha=1,
             edgecolor=None,
             zdir="z",
-            color="black",
+            color="green",
             marker=".",
         )
         #pass
@@ -291,13 +339,16 @@ class BlochVisualization:
         self.prepare_mesh(1)
         self.render_hemisphere()
 
+        if self.draw_mode == POINTS_DRAW:
+            self.render_points()
+
+
         self.render_equator_and_parallel()
 
         self.render_sphere_axes()
 
         self.render_labels_for_axes()
 
-        self.render_points()
 
         return self.figure
     

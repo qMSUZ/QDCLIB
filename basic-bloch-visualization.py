@@ -35,17 +35,45 @@
 import numpy as np
 import qdclib as qdcl
 
+# direct points
+# as Bloch vectors
+def example1():  
+    b = qdcl.BlochVisualization()
+    b.set_title("Bloch Vector Points")
+    
+    ptns = np.empty((0,3))
 
-b = qdcl.BlochVisualization()
-ptns = np.empty((0,3))
-ptns = np.append(ptns, [[ 1, 0, 0]], axis=0) # positive x
-ptns = np.append(ptns, [[-1, 0, 0]], axis=0) # negative x
-ptns = np.append(ptns, [[ 0, 1, 0]], axis=0) # +y
-ptns = np.append(ptns, [[ 0,-1, 0]], axis=0) # -y
-ptns = np.append(ptns, [[ 0, 0, 1]], axis=0) # +z 
-ptns = np.append(ptns, [[ 0, 0,-1]], axis=0) # -z
+    ptns = np.append(ptns, [[ 1, 0, 0]], axis=0) # positive x
+    ptns = np.append(ptns, [[-1, 0, 0]], axis=0) # negative x
+    ptns = np.append(ptns, [[ 0, 1, 0]], axis=0) # +y
+    ptns = np.append(ptns, [[ 0,-1, 0]], axis=0) # -y
+    ptns = np.append(ptns, [[ 0, 0, 1]], axis=0) # +z 
+    ptns = np.append(ptns, [[ 0, 0,-1]], axis=0) # -z
 
-b.set_points( ptns )
+    b.set_points( ptns )
+    b.enable_draw_points()
 
-f=b.make_figure()
-f.show()
+    f=b.make_figure()
+    f.show()
+
+# pure staes
+# io Bloch sphere
+def example2():  
+
+    b = qdcl.BlochVisualization()
+    b.set_title("Pure states")
+
+    purestates = np.empty((0,2))
+
+    purestates = np.append(purestates, [[ 1, 0 ]], axis=0) 
+    purestates = np.append(purestates, [[ 1.0/np.sqrt(2), 1.0/np.sqrt(2) ]], axis=0) 
+
+    
+    b.set_pure_states( purestates )
+    b.enable_pure_states_draw()
+
+    f=b.make_figure()
+    f.show()
+
+example1()
+example2()
