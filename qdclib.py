@@ -663,22 +663,32 @@ def bures_distance( uvector, vvector, r=0 ):
     Returns
     -------
     Float
-        The distance between given quantum states.
+        The distance between given quantum states according to the Bures measure.
     Examples
     --------
-    A distance between the same states (according to the Fidelity measure):
-    >>> v=np.array([0+1j,0])
+    A distance between the same states:
+    >>> v=np.array([1,0])
     >>> u=np.array([1,0])
-    >>> print(fidelity_as_distance(u, v))
+    >>> print(bures_distance(u, v))
         0.0
     A distance between the orthogonal states:
     >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)]])
     >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)]])
-    >>> print(fidelity_as_distance(u, v))
-        1.0
+    >>> print(bures_distance(u, v))
+        2.0
+    A distance between two examplary states:
+    >>> v=np.array([1/math.sqrt(2),1/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> print(bures_distance(u, v, 3))
+        0.586
 
     """
-    return 2 - 2*math.sqrt(fidelity_measure(uvector, vvector, r))
+    if r==0:
+        rslt = 2 - 2*math.sqrt(fidelity_measure(uvector, vvector, r))
+    else:
+        rslt = round(( 2 - 2*math.sqrt(fidelity_measure(uvector, vvector, r)) ), r)
+    
+    return rslt
 
 def trace_distance( uvector, vvector ):
     """
