@@ -826,7 +826,7 @@ def create_spherical_probes( _n_points, _n_dim=2):
     
     return _unit_vectors.T
 
-def create_focused_circle_probes_2d( _n_points, _n_focus_points, _width_of_cluster=0.1):
+def create_focused_circle_probes_2d( _n_points, _n_focus_points, _width_of_cluster=0.1 ):
     # a tu chodzi oto ze owszem losujemy punkty
     # ale już domylnie skupione wokól kilku puntków na okręgu
     # choć zakładamy że same punkty będą wylosowanane
@@ -847,6 +847,8 @@ def create_focused_circle_probes_2d( _n_points, _n_focus_points, _width_of_clust
     
     return d
 
+def create_focused_qubits_probes( _n_points, _n_focus_points, _width_of_cluster=0.1 ):
+    pass
 
 def slerp(p0, p1, t):
     """
