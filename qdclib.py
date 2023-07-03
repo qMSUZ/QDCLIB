@@ -42,17 +42,19 @@ import pandas as pd
 import math as math
 import sympy as sympy
 
-COSINE_DISTANCE   = 1000
-DOT_DISTANCE      = 1001
-FIDELITY_DISTANCE = 1002
-TRACE_DISTANCE    = 1003
+COSINE_DISTANCE    = 1000
+DOT_DISTANCE       = 1001
+FIDELITY_DISTANCE  = 1002
+TRACE_DISTANCE     = 1003
 MANHATTAH_DISTANCE = 1004
 BURES_DISTANCE     = 1005
 
-POINTS_DRAW       = 2000
-LINES_DRAW        = 2001
+POINTS_DRAW        = 2000
+LINES_DRAW         = 2001
+
 
 # klasy wyjątków z EntDetectora
+
 
 class DimensionError(Exception):
     """DimensionError"""
@@ -188,7 +190,7 @@ class BlochVisualization:
         pass
 
     def clear_vectors(self):
-        pass
+        self.additional_vectors = [ ]
 
     def add_vectors(self, _points=None):
         pass
@@ -209,7 +211,7 @@ class BlochVisualization:
         self.draw_mode = POINTS_DRAW        
 
     def clear_pure_states(self):
-        pass
+        self.additional_states = [ ]
 
     def add_pure_states(self, _states=None):
         pass
@@ -557,7 +559,7 @@ def manhattan_distance(uvector, vvector):
     return d
 
 
-def cosine_distance( uvector, vvector ):
+def cosine_distance( uvector, vvector, r = 0 ):
     """
     Calculate a cosine distance between two vectors
 
@@ -574,12 +576,38 @@ def cosine_distance( uvector, vvector ):
         DESCRIPTION.
 
     """
-    distance_value = 1.0 - np.dot(uvector, vvector) / ( np.linalg.norm(uvector) * np.linalg.norm(vvector) )
-    distance_value = np.linalg.norm(distance_value)
+    if r == 0:
+        distance_value = 1.0 - np.dot(uvector, vvector) / ( np.linalg.norm(uvector) * np.linalg.norm(vvector) )
+        distance_value = np.linalg.norm(distance_value)
+    else:
+        distance_value = 1.0 - np.dot(uvector, vvector) / ( np.linalg.norm(uvector) * np.linalg.norm(vvector) )
+        distance_value = round(np.linalg.norm(distance_value), r)
+        
     return distance_value
 
-def dot_product_as_distance( uvector, vvector ):
-    return 1.0 - np.linalg.norm( np.vdot( vvector, uvector ) )
+def dot_product_as_distance( uvector, vvector, r=0 ):
+    """
+    Calculate a dot product distance between two vectors.
+
+    Parameters
+    ----------
+    uvector : TYPE
+        DESCRIPTION.
+    vvector : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
+    if r==0:
+        rslt = 1.0 - np.linalg.norm( np.vdot( vvector, uvector ) )
+    else:
+        rslt = round( 1.0 - np.linalg.norm( np.vdot( vvector, uvector ) ), r )
+    
+    return rslt
 
 def fidelity_measure( uvector, vvector, r=0):
     """
@@ -620,7 +648,7 @@ def fidelity_measure( uvector, vvector, r=0):
     if r==0:
         rslt = ( np.linalg.norm( np.vdot( vvector, uvector ) ) ** 2.0 )
     else:
-        rslt = round(( np.linalg.norm( np.vdot( vvector, uvector ) ) ** 2.0 ), r)
+        rslt = round( ( np.linalg.norm( np.vdot( vvector, uvector ) ) ** 2.0 ), r )
     
     return rslt
 
@@ -654,7 +682,13 @@ def fidelity_as_distance( uvector, vvector, r=0 ):
     >>> print(fidelity_as_distance(u, v))
         1.0
     """
-    return 1.0 - fidelity_measure( vvector, uvector, r )
+    
+    if r==0:
+        rslt = 1.0 - fidelity_measure( vvector, uvector, 0 )
+    else:
+        rslt = round( 1.0 - fidelity_measure( vvector, uvector, 0 ), r)
+    
+    return rslt
 
 def bures_distance( uvector, vvector, r=0 ):
     """
@@ -692,13 +726,13 @@ def bures_distance( uvector, vvector, r=0 ):
 
     """
     if r==0:
-        rslt = 2 - 2*math.sqrt(fidelity_measure(uvector, vvector, r))
+        rslt = 2.0 - 2.0 * math.sqrt( fidelity_measure(uvector, vvector, r) )
     else:
-        rslt = round(( 2 - 2*math.sqrt(fidelity_measure(uvector, vvector, r)) ), r)
+        rslt = round( ( 2.0 - 2.0 * math.sqrt( fidelity_measure(uvector, vvector, r) ) ), r )
     
     return rslt
 
-def trace_distance( uvector, vvector ):
+def trace_distance( uvector, vvector, r=0 ):
     """
     for pure states
 
@@ -715,7 +749,12 @@ def trace_distance( uvector, vvector ):
         DESCRIPTION.
 
     """
-    return np.sqrt( 1.0 - ( np.linalg.norm( np.vdot( vvector, uvector ) ) ** 2.0 ) )
+    if r==0:
+        rslt = np.sqrt( 1.0 - ( np.linalg.norm( np.vdot( vvector, uvector ) ) ** 2.0 ) )
+    else:
+        rslt = round( np.sqrt( 1.0 - ( np.linalg.norm( np.vdot( vvector, uvector ) ) ** 2.0 ) ), r )
+    
+    return rslt
 
 def create_zero_vector( _n_dim=3 ):
     """
@@ -761,7 +800,7 @@ def create_one_vector( _axis=0, _n_dim=3 ):
     return _vector_one
 
 
-def create_spherical_probes( _n_points, _n_dim=3):
+def create_circle_probes( _n_points, _n_dim=3):
     """
     
     Parameters
@@ -787,9 +826,9 @@ def create_spherical_probes( _n_points, _n_dim=3):
     
     return _unit_vectors.T
 
-def create_focused_spherical_probes_2d( _n_points, _n_focus_points, _width_of_cluster=0.1):
+def create_focused_circle_probes_2d( _n_points, _n_focus_points, _width_of_cluster=0.1):
     # a tu chodzi oto ze owszem losujemy punkty
-    # ale już domylnie skupione wokól kilku puntków,
+    # ale już domylnie skupione wokól kilku puntków na okręgu
     # choć zakładamy że same punkty będą wylosowanane
     
     theta=0

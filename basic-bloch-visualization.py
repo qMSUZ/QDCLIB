@@ -75,5 +75,25 @@ def example2():
     f=b.make_figure()
     f.show()
 
+def example3():
+    n_clusters = 3
+    probes = qdcl.create_focused_circle_probes_2d(30, n_clusters, _width_of_cluster=0.15)
+
+    purestates = np.empty((0,2))
+    for d in probes:
+        purestates =  np.append(purestates, [d], axis=0) 
+
+
+    b = qdcl.BlochVisualization()
+    b.set_title("Pure states")
+
+    b.set_pure_states( purestates )
+    b.enable_pure_states_draw()
+
+    f=b.make_figure()
+    f.show()
+
+
 example1()
 example2()
+example3()
