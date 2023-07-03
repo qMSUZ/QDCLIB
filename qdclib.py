@@ -46,6 +46,8 @@ COSINE_DISTANCE   = 1000
 DOT_DISTANCE      = 1001
 FIDELITY_DISTANCE = 1002
 TRACE_DISTANCE    = 1003
+MANHATTAH_DISTANCE = 1004
+BURES_DISTANCE     = 1005
 
 POINTS_DRAW       = 2000
 LINES_DRAW        = 2001
@@ -85,6 +87,12 @@ def _internal_qdcl_vector_state_to_density_matrix(q):
 
 def _internal_qdcl_create_density_matrix_from_vector_state(q):
     return _internal_qdcl_vector_state_to_density_matrix(q)
+
+class BlochVectorsTable:
+    pass
+
+class PureStatesTable:
+    pass
 
 class BlochVisualization:
 
