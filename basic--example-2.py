@@ -38,7 +38,7 @@ import qdclib as qdcl
 
 print("\n\nexample\n\n")
 
-d = qdcl.create_circle_probes(20, 2)
+d = qdcl.create_spherical_probes(20, 2)
 
 print("Norms of each point in d:")
 print(" " * 4,np.linalg.norm(d, axis=1))

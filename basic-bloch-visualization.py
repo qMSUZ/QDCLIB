@@ -66,7 +66,7 @@ def example2():
     purestates = np.empty((0,2))
 
     purestates = np.append(purestates, [[ 1, 0 ]], axis=0) 
-    purestates = np.append(purestates, [[ 1.0/np.sqrt(2), 1.0/np.sqrt(2) ]], axis=0) 
+    purestates = np.append(purestates, [[ 1.0/np.sqrt(2), 1.0/np.sqrt(2) ]], axis=0)
 
     
     b.set_pure_states( purestates )

@@ -800,7 +800,7 @@ def create_one_vector( _axis=0, _n_dim=3 ):
     return _vector_one
 
 
-def create_circle_probes( _n_points, _n_dim=3):
+def create_spherical_probes( _n_points, _n_dim=2):
     """
     
     Parameters
@@ -846,6 +846,7 @@ def create_focused_circle_probes_2d( _n_points, _n_focus_points, _width_of_clust
         d[i] = d[i] / np.linalg.norm(d[i])
     
     return d
+
 
 def slerp(p0, p1, t):
     """
