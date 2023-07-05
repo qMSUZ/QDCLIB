@@ -56,9 +56,27 @@ def example1():
     f=b.make_figure()
     f.show()
 
+# direct points
+# with spherical coords
+def example2():  
+    ptns = np.empty((0,3))
+
+    for degree in range(0, 95, 5):
+        ptns = np.append(ptns, [ qdcl.convert_spherical_point_to_bloch_vector(1.0, -np.radians(degree), np.radians(360)) ], axis=0)
+    
+    b = qdcl.BlochVisualization()
+    b.set_title("Bloch Vector Points")
+
+    b.set_points( ptns )
+    b.enable_draw_points()
+
+    f=b.make_figure()
+    f.show()
+
+
 # pure staes
 # io Bloch sphere
-def example2():  
+def example3():  
 
     b = qdcl.BlochVisualization()
     b.set_title("Pure states")
@@ -75,7 +93,7 @@ def example2():
     f=b.make_figure()
     f.show()
 
-def example3():
+def example4():
     n_clusters = 3
     probes = qdcl.create_focused_circle_probes_2d(30, n_clusters, _width_of_cluster=0.15)
 
@@ -94,6 +112,7 @@ def example3():
     f.show()
 
 
-example1()
+#example1()
 example2()
-example3()
+#example3()
+#example4()

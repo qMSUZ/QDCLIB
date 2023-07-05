@@ -90,6 +90,33 @@ def _internal_qdcl_vector_state_to_density_matrix(q):
 def _internal_qdcl_create_density_matrix_from_vector_state(q):
     return _internal_qdcl_vector_state_to_density_matrix(q)
 
+def convert_pure_state_to_bloch_vector( qstate ):
+    
+    qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
+    
+    xcoord = np.trace( _internal_pauli_x() @ qstateden )
+    ycoord = np.trace( _internal_pauli_y() @ qstateden )
+    zcoord = np.trace( _internal_pauli_z() @ qstateden )
+    
+    return np.array([xcoord, ycoord, zcoord])
+
+def convert_spherical_point_to_bloch_vector( _r, _theta, _phi ):
+    
+    xcoord = _r * np.sin( _theta ) * np.cos( _phi )
+    ycoord = _r * np.sin( _theta ) * np.sin( _phi )
+    zcoord = _r * np.cos( _theta )
+
+    return np.array([xcoord, ycoord, zcoord])
+
+def bloch_vector_t_spherical_point( _x, _y, _z ):
+    
+    r = np.sqrt(_x * _x + _y * _y + _z * _z)
+    theta = np.arctan( _y / _x )
+    phi = np.arccos( _z / r ) 
+    
+    # check order of results
+    return np.array([r, phi, theta])
+
 class BlochVectorsTable:
     pass
 
