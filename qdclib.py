@@ -759,6 +759,52 @@ def bures_distance( uvector, vvector, r=0 ):
     
     return rslt
 
+def hs_distance( uvector, vvector, r=0 ):
+    """
+    Caclutales the Hilbert-Schmidt distance between two pure states.
+
+    Parameters
+    ----------
+    uvector, vvector : numpy array objects
+        Vectors of complex numbers describing quantum states.
+    r : integer
+        The number of decimals to use while rounding the number (default is 0,
+        i.e. the number is not rounded).
+
+    Returns
+    -------
+    Float
+        The distance between given quantum states according to 
+        the Hilbert-Schmidt measure.
+    Examples
+    --------
+    A distance between the same states:
+    >>> v=np.array([1,0])
+    >>> u=np.array([1,0])
+    >>> print(hs_distance(u, v))
+        0.0
+    A distance between the orthogonal states:
+    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)]])
+    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)]])
+    >>> print(hs_distance(u, v, 5))
+        1.41421
+    A distance between two examplary states:
+    >>> v=np.array([1/math.sqrt(2),1/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> print(hs_distance(u, v, 3))
+        1.0
+
+    """
+    qu=_internal_qdcl_vector_state_to_density_matrix(uvector)
+    qv=_internal_qdcl_vector_state_to_density_matrix(vvector)
+    rp=sympy.re(np.trace(np.subtract(qu,qv) @ np.subtract(qu,qv)))
+    if r==0:
+        rslt=math.sqrt(rp)
+    else:
+        rslt=round(math.sqrt(rp),r)
+    return rslt
+
+
 def trace_distance( uvector, vvector, r=0 ):
     """
     for pure states
