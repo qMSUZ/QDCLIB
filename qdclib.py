@@ -576,12 +576,50 @@ def convert_data_to_vector_state(dataTuple):
     return Qvec
 
 
-def manhattan_distance(uvector, vvector):
+def manhattan_distance(uvector, vvector, r=0):
+    """
+    Caclutales the Manhattan distance between two pure (vector) states.
+
+    Parameters
+    ----------
+    uvector, vvector : numpy array objects
+        Vectors of complex numbers describing quantum states.
+    r : integer
+        The number of decimals to use while rounding the number (default is 0,
+        i.e. the number is not rounded).
+
+    Returns
+    -------
+    d : float
+        The distance between given quantum states according to the Manhattan 
+        (Taxicab) distance.
+    Examples
+    --------
+    A distance between the same states:
+    >>> v=np.array([1,0])
+    >>> u=np.array([1,0])
+    >>> print(manhattan_distance(u, v))
+        0
+    A distance between the orthogonal states:
+    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)]])
+    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)]])
+    >>> print(manhattan_distance(u, v, 5))
+        1.41421
+    A distance between two examplary states:
+    >>> v=np.array([1/math.sqrt(2),1/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> print(manhattan_distance(u, v, 3))
+        1.0
+
+    """
     d=0
     dim=uvector.shape[0]
     
     for idx in range(dim):
         d = d + np.abs( (uvector[idx] - vvector[idx]) )
+    
+    if r!=0:
+        d=round(d,r)
     
     return d
 
