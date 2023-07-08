@@ -599,10 +599,10 @@ def manhattan_distance(uvector, vvector, r=0):
     >>> v=np.array([1,0])
     >>> u=np.array([1,0])
     >>> print(manhattan_distance(u, v))
-        0
+        0.0
     A distance between the orthogonal states:
-    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)]])
-    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)]])
+    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)])
     >>> print(manhattan_distance(u, v, 5))
         1.41421
     A distance between two examplary states:
@@ -612,7 +612,7 @@ def manhattan_distance(uvector, vvector, r=0):
         1.0
 
     """
-    d=0
+    d=0.0
     dim=uvector.shape[0]
     
     for idx in range(dim):
@@ -622,7 +622,6 @@ def manhattan_distance(uvector, vvector, r=0):
         d=round(d,r)
     
     return d
-
 
 def cosine_distance( uvector, vvector, r = 0 ):
     """
