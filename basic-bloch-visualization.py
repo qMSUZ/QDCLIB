@@ -62,7 +62,7 @@ def example2():
     ptns = np.empty((0,3))
 
     for degree in range(0, 95, 5):
-        ptns = np.append(ptns, [ qdcl.convert_spherical_point_to_bloch_vector(1.0, -np.radians(degree), np.radians(360)) ], axis=0)
+        ptns = np.append(ptns, [ qdcl.convert_spherical_point_to_bloch_vector(1.0, np.radians(135 + degree), np.radians(0)) ], axis=0)
     
     b = qdcl.BlochVisualization()
     b.set_title("Bloch Vector Points")
@@ -83,8 +83,9 @@ def example3():
 
     purestates = np.empty((0,2))
 
-    purestates = np.append(purestates, [[ 1, 0 ]], axis=0) 
-    purestates = np.append(purestates, [[ 1.0/np.sqrt(2), 1.0/np.sqrt(2) ]], axis=0)
+    purestates = np.append(purestates, [[ 1, 0 ]], axis=0)
+    purestates = np.append(purestates, [[ -1.0/np.sqrt(2), 1.0/np.sqrt(2) ]], axis=0)
+    purestates = np.append(purestates, [[ 0, 1 ]], axis=0)
 
     
     b.set_pure_states( purestates )
@@ -93,9 +94,32 @@ def example3():
     f=b.make_figure()
     f.show()
 
-def example4():
+def example4a():
     n_clusters = 3
-    probes = qdcl.create_focused_circle_probes_2d(30, n_clusters, _width_of_cluster=0.15)
+    probes = qdcl.create_focused_circle_probes_with_uniform_placed_centers(
+                    30, 
+                    n_clusters, 
+                    _width_of_cluster=0.05 )
+
+    purestates = np.empty((0,2))
+    for d in probes:
+        purestates =  np.append(purestates, [d], axis=0) 
+
+
+    b = qdcl.BlochVisualization()
+    b.set_title("Pure states")
+
+    b.set_pure_states( purestates )
+    b.enable_pure_states_draw()
+
+    f=b.make_figure()
+    f.show()
+
+def example4b():
+    probes = qdcl.create_focused_circle_probes(
+                    30, 
+                    2, 
+                    _width_of_cluster=0.25 )
 
     purestates = np.empty((0,2))
     for d in probes:
@@ -112,7 +136,48 @@ def example4():
     f.show()
 
 
+def example5():
+
+    d = qdcl.create_focused_qubits_probes( 30, 2, 0.25)
+
+    b = qdcl.BlochVisualization()
+    b.set_title("Bloch Vector Points")
+  
+    b.set_points( d )
+    b.enable_draw_points()
+      
+    f=b.make_figure()
+    f.show()
+
+
+def example6():
+    
+    _n_theta=2
+    _n_psi=2
+    
+    centers_on_sphere = np.empty((0,3))
+       
+    for i in range( _n_theta ):
+        for j in range( _n_psi+1 ):
+            _theta = 2.0 * np.pi * (i/_n_theta)
+            _psi = (np.pi/2.0) - np.pi*(j/_n_psi)
+            sp = qdcl.convert_spherical_point_to_bloch_vector(1.0, _theta, _psi)
+            centers_on_sphere =  np.append(centers_on_sphere, [ sp ] , axis=0) 
+
+    b = qdcl.BlochVisualization()
+    b.set_title("Bloch Vector Points")
+  
+    b.set_points( centers_on_sphere )
+    b.enable_draw_points()
+      
+    f=b.make_figure()
+    f.show()
+ 
+
 #example1()
-example2()
-#example3()
-#example4()
+#example2()
+example3()
+#example4a()
+#example4b()
+#example5()
+#example6()

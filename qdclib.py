@@ -102,15 +102,15 @@ def convert_pure_state_to_bloch_vector( qstate ):
 
 def convert_spherical_point_to_bloch_vector( _r, _theta, _phi ):
     
-    xcoord = _r * np.sin( _theta ) * np.cos( _phi )
-    ycoord = _r * np.sin( _theta ) * np.sin( _phi )
-    zcoord = _r * np.cos( _theta )
+    xcoord = _r * np.cos( _phi ) * np.cos( _theta )
+    ycoord = _r * np.cos( _phi ) * np.sin( _theta )
+    zcoord = _r * np.sin( _phi )
 
     return np.array([xcoord, ycoord, zcoord])
 
-def bloch_vector_t_spherical_point( _x, _y, _z ):
+def bloch_vector_to_spherical_point( _x, _y, _z ):
     
-    r = np.sqrt(_x * _x + _y * _y + _z * _z)
+    r = np.sqrt( _x * _x + _y * _y + _z * _z )
     theta = np.arctan( _y / _x )
     phi = np.arccos( _z / r ) 
     
@@ -190,6 +190,12 @@ class BlochVisualization:
             self.y_dir = np.outer(np.sin(self.u_angle), np.sin(self.v_angle))
             self.z_dir = np.outer(np.ones(self.u_angle.shape[0]), np.cos(self.v_angle))
     
+    def reset_draw_mode( self ):
+        self.draw_mode = 0
+
+    def enable_draw_points( self ):
+        self.draw_mode = POINTS_DRAW
+
     def set_points(self, _points=None):
         self.additional_points = _points.copy()
         
@@ -198,17 +204,11 @@ class BlochVisualization:
             self.additional_points[row] *= (self.radius + 0.01)
             
         # rescale to radius r
-
-    def reset_draw_mode( self ):
-        self.draw_mode = 0
-
-    def enable_draw_points( self ):
-        self.draw_mode = POINTS_DRAW
-        
+       
     def clear_points(self):
         self.additional_points = [ ]
 
-    def add_points(self, _points=None):
+    def add_points(self, _points=None, _color=None):
         # normalise points
         # rescale to radius r
         pass
@@ -219,10 +219,10 @@ class BlochVisualization:
     def clear_vectors(self):
         self.additional_vectors = [ ]
 
-    def add_vectors(self, _points=None):
+    def add_vectors(self, _points=None, _color=None):
         pass
 
-    def set_pure_states(self, _states=None):
+    def set_pure_states(self, _states=None, _color=None):
         ptns = np.empty((0,3))
         for qstate in _states:
             qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
@@ -230,7 +230,7 @@ class BlochVisualization:
             ycoord = np.trace( _internal_pauli_y() @ qstateden )
             zcoord = np.trace( _internal_pauli_z() @ qstateden )
         
-            ptns = np.append(ptns, [[ xcoord, ycoord, zcoord]], axis=0) # for state
+            ptns = np.append( ptns, [[ xcoord, ycoord, zcoord]], axis=0)  # for state
     
         self.set_points( ptns )
         
@@ -936,29 +936,55 @@ def create_spherical_probes( _n_points, _n_dim=2):
     
     return _unit_vectors.T
 
-def create_focused_circle_probes_2d( _n_points, _n_focus_points, _width_of_cluster=0.1 ):
-    # a tu chodzi oto ze owszem losujemy punkty
-    # ale już domylnie skupione wokól kilku puntków na okręgu
-    # choć zakładamy że same punkty będą wylosowanane
+def create_focused_circle_probes( _n_points, _n_focus_points, _width_of_cluster=0.25 ):
     
-    theta=0
-    theta_delta = (2.0 * np.pi) / _n_focus_points
+    d, _ = make_blobs( n_samples=_n_points,
+                       n_features=2,
+                       centers = _n_focus_points,
+                       cluster_std=_width_of_cluster )
+
+    for i in range(_n_points):
+        d[i] = d[i] / np.linalg.norm(d[i])
+    
+    return d
+
+def create_focused_circle_probes_with_uniform_placed_centers( _n_points, _n_focus_points, _width_of_cluster=0.1 ):
+    
+    theta=0.0
+    theta_delta = (1.0 * np.pi) / _n_focus_points
     centers_on_circle = [ ]
-    for i in range(_n_focus_points):
-        theta=theta+theta_delta
-        x=np.sin(theta)
-        y=np.cos(theta)  
+    
+    for _ in range(_n_focus_points):
+        theta = theta + theta_delta
+        x = np.sin(theta)
+        y = np.cos(theta)  
         centers_on_circle.append((x,y))
     
-    d, labels = make_blobs( n_samples=_n_points, n_features=2, centers=centers_on_circle, cluster_std=_width_of_cluster )
+    d, _ = make_blobs( n_samples=_n_points, 
+                            n_features=2, 
+                            centers=centers_on_circle, 
+                            cluster_std=_width_of_cluster )
     
     for i in range(_n_points):
         d[i] = d[i] / np.linalg.norm(d[i])
     
     return d
 
-def create_focused_qubits_probes( _n_points, _n_focus_points, _width_of_cluster=0.1 ):
+def create_focused_qubits_probes( _n_points, _n_focus_points, _width_of_cluster=0.25 ):
+    
+    d, _ = make_blobs( n_samples=_n_points,
+                       n_features=3,
+                       centers = _n_focus_points,
+                       cluster_std=_width_of_cluster )
+
+    for i in range(_n_points):
+        d[i] = d[i] / np.linalg.norm(d[i])
+    
+    return d
+
+def create_focused_qubits_probes_with_uniform_placed_centers( _n_points, _n_focus_points, _width_of_cluster=0.25 ):
     pass
+
 
 def slerp(p0, p1, t):
     """
@@ -1245,3 +1271,12 @@ def get_distances_for_cluster( _data, _n_cluster ):
     """
     return _data[ _data[:,1] == _n_cluster ]
 
+
+def version():
+    pass
+
+def about():
+    pass
+
+def how_to_cite():
+    pass
