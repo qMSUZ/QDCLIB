@@ -625,29 +625,62 @@ def manhattan_distance(uvector, vvector, r=0):
 
 def cosine_distance( uvector, vvector, r = 0 ):
     """
-    Calculate a cosine distance between two vectors
+    Calculates a cosine distance between two vectors.
 
     Parameters
     ----------
-    uvector : TYPE
-        DESCRIPTION.
-    vvector : TYPE
-        DESCRIPTION.
+    uvector, vvector : numpy array objects
+        Vectors of complex numbers describing quantum states.
+    r : integer
+        The number of decimals to use while rounding the number (default is 0,
+        i.e. the number is not rounded).
 
     Returns
     -------
-    distance_value : TYPE
-        DESCRIPTION.
+    distance_value : complex
+        The distance between given quantum states according to the cosine 
+        distance. In case of cosine similarity, its value is 1 for the same 
+        vectors, 0 for ortogonal vectors, and (-1) for opposite vectors.
+        The cosine distance is 0 for the same vectors, 1 for ortogonal vectors, 
+        and 2 for opposite vectors.
+        
+    Examples
+    --------
+    A distance between the same states:
+    >>> v=np.array([1,0])
+    >>> u=np.array([1,0])
+    >>> print(cosine_distance(u, v))
+        0.0
+    A distance between the opposite states:
+    >>> v=np.array([1,0])
+    >>> u=np.array([-1,0])
+    >>> print(cosine_distance(u, v))
+        2.0
+    A distance between the orthogonal states:
+    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)])
+    >>> print(cosine_distance(u, v))
+        (1+0j)
+    >>> v=np.array([1/math.sqrt(2),1/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),-1/math.sqrt(2)])
+    >>> print(cosine_distance(u, v))
+        1.0
+    A distance between two examplary states:
+    >>> v=np.array([1/math.sqrt(2),1/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> print(cosine_distance(u, v, 3))
+        (0.5+0.5j)
 
     """
+    
+    similarity = np.vdot(uvector, vvector) 
     if r == 0:
-        distance_value = 1.0 - np.dot(uvector, vvector) / ( np.linalg.norm(uvector) * np.linalg.norm(vvector) )
-        distance_value = np.linalg.norm(distance_value)
+        distance_value = 1.0 - similarity
     else:
-        distance_value = 1.0 - np.dot(uvector, vvector) / ( np.linalg.norm(uvector) * np.linalg.norm(vvector) )
-        distance_value = round(np.linalg.norm(distance_value), r)
+        distance_value = np.round(1.0 - similarity, r)
         
     return distance_value
+
 
 def dot_product_as_distance( uvector, vvector, r=0 ):
     """
