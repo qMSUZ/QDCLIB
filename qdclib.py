@@ -1036,9 +1036,25 @@ def create_focused_qubits_probes( _n_points, _n_focus_points, _width_of_cluster=
     
     return d
 
-def create_focused_qubits_probes_with_uniform_placed_centers( _n_points, _n_focus_points, _width_of_cluster=0.25 ):
-    pass
+def create_focused_qubits_probes_with_uniform_placed_centers( _n_points, _n_theta, _n_psi, _width_of_cluster=0.1 ):
+    centers_on_sphere = [ ]
+    
+    for i in range( _n_theta ):
+        for j in range( _n_psi+1 ):
+            _theta = 2.0 * np.pi * (i/_n_theta)
+            _psi = (np.pi/2.0) - np.pi*(j/_n_psi)
+            sp = convert_spherical_point_to_bloch_vector(1.0, _theta, _psi)
+            centers_on_sphere.append( ( sp[0], sp[1], sp[2]) ) 
 
+    d, _ = make_blobs( n_samples=_n_points,
+                       n_features=3,
+                       centers = centers_on_sphere,
+                       cluster_std=_width_of_cluster )
+
+    for i in range(_n_points):
+        d[i] = d[i] / np.linalg.norm(d[i])
+    
+    return d
 
 def slerp(p0, p1, t):
     """

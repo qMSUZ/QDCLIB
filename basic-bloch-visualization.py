@@ -152,22 +152,12 @@ def example5():
 
 def example6():
     
-    _n_theta=2
-    _n_psi=2
-    
-    centers_on_sphere = np.empty((0,3))
-       
-    for i in range( _n_theta ):
-        for j in range( _n_psi+1 ):
-            _theta = 2.0 * np.pi * (i/_n_theta)
-            _psi = (np.pi/2.0) - np.pi*(j/_n_psi)
-            sp = qdcl.convert_spherical_point_to_bloch_vector(1.0, _theta, _psi)
-            centers_on_sphere =  np.append(centers_on_sphere, [ sp ] , axis=0) 
+    d = qdcl.create_focused_qubits_probes_with_uniform_placed_centers(100, 4, 2, 0.05)
 
     b = qdcl.BlochVisualization()
     b.set_title("Bloch Vector Points")
   
-    b.set_points( centers_on_sphere )
+    b.set_points( d )
     b.enable_draw_points()
       
     f=b.make_figure()
@@ -176,8 +166,8 @@ def example6():
 
 #example1()
 #example2()
-example3()
+#example3()
 #example4a()
 #example4b()
 #example5()
-#example6()
+example6()
