@@ -115,7 +115,15 @@ def bloch_vector_to_spherical_point( _x, _y, _z ):
     phi = np.arccos( _z / r ) 
     
     # check order of results
-    return np.array([r, phi, theta])
+    return np.array([r, theta, phi ])
+
+def spherical_point_to_pure_state( _theta, _phi):
+    pure_state_qubit = create_zero_vector( 2 )
+    
+    pure_state_qubit[0] = np.cos( _theta / 2.0 )
+    pure_state_qubit[1] = ( np.cos( _phi ) + 1.0J*np.sin( _phi ) ) * np.sin( _theta / 2.0 )
+    
+    return pure_state_qubit
 
 class BlochVectorsTable:
     pass
@@ -1055,7 +1063,7 @@ def create_focused_qubits_probes( _n_points, _n_focus_points, _width_of_cluster=
     
     return d
 
-def create_focused_qubits_probes_with_uniform_placed_centers( _n_points, _n_theta, _n_psi, _width_of_cluster=0.1 ):
+def create_focused_qubits_probes_with_uniform_placed_centers( _n_points, _n_theta, _n_psi, _width_of_cluster=0.1, return_labels = False, return_centers = False ):
     centers_on_sphere = [ ]
     
     for i in range( _n_theta ):
@@ -1065,13 +1073,20 @@ def create_focused_qubits_probes_with_uniform_placed_centers( _n_points, _n_thet
             sp = convert_spherical_point_to_bloch_vector(1.0, _theta, _psi)
             centers_on_sphere.append( ( sp[0], sp[1], sp[2]) ) 
 
-    d, _ = make_blobs( n_samples=_n_points,
+    d, labels = make_blobs( n_samples=_n_points,
                        n_features=3,
                        centers = centers_on_sphere,
                        cluster_std=_width_of_cluster )
 
     for i in range(_n_points):
         d[i] = d[i] / np.linalg.norm(d[i])
+    
+    
+    if return_labels==True and return_centers==False:
+        return d, labels
+
+    if return_labels==True and return_centers==True:
+        return d, labels, centers_on_sphere
     
     return d
 

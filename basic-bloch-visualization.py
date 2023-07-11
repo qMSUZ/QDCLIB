@@ -85,6 +85,7 @@ def example3():
 
     purestates = np.append(purestates, [[ 1, 0 ]], axis=0)
     purestates = np.append(purestates, [[ -1.0/np.sqrt(2), 1.0/np.sqrt(2) ]], axis=0)
+    purestates = np.append(purestates, [[ 1.0/np.sqrt(2), 1.0/np.sqrt(2) ]], axis=0)
     purestates = np.append(purestates, [[ 0, 1 ]], axis=0)
 
     

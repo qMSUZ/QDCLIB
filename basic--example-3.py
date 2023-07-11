@@ -33,10 +33,4 @@
 
 import qdclib as qdcl
 
-n_clusters = 3
-d = qdcl.create_focused_circle_probes_with_uniform_placed_centers(30, n_clusters, _width_of_cluster=0.15)
-labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
-
-f=qdcl.create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
-f.show()
 

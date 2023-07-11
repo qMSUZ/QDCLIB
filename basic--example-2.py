@@ -31,47 +31,6 @@
 # *                                                                         *
 # ***************************************************************************/
 
-import matplotlib.pyplot as plt
-import numpy as np
-
 import qdclib as qdcl
 
-print("\n\nexample\n\n")
 
-d = qdcl.create_spherical_probes(20, 2)
-
-print("Norms of each point in d:")
-print(" " * 4,np.linalg.norm(d, axis=1))
-
-#
-# Scatter plot of 2D data 
-#
-fig, ax = plt.subplots()
-ax.set_aspect('equal')
-circle = plt.Circle( (0,0), 1,  color='r', fill=False)
-ax.scatter( d[:,0], d[:,1])
-ax.add_patch(circle)
-fig.show()
-
-n_clusters = 3
-labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
-#labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.DOT_DISTANCE )
-#labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.FIDELITY_DISTANCE )
-#labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.TRACE_DISTANCE )
-
-print("Norms of each point in centers:")
-print(" " * 4,np.linalg.norm(centers, axis=1))
-
-fig, ax = plt.subplots()
-ax.set_aspect('equal')
-circle = plt.Circle( (0,0), 1,  color='r', fill=False)
-ax.scatter( d[:,0], d[:,1], c=labels)
-ax.scatter(centers[:, 0], centers[:, 1], marker='x', color='g')
-for idx in range(n_clusters):
-    ax.annotate("", xy=(centers[idx, 0], centers[idx, 1]), xytext=(0, 0), arrowprops=dict(arrowstyle="->"))
-ax.add_patch(circle)
-fig.show()
-
-t = qdcl.create_distance_table( d, centers, labels, n_clusters, qdcl.cosine_distance )
-print("")
-print(t)
