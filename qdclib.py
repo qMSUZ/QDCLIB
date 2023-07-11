@@ -898,19 +898,38 @@ def hs_distance( uvector, vvector, r=0 ):
 
 def trace_distance( uvector, vvector, r=0 ):
     """
-    for pure states
+    Calculates the distance based on density matrix trace of two pure states.
 
     Parameters
     ----------
-    uvector : TYPE
-        DESCRIPTION.
-    vvector : TYPE
-        DESCRIPTION.
+    uvector, vvector : numpy array objects
+        Vectors of complex numbers describing quantum states.
+    r : integer
+        The number of decimals to use while rounding the number (default is 0,
+        i.e. the number is not rounded).
 
     Returns
     -------
-    TYPE
-        DESCRIPTION.
+    rslt : float
+        The distance between given quantum states according to 
+        the trace distance.
+    Examples
+    --------
+    A distance between the same states:
+    >>> v=np.array([1,0])
+    >>> u=np.array([1,0])
+    >>> print(trace_distance(u, v))
+        0.0
+    A distance between the orthogonal states:
+    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)])
+    >>> print(trace_distance(u, v))
+        1.0
+    A distance between two examplary states:
+    >>> v=np.array([1/math.sqrt(2),1/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> print(trace_distance(u, v, 5))
+        0.70711
 
     """
     if r==0:
