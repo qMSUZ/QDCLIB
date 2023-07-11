@@ -53,7 +53,7 @@ ax.scatter( d[:,0], d[:,1])
 ax.add_patch(circle)
 fig.show()
 
-n_clusters = 4
+n_clusters = 3
 labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
 #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.DOT_DISTANCE )
 #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.FIDELITY_DISTANCE )

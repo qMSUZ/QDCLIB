@@ -1024,7 +1024,7 @@ def create_focused_circle_probes( _n_points, _n_focus_points, _width_of_cluster=
 def create_focused_circle_probes_with_uniform_placed_centers( _n_points, _n_focus_points, _width_of_cluster=0.1 ):
     
     theta=0.0
-    theta_delta = (1.0 * np.pi) / _n_focus_points
+    theta_delta = (2.0 * np.pi) / _n_focus_points
     centers_on_circle = [ ]
     
     for _ in range(_n_focus_points):
