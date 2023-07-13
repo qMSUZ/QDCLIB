@@ -45,13 +45,14 @@ def bloch_sphere_direct_definition_pure_states():
     purestates = np.append( purestates, [qzminus], axis=0 )
 
     b = qdcl.BlochVisualization()
-    b.set_title("Pure states")
+    b.set_title("Pure states -- Figure 1")
     
     b.set_pure_states( purestates )
     b.enable_pure_states_draw()
     
     f=b.make_figure()
-    f.show()
+    
+    return f
 
 def bloch_sphere_definition_pure_states_by_spherical_corrds():
     purestates = np.empty((0,2))
@@ -64,32 +65,34 @@ def bloch_sphere_definition_pure_states_by_spherical_corrds():
     purestates = np.append( purestates, [qzminus_f_sp], axis=0 )
 
     b = qdcl.BlochVisualization()
-    b.set_title("Pure states")
+    b.set_title("Pure states -- Figure 2")
     
     b.set_pure_states( purestates )
     b.enable_pure_states_draw()
     
     f=b.make_figure()
-    f.show()
+    
+    return f
 
-def bloch_sphere_vectosr_from_pure_states():
+def bloch_sphere_vectors_from_pure_states():
     b = qdcl.BlochVisualization()
-    b.set_title("Bloch Vector Points")
+    b.set_title("Bloch Vector Points -- Figure 3")
     
     ptns = np.empty((0,3))
 
-    ptns = np.append(ptns, [ bvxplus ], axis=0) # positive x
-    ptns = np.append(ptns, [ ], axis=0) # negative x
-    ptns = np.append(ptns, [ ], axis=0) # +y
-    ptns = np.append(ptns, [ ], axis=0) # -y
-    ptns = np.append(ptns, [ ], axis=0) # +z 
-    ptns = np.append(ptns, [ ], axis=0) # -z
+    ptns = np.append(ptns, [ bvxplus  ], axis=0) # positive x
+    ptns = np.append(ptns, [ bvxminus ], axis=0) # negative x
+    ptns = np.append(ptns, [ bvyplus  ], axis=0) # +y
+    ptns = np.append(ptns, [ bvyminus ], axis=0) # -y
+    ptns = np.append(ptns, [ bzplus   ], axis=0) # +z 
+    ptns = np.append(ptns, [ bzminus  ], axis=0) # -z
 
     b.set_points( ptns )
     b.enable_draw_points()
 
     f=b.make_figure()
-    f.show() 
+    
+    return f
 
 qxplus  = np.array( [1.0/np.sqrt(2),  1.0/np.sqrt(2)  ] )
 qxminus = np.array( [1.0/np.sqrt(2), -1.0/np.sqrt(2)  ] )
@@ -120,4 +123,6 @@ bzplus   = qdcl.convert_pure_state_to_bloch_vector( qzplus )
 bzminus  = qdcl.convert_pure_state_to_bloch_vector( qzminus )
 
 
-
+f1 = bloch_sphere_direct_definition_pure_states()
+f2 = bloch_sphere_definition_pure_states_by_spherical_corrds()
+f3 = bloch_sphere_vectors_from_pure_states()
