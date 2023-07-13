@@ -91,6 +91,22 @@ def _internal_qdcl_create_density_matrix_from_vector_state(q):
     return _internal_qdcl_vector_state_to_density_matrix(q)
 
 def convert_pure_state_to_bloch_vector( qstate ):
+    """
+    
+    Convert pure quantum state to
+    the bloch vector representation
+
+    Parameters
+    ----------
+    qstate : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
     
     qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
     
@@ -108,21 +124,46 @@ def convert_spherical_point_to_bloch_vector( _r, _theta, _phi ):
 
     return np.array([xcoord, ycoord, zcoord])
 
-def bloch_vector_to_spherical_point( _x, _y, _z ):
+def convert_bloch_vector_to_spherical_point( _x, _y, _z ):
     
     r = np.sqrt( _x * _x + _y * _y + _z * _z )
-    theta = np.arctan( _y / _x )
-    phi = np.arccos( _z / r ) 
+    theta = np.arccos( _z / r )
+    phi = np.sign(_y) *  np.arccos( _x / np.sqrt(_x*_x + _y*_y) ) 
     
-    # check order of results
     return np.array([r, theta, phi ])
 
-def spherical_point_to_pure_state( _theta, _phi):
+def convert_spherical_point_to_pure_state( _theta, _phi):
+    """
+    Convert spherical point theta and phi angles to
+    the pure quantum state
+
+    Parameters
+    ----------
+    _theta : TYPE
+        DESCRIPTION.
+        
+        0 <= _theta <= np.pi 
+        0 <= _phi <= np.pi 
+        
+    _phi : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    pure_state_qubit : TYPE
+        DESCRIPTION.
+
+    """
     pure_state_qubit = create_zero_vector( 2 )
     
     pure_state_qubit[0] = np.cos( _theta / 2.0 )
-    pure_state_qubit[1] = ( np.cos( _phi ) + 1.0J*np.sin( _phi ) ) * np.sin( _theta / 2.0 )
+    pure_state_qubit[1] = np.exp(1.0J * _phi) * np.sin( _theta / 2.0 )
     
+    return pure_state_qubit
+
+def convert_bloch_vector_to_pure_state( _x, _y, _z ):
+    r,theta,phi = convert_bloch_vector_to_spherical_point( _x, _y, _z)
+    pure_state_qubit = convert_spherical_point_to_pure_state( theta, phi  )
     return pure_state_qubit
 
 class BlochVectorsTable:
@@ -234,9 +275,11 @@ class BlochVisualization:
         ptns = np.empty((0,3))
         for qstate in _states:
             qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
-            xcoord = np.trace( _internal_pauli_x() @ qstateden )
-            ycoord = np.trace( _internal_pauli_y() @ qstateden )
-            zcoord = np.trace( _internal_pauli_z() @ qstateden )
+            
+            # change sign for x coords
+            xcoord = - np.trace( _internal_pauli_x() @ qstateden )
+            ycoord =   np.trace( _internal_pauli_y() @ qstateden )
+            zcoord =   np.trace( _internal_pauli_z() @ qstateden )
         
             ptns = np.append( ptns, [[ xcoord, ycoord, zcoord]], axis=0)  # for state
     
@@ -964,7 +1007,7 @@ def create_zero_vector( _n_dim=3 ):
     --------
     """
     
-    _vector_zero = np.zeros( (_n_dim) )
+    _vector_zero = np.zeros( (_n_dim), dtype=np.complex )
     
     return _vector_zero
 
@@ -985,7 +1028,7 @@ def create_one_vector( _axis=0, _n_dim=3 ):
 
     """
     
-    _vector_one = np.zeros( (_n_dim) )
+    _vector_one = np.zeros( (_n_dim), dtype=np.complex )
     _vector_one[ _axis ] = 1.0  
     
     return _vector_one

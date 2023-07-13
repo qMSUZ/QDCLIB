@@ -62,7 +62,7 @@ def example2():
     ptns = np.empty((0,3))
 
     for degree in range(0, 95, 5):
-        ptns = np.append(ptns, [ qdcl.convert_spherical_point_to_bloch_vector(1.0, np.radians(135 + degree), np.radians(0)) ], axis=0)
+        ptns = np.append(ptns, [ qdcl.convert_spherical_point_to_bloch_vector(1.0, np.radians(90), np.radians(135 + degree)) ], axis=0)
     
     b = qdcl.BlochVisualization()
     b.set_title("Bloch Vector Points")
@@ -84,7 +84,7 @@ def example3():
     purestates = np.empty((0,2))
 
     purestates = np.append(purestates, [[ 1, 0 ]], axis=0)
-    purestates = np.append(purestates, [[ -1.0/np.sqrt(2), 1.0/np.sqrt(2) ]], axis=0)
+    purestates = np.append(purestates, [[ 1.0/np.sqrt(2.0), -1.0/np.sqrt(2.0) ]], axis=0)
     purestates = np.append(purestates, [[ 1.0/np.sqrt(2), 1.0/np.sqrt(2) ]], axis=0)
     purestates = np.append(purestates, [[ 0, 1 ]], axis=0)
 
