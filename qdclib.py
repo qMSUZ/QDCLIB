@@ -626,6 +626,43 @@ def convert_data_to_vector_state(dataTuple):
         Qvec[i]=sympy.sqrt(Qvec[i]/sum_all)
     return Qvec
 
+def is_vector_normalized(vec):
+    """
+    Checks if the entered vector is normalized (is a correct quantum state).
+
+    Parameters
+    ----------
+    vec : numpy array object
+        A vector state.
+
+    Returns
+    -------
+    Boolean value, None
+        True if the vector is normalized, False if not, and None if entered 
+        parameter is not a numpy array.
+        
+    Examples
+    --------
+    If the entered vector is a correct quantum state:
+    >>> x=is_vector_normalized(np.array([1/math.sqrt(2),-1/math.sqrt(2)]))
+    >>> print(x)
+        True
+    If the state vector is not normalized:
+    >>> print(is_vector_normalized(np.array([0+1j,1])))
+        False
+    If the entered parameter is not a vector:
+    >>> print(is_vector_normalized(7))
+        None
+
+    """
+    if not(isinstance(vec, np.ndarray)):
+        return None
+    else:
+        if (math.isclose(np.linalg.norm(vec), 1, abs_tol=0.000001)):
+            return True
+        else:
+            return False
+
 
 def manhattan_distance(uvector, vvector, r=0):
     """
