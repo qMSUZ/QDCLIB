@@ -90,6 +90,16 @@ def _internal_qdcl_vector_state_to_density_matrix(q):
 def _internal_qdcl_create_density_matrix_from_vector_state(q):
     return _internal_qdcl_vector_state_to_density_matrix(q)
 
+# code based on chop
+# discussed at:
+#   https://stackoverflow.com/questions/43751591/does-python-have-a-similar-function-of-chop-in-mathematica
+def chop(expr, delta=10 ** -10):
+    if isinstance(expr, (int, float, complex)):
+        return 0 if -delta <= expr <= delta else expr
+    else:
+        return [chop(x) for x in expr]
+
+
 def convert_pure_state_to_bloch_vector( qstate ):
     """
     
