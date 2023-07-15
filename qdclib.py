@@ -1383,6 +1383,27 @@ def kmedoids(_qX, _n_clusters, _max_iterations=128, _func_distance = None):
 
     return labels, medoids
 
+def kmedoids_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _max_iterations=128, _verification=0):
+    # vectors qX should be treated as quantum pure states
+    # but verification in performed when 
+    # verification == 1
+
+    if _func_distance==COSINE_DISTANCE:
+        _funcdist = cosine_distance
+
+    if _func_distance==DOT_DISTANCE:
+        _funcdist = dot_product_as_distance
+
+    if _func_distance==FIDELITY_DISTANCE:
+        _funcdist = fidelity_as_distance
+
+    if _func_distance==TRACE_DISTANCE:
+        _funcdist = trace_distance
+
+    closest, centers = kmedoids( _qX, _n_clusters, _max_iterations, _funcdist )
+        
+    return closest, centers 
+
 def calculate_distance(_data, _vector, _func_distance):
     """
     

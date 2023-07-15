@@ -36,7 +36,12 @@ import numpy as np
 
 import qdclib as qdcl
 
-print("\n\nexample\n\n")
+seed_value = 1234
+np.random.seed( seed_value )
+
+print("\n\nBasic example of kmeans clustering states of 20 single qubits")
+print("states contains only real amplitudes")
+print("seed value:", seed_value)
 
 d = qdcl.create_spherical_probes(20, 2)
 
@@ -46,6 +51,9 @@ print(" " * 4,np.linalg.norm(d, axis=1))
 #
 # Scatter plot of 2D data 
 #
+
+print("Plot all states on unit circle")
+
 fig, ax = plt.subplots()
 ax.set_aspect('equal')
 circle = plt.Circle( (0,0), 1,  color='r', fill=False)
@@ -53,14 +61,15 @@ ax.scatter( d[:,0], d[:,1])
 ax.add_patch(circle)
 fig.show()
 
-n_clusters = 3
+
+n_clusters = 4
 labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
-#labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.DOT_DISTANCE )
-#labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.FIDELITY_DISTANCE )
-#labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.TRACE_DISTANCE )
 
 print("Norms of each point in centers:")
 print(" " * 4,np.linalg.norm(centers, axis=1))
+
+print("Plot all states on unit circle")
+print("with centers after clustering")
 
 fig, ax = plt.subplots()
 ax.set_aspect('equal')
@@ -72,6 +81,8 @@ for idx in range(n_clusters):
 ax.add_patch(circle)
 fig.show()
 
+print("Distance between probes and centers for each classes")
 t = qdcl.create_distance_table( d, centers, labels, n_clusters, qdcl.cosine_distance )
+#t = qdcl.create_distance_table( d, centers, labels, n_clusters, qdcl.dot_product_as_distance )
 print("")
 print(t)
