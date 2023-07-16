@@ -716,7 +716,7 @@ def vector_check(vec):
         return None
 
 
-def manhattan_distance(uvector, vvector, r=0):
+def manhattan_distance(uvector, vvector, r=0, check=0): 
     """
     Caclutales the Manhattan distance between two pure (vector) states.
 
@@ -727,12 +727,17 @@ def manhattan_distance(uvector, vvector, r=0):
     r : integer
         The number of decimals to use while rounding the number (default is 0,
         i.e. the number is not rounded).
+    check : Boolean
+        If check==1 then paramatres uvector, vvector are checked for being 
+        normalized vectors (as default it is not checked).
 
     Returns
     -------
-    d : float
+    d : float, None
         The distance between given quantum states according to the Manhattan 
-        (Taxicab) distance.
+        (Taxicab) distance. None if the entered vectors are checked for being
+        correct quantum states and they are not.
+        
     Examples
     --------
     A distance between the same states:
@@ -750,18 +755,29 @@ def manhattan_distance(uvector, vvector, r=0):
     >>> u=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
     >>> print(manhattan_distance(u, v, 3))
         1.0
+    If entered vector v is not a correct quantum state:
+    >>> v=np.array([1,1])
+    >>> u=np.array([1,0])
+    >>> print(manhattan_distance(u, v, 0, 1))
+        ...
+        ValueError: The vector is not normalized!
 
     """
-    d=0.0
-    dim=uvector.shape[0]
-    
-    for idx in range(dim):
-        d = d + np.abs( (uvector[idx] - vvector[idx]) )
-    
-    if r!=0:
-        d=round(d,r)
-    
-    return d
+    x=1
+    y=1
+    if check==1:
+        x=vector_check(uvector)
+        y=vector_check(vvector)
+    if (x==1 and y==1):
+        d=0.0
+        dim=uvector.shape[0]
+        for idx in range(dim):
+            d = d + np.abs( (uvector[idx] - vvector[idx]) )
+        if r!=0:
+            d=round(d,r)
+        return d
+    else:
+        return None
 
 def cosine_distance( uvector, vvector, r = 0 ):
     """
