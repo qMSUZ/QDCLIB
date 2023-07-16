@@ -673,6 +673,48 @@ def is_vector_normalized(vec):
         else:
             return False
 
+def vector_check(vec):
+    """
+    Calls the function is_vector_normalized which checks if the entered vector 
+    is normalized (is a correct quantum state) and returns 1 if its true 
+    (otherwise raises the exceptions).
+
+    Parameters
+    ----------
+    vec : numpy array object
+        A vector state.
+
+    Returns
+    -------
+    1, None
+        One if the entered parameter is a normalized vector, None otherwise.
+        
+    Examples
+    --------
+    If the entered vector is a correct quantum state:
+    >>> x=vector_check(np.array([1/math.sqrt(2),-1/math.sqrt(2)]))
+    >>> print(x)
+        1
+    If the state vector is not normalized:
+    >>> print(is_vector_normalized(np.array([0+1j,1])))
+        ...
+        ValueError: The vector is not normalized!
+    If the entered parameter is not a vector:
+    >>> print(is_vector_normalized(5))
+        ...
+        TypeError: The parameter is not a vector!
+
+    """
+    x=is_vector_normalized(vec)
+    if x is True:
+        return 1
+    else:
+        if x is None:
+            raise TypeError("The parameter is not a vector!")
+        if x is False:
+            raise ValueError("The vector is not normalized!")
+        return None
+
 
 def manhattan_distance(uvector, vvector, r=0):
     """
