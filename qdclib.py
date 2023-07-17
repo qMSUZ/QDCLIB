@@ -780,7 +780,7 @@ def manhattan_distance(uvector, vvector, r=0, check=0):
     else:
         return None
 
-def cosine_distance( uvector, vvector, r = 0 ):
+def cosine_distance( uvector, vvector, r = 0, check=0 ):
     """
     Calculates a cosine distance between two vectors.
 
@@ -791,6 +791,9 @@ def cosine_distance( uvector, vvector, r = 0 ):
     r : integer
         The number of decimals to use while rounding the number (default is 0,
         i.e. the number is not rounded).
+    check : Boolean
+        If check==1 then paramatres uvector, vvector are checked for being 
+        normalized vectors (as default it is not checked).
 
     Returns
     -------
@@ -827,16 +830,29 @@ def cosine_distance( uvector, vvector, r = 0 ):
     >>> u=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
     >>> print(cosine_distance(u, v, 3))
         (0.5+0.5j)
+    If entered vector v is not a correct quantum state:
+    >>> v=np.array([1,1])
+    >>> u=np.array([1,0])
+    >>> print(cosine_distance(u, v, 0, 1))
+        ...
+        ValueError: The vector is not normalized!
 
     """
-    
-    similarity = np.vdot(uvector, vvector) 
-    if r == 0:
-        distance_value = 1.0 - similarity
+    x=1
+    y=1
+    if check==1:
+        x=vector_check(uvector)
+        y=vector_check(vvector)
+    if (x==1 and y==1):
+        similarity = np.vdot(uvector, vvector) 
+        if r == 0:
+            distance_value = 1.0 - similarity
+        else:
+            distance_value = np.round(1.0 - similarity, r)
+            
+        return distance_value
     else:
-        distance_value = np.round(1.0 - similarity, r)
-        
-    return distance_value
+        return None
 
 
 def dot_product_as_distance( uvector, vvector, r=0 ):
