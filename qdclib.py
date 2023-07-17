@@ -1347,6 +1347,15 @@ def kmeans_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _max
     if _func_distance==TRACE_DISTANCE:
         _funcdist = trace_distance
 
+    if _func_distance==MANHATTAN_DISTANCE:
+        _funcdist = manhattan_distance
+    
+    if _func_distance==BURES_DISTANCE:
+        _funcdist =bures_distance
+    
+    if _func_distance==HS_DISTANCE:
+        _funcdist = hs_distance 
+    
     closest, centers = kmeans_spherical( _qX, _n_clusters, _max_iterations, _funcdist )
         
     return closest, centers 
@@ -1458,6 +1467,16 @@ def kmedoids_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _m
 
     if _func_distance==TRACE_DISTANCE:
         _funcdist = trace_distance
+
+    if _func_distance==MANHATTAN_DISTANCE:
+        _funcdist = manhattan_distance
+    
+    if _func_distance==BURES_DISTANCE:
+        _funcdist =bures_distance
+    
+    if _func_distance==HS_DISTANCE:
+        _funcdist = hs_distance 
+    
 
     closest, centers = kmedoids( _qX, _n_clusters, _max_iterations, _funcdist )
         

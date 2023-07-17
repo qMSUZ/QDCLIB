@@ -45,14 +45,14 @@ print("seed value:", seed_value)
 
 d = qdcl.create_spherical_probes(20, 2)
 
-print("Norms of each point in d:")
+print("\nNorms of each point in d:")
 print(" " * 4,np.linalg.norm(d, axis=1))
 
 #
 # Scatter plot of 2D data 
 #
 
-print("Plot all states on unit circle")
+print("\n\nPlot all states on unit circle")
 
 fig, ax = plt.subplots()
 ax.set_aspect('equal')
