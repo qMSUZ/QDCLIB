@@ -51,24 +51,10 @@ import random as rd
 import math
 import itertools
 
+from ExceptionsClasses import *
 
 # smallest value for entropy calculations
 precision_for_entrpy_calc = 0.00001
-
-class DimensionError(Exception):
-    """DimensionError"""
-    def __init__(self, message):
-        self.message = message
-
-class ArgumentValueError(Exception):
-    """ArgumentValueError"""
-    def __init__(self, message):
-        self.message = message
-
-class DensityMatrixDimensionError(Exception):
-    """DensityMatrixDimensionError"""
-    def __init__(self, message):
-        self.message = message
 
 # code based on chop
 # discussed at:

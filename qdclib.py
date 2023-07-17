@@ -31,6 +31,8 @@
 # *                                                                         *
 # ***************************************************************************/
 
+from ExceptionsClasses import *
+
 import matplotlib
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D, proj3d
@@ -54,24 +56,6 @@ POINTS_DRAW        = 2000
 LINES_DRAW         = 2001
 
 
-# klasy wyjątków z EntDetectora
-
-
-class DimensionError(Exception):
-    """DimensionError"""
-    def __init__(self, message):
-        self.message = message
-
-class ArgumentValueError(Exception):
-    """ArgumentValueError"""
-    def __init__(self, message):
-        self.message = message
-
-class DensityMatrixDimensionError(Exception):
-    """DensityMatrixDimensionError"""
-    def __init__(self, message):
-        self.message = message
-
 
 def _internal_pauli_x():
     paulix=np.array([0.0, 1.0, 1.0, 0.0]).reshape(2,2)
@@ -94,11 +78,11 @@ def _internal_qdcl_create_density_matrix_from_vector_state(q):
 # code based on chop
 # discussed at:
 #   https://stackoverflow.com/questions/43751591/does-python-have-a-similar-function-of-chop-in-mathematica
-def chop(expr, delta=10 ** -10):
+def _internal_chop(expr, delta=10 ** -10):
     if isinstance(expr, (int, float, complex)):
         return 0 if -delta <= expr <= delta else expr
     else:
-        return [chop(x) for x in expr]
+        return [_internal_chop(x) for x in expr]
 
 
 def convert_pure_state_to_bloch_vector( qstate ):
@@ -1554,7 +1538,7 @@ def create_distance_table( _data, _centers, _labels, _n_clusters, _func_distance
     distance_table=np.zeros( shape=(_data.shape[0], 2) )
     for l in range(0, _n_clusters):
         cntr=_centers[l]
-        for e in _data[_labels==l]:
+        for e in _data[_labels == l]:
             distance_table[idx, 0] = _func_distance(e, cntr)
             distance_table[idx, 1] = l
             idx=idx+1
@@ -1578,7 +1562,7 @@ def get_distances_for_cluster( _data, _n_cluster ):
         DESCRIPTION.
 
     """
-    return _data[ _data[:,1] == _n_cluster ]
+    return _data[ _data[:, 1] == _n_cluster ]
 
 
 def version():
