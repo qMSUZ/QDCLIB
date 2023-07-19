@@ -839,7 +839,7 @@ def cosine_distance( uvector, vvector, r = 0, check=0 ):
         return None
 
 
-def dot_product_as_distance( uvector, vvector, r=0 ):
+def dot_product_as_distance( uvector, vvector, r=0, check=0 ):
     """
     Calculates a dot product as a distance between two vectors.
 
@@ -850,6 +850,9 @@ def dot_product_as_distance( uvector, vvector, r=0 ):
     r : integer
         The number of decimals to use while rounding the number (default is 0,
         i.e. the number is not rounded).
+    check : Boolean
+        If check==1 then paramatres uvector, vvector are checked for being 
+        normalized vectors (as default it is not checked).
 
     Returns
     -------
@@ -875,14 +878,28 @@ def dot_product_as_distance( uvector, vvector, r=0 ):
     >>> u=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
     >>> print(dot_product_as_distance(u, v, 5))
         0.29289
+    If entered vector v is not a correct quantum state:
+    >>> v=np.array([1,1])
+    >>> u=np.array([1,0])
+    >>> print(dot_product_as_distance(u, v, 0, 1))
+        ...
+        ValueError: The vector is not normalized!
 
     """
-    if r==0:
-        rslt = 1.0 - np.linalg.norm( np.vdot( vvector, uvector ) )
+    x=1
+    y=1
+    if check==1:
+        x=vector_check(uvector)
+        y=vector_check(vvector)
+    if (x==1 and y==1):
+        if r==0:
+            rslt = 1.0 - np.linalg.norm( np.vdot( vvector, uvector ) )
+        else:
+            rslt = round( 1.0 - np.linalg.norm( np.vdot( vvector, uvector ) ), r )
+        
+        return rslt
     else:
-        rslt = round( 1.0 - np.linalg.norm( np.vdot( vvector, uvector ) ), r )
-    
-    return rslt
+        return None
 
 def fidelity_measure( uvector, vvector, r=0):
     """
