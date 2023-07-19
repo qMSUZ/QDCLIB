@@ -962,11 +962,11 @@ def fidelity_measure( uvector, vvector, r=0, check=0):
     else:
         return None
 
-def fidelity_as_distance( uvector, vvector, r=0 ):
+def fidelity_as_distance( uvector, vvector, r=0, check=0 ):
     """
     Calculates a distance between two pure states using the Fidelity measure.
     If the states are similar, the distance tends to zero. For orthogonal states
-    the distance is one.
+    the distance is one. 
 
     Parameters
     ----------
@@ -975,6 +975,10 @@ def fidelity_as_distance( uvector, vvector, r=0 ):
     r : integer
         The number of decimals to use while rounding the number (default is 0,
         i.e. the number is not rounded).
+    check : Boolean
+        If check==1 then paramatres uvector, vvector are checked for being 
+        normalized vectors (as default it is not checked).
+        
     Returns
     -------
     Float
@@ -987,18 +991,20 @@ def fidelity_as_distance( uvector, vvector, r=0 ):
     >>> print(fidelity_as_distance(u, v))
         0.0
     A distance between the orthogonal states:
-    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)]])
-    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)]])
+    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)])
     >>> print(fidelity_as_distance(u, v))
         1.0
+    If entered vector v is not a correct quantum state:
+    >>> v=np.array([1,1])
+    >>> u=np.array([1,0])
+    >>> print(fidelity_as_distance(u, v, 0, 1))
+        ...
+        ValueError: The vector is not normalized!
+
     """
-    
-    if r==0:
-        rslt = 1.0 - fidelity_measure( vvector, uvector, 0 )
-    else:
-        rslt = round( 1.0 - fidelity_measure( vvector, uvector, 0 ), r)
-    
-    return rslt
+    return 1.0 - fidelity_measure( vvector, uvector, r, check )
+ 
 
 def bures_distance( uvector, vvector, r=0 ):
     """
