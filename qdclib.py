@@ -56,18 +56,69 @@ POINTS_DRAW        = 2000
 LINES_DRAW         = 2001
 
 
-
 def _internal_pauli_x():
-    paulix=np.array([0.0, 1.0, 1.0, 0.0]).reshape(2,2)
+    paulix=np.array( [0.0, 1.0, 1.0, 0.0] ).reshape(2,2)
     return paulix
 
 def _internal_pauli_y():
-    pauliy=np.array([0.0, -1.0J, 1.0J, 0.0]).reshape(2,2)
+    pauliy=np.array( [0.0, -1.0J, 1.0J, 0.0] ).reshape(2,2)
     return pauliy
 
 def _internal_pauli_z():
-    pauliz=np.array([1.0, 0.0, 0.0, -1.0]).reshape(2,2)
+    pauliz=np.array( [1.0, 0.0, 0.0, -1.0] ).reshape(2,2)
     return pauliz
+
+def _internal_gell_mann_lambda1():
+    gm_lNum=np.array( [0.0, 1.0, 0.0,
+                       1.0, 0.0, 0.0,
+                       0.0, 0.0, 0.0] ).reshape(3,3)
+    return gm_lNum
+    
+def _internal_gell_mann_lambda4():
+    gm_lNum=np.array( [0.0, 0.0, 1.0,
+                       0.0, 0.0, 0.0,
+                       1.0, 0.0, 0.0] ).reshape(3,3)
+    return gm_lNum
+
+def _internal_gell_mann_lambda6():
+    gm_lNum=np.array( [0.0, 0.0, 0.0,
+                       0.0, 0.0, 1.0,
+                       0.0, 1.0, 0.0] ).reshape(3,3)
+    return gm_lNum
+
+def _internal_gell_mann_lambda2():
+    gm_lNum=np.array( [ 0.0, -1.0J, 0.0,
+                       1.0J,   0.0, 0.0,
+                        0.0,   0.0, 0.0] ).reshape(3,3)
+    return gm_lNum
+
+def _internal_gell_mann_lambda5():
+    gm_lNum=np.array( [ 0.0, 0.0, -1.0J,
+                        0.0, 0.0,   0.0,
+                       1.0J, 0.0,   0.0] ).reshape(3,3)
+    return gm_lNum
+
+def _internal_gell_mann_lambda7():
+    gm_lNum=np.array( [0.0,  0.0,  0.0,
+                       0.0,  0.0, -1.0J,
+                       0.0, 1.0J,  0.0] ).reshape(3,3)
+    return gm_lNum
+
+
+def _internal_gell_mann_lambda3():
+    gm_lNum=np.array( [1.0,  0.0, 0.0,
+                       0.0, -1.0, 0.0,
+                       0.0,  0.0, 0.0] ).reshape(3,3)
+    return gm_lNum
+
+
+def _internal_gell_mann_lambda8():
+    gm_lNum=1.0 / np.sqrt(3) * np.array( [1.0, 0.0,  0.0,
+                                          0.0, 1.0,  0.0,
+                                          0.0, 0.0, -2.0] ).reshape(3,3)
+    return gm_lNum
+
+
 
 def _internal_qdcl_vector_state_to_density_matrix(q):
     return np.outer(q, np.transpose(q.conj()))
@@ -85,11 +136,11 @@ def _internal_chop(expr, delta=10 ** -10):
         return [_internal_chop(x) for x in expr]
 
 
-def convert_pure_state_to_bloch_vector( qstate ):
+def convert_qubit_pure_state_to_bloch_vector( qstate ):
     """
     
-    Convert pure quantum state to
-    the bloch vector representation
+    Convert pure quantum state of qubit to
+    the bloch vector representation 
 
     Parameters
     ----------
@@ -102,6 +153,9 @@ def convert_pure_state_to_bloch_vector( qstate ):
         DESCRIPTION.
 
     """
+    
+    # to check qstate is vector state
+    # or matrix
     
     qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
     
@@ -244,6 +298,7 @@ class BlochVisualization:
         self.additional_points = _points.copy()
         
         for row in range(0, self.additional_points.shape[0]):
+            # normalization points
             self.additional_points[row] /= np.linalg.norm(self.additional_points[row])
             self.additional_points[row] *= (self.radius + 0.01)
             

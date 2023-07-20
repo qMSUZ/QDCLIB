@@ -102,21 +102,22 @@ def read_iris_data( fname ):
 
 iris_data, d,  dprime, Y, d0, d1, d2 = read_iris_data( 'data/iris_data.txt')
 
-pca = decomposition.PCA( n_components=3 )
+n_components = 3
+pca = decomposition.PCA( n_components )
 #d_r = pca.fit(d).transform(d)
 #d_r = pca.fit(dprime).transform(dprime)
 d_r = pca.fit(iris_data[:, 0:4]).transform(iris_data[:, 0:4])
 
-
-for i in range(150):
-    d_r [i]=d_r[i]/np.linalg.norm(d_r[i])
-    
-
-plt.figure( figsize = (10,10) )
-plt.scatter( d_r[0:49, 0],    d_r[0:49, 1],    color="red")
-plt.scatter( d_r[50:99, 0],   d_r[50:99, 1],   color="green")
-plt.scatter( d_r[100:149, 0], d_r[100:149, 1], color="blue")
-plt.title("PCA")
+   
+fig = plt.figure( figsize = (12,12) )
+ax = fig.add_subplot( projection = '3d' )
+ax.scatter( d_r[0:49, 0],    d_r[0:49, 1],    d_r[0:49, 2],    color="red")
+ax.scatter( d_r[50:99, 0],   d_r[50:99, 1],   d_r[50:99, 2],   color="green")
+ax.scatter( d_r[100:149, 0], d_r[100:149, 1], d_r[100:149, 2], color="blue")
+ax.set_title("PCA for n_components = {}".format(n_components))
+ax.set_xlabel('X Label')
+ax.set_ylabel('Y Label')
+ax.set_zlabel('Z Label')
 plt.show()
 
 ptns = np.empty((0,3))
@@ -125,6 +126,8 @@ for i in range(0, 150):
 #for i in range(50, 100, 1):
 #for i in range(100, 150, 1):    
     ptns = np.append(ptns, [ d_r[i] ], axis=0) 
+    # points will be normalised by set_points
+    # method
 
 b = qdcl.BlochVisualization()
 b.set_title("Bloch Vector Points")
