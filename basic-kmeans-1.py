@@ -42,6 +42,7 @@ np.random.seed( seed_value )
 print("\n\nBasic example of kmeans clustering states of 20 single qubits")
 print("states contains only real amplitudes")
 print("seed value:", seed_value)
+print("\n")
 
 d = qdcl.create_spherical_probes(20, 2)
 
