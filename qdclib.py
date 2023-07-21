@@ -55,6 +55,9 @@ HS_DISTANCE        = 1006
 POINTS_DRAW        = 2000
 LINES_DRAW         = 2001
 
+POINTS_MULTI_BATCH_DRAW = 3000
+LINES_MULTI_BATCH_DRAW  = 3001
+
 
 def _internal_pauli_x():
     paulix=np.array( [0.0, 1.0, 1.0, 0.0] ).reshape(2,2)
