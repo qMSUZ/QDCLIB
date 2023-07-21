@@ -39,8 +39,8 @@ import qdclib as qdcl
 seed_value = 1234
 np.random.seed( seed_value )
 
-print("\n\nBasic example of kmeans clustering states of 20 single qubits")
-print("states contains only real amplitudes")
+print("\n\nA basic example of kmeans clustering states for 20 single qubits")
+print("states containing only real amplitudes")
 print("seed value:", seed_value)
 print("\n")
 
