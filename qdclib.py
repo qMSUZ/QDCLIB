@@ -294,8 +294,11 @@ class BlochVisualization:
     def reset_draw_mode( self ):
         self.draw_mode = 0
 
-    def enable_draw_points( self ):
+    def enable_draw_single_batch_points( self ):
         self.draw_mode = POINTS_DRAW
+
+    def enable_draw_multi_batch_points( self ):
+        self.draw_mode = POINTS_MULTI_BATCH_DRAW
 
     def set_points(self, _points=None):
         self.additional_points = _points.copy()
@@ -310,10 +313,16 @@ class BlochVisualization:
     def clear_points(self):
         self.additional_points = [ ]
 
-    def add_points(self, _points=None, _color=None):
-        # normalise points
-        # rescale to radius r
-        pass
+    def add_points(self, _points=None, _color=None, _marker=None):
+        self.draw_mode = POINTS_MULTI_BATCH_DRAW
+        cp_points = _points.copy()
+        
+        for row in range(0, cp_points.shape[0]):
+            # normalization points
+            cp_points[row] /= np.linalg.norm( cp_points[row] )
+            cp_points[row] *= (self.radius + 0.01)
+        
+        self.additional_points.append( [ cp_points, (_color, _marker) ] )
     
     def set_vectors(self, _points=None):
         pass
@@ -435,18 +444,35 @@ class BlochVisualization:
         self.axes.text(0, 0, self.zlabelpos[1], self.zlabel[1], **common_opts)
     
     def render_points( self ):
-        # axis needs reorganisation
-        self.axes.scatter(
-            np.real(self.additional_points[:,1]),
-            np.real(self.additional_points[:,0]),
-            np.real(self.additional_points[:,2]),
-            s=200,
-            alpha=1,
-            edgecolor=None,
-            zdir="z",
-            color="green",
-            marker=".",
-        )
+        # warning: ?axis needs reorganisation?
+        
+        if self.draw_mode == POINTS_DRAW:
+            self.axes.scatter(
+                np.real(self.additional_points[:,1]),
+                np.real(self.additional_points[:,0]),
+                np.real(self.additional_points[:,2]),
+                s=200,
+                alpha=1,
+                edgecolor=None,
+                zdir="z",
+                color="green",
+                marker=".",
+            )
+            
+        if self.draw_mode == POINTS_MULTI_BATCH_DRAW:
+            for t,(c,m) in self.additional_points:
+                self.axes.scatter(
+                    np.real(t[:,1]),
+                    np.real(t[:,0]),
+                    np.real(t[:,2]),
+                    s=200,
+                    alpha=1,
+                    edgecolor=None,
+                    zdir="z",
+                    color=c,
+                    marker=m,
+                )
+                
         #pass
     
     def render_bloch_sphere( self ):        
@@ -480,8 +506,7 @@ class BlochVisualization:
         self.prepare_mesh(1)
         self.render_hemisphere()
 
-        if self.draw_mode == POINTS_DRAW:
-            self.render_points()
+        self.render_points()
 
 
         self.render_equator_and_parallel()

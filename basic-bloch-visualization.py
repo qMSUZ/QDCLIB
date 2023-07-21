@@ -31,7 +31,6 @@
 # *                                                                         *
 # ***************************************************************************/
 
-
 import numpy as np
 import qdclib as qdcl
 
@@ -51,7 +50,7 @@ def example1():
     ptns = np.append(ptns, [[ 0, 0,-1]], axis=0) # -z
 
     b.set_points( ptns )
-    b.enable_draw_points()
+    b.enable_draw_single_batch_points()
 
     f=b.make_figure()
     f.show()
@@ -62,13 +61,18 @@ def example2():
     ptns = np.empty((0,3))
 
     for degree in range(0, 95, 5):
-        ptns = np.append(ptns, [ qdcl.convert_spherical_point_to_bloch_vector(1.0, np.radians(90), np.radians(135 + degree)) ], axis=0)
+        ptns = np.append( ptns, 
+             [ qdcl.convert_spherical_point_to_bloch_vector(
+                                1.0, 
+                                np.radians(0), 
+                                np.radians(90 + degree)) 
+             ], axis=0 )
     
     b = qdcl.BlochVisualization()
     b.set_title("Bloch Vector Points")
 
     b.set_points( ptns )
-    b.enable_draw_points()
+    b.enable_draw_single_batch_points()
 
     f=b.make_figure()
     f.show()
@@ -145,7 +149,7 @@ def example5():
     b.set_title("Bloch Vector Points")
   
     b.set_points( d )
-    b.enable_draw_points()
+    b.enable_draw_single_batch_points()
       
     f=b.make_figure()
     f.show()
@@ -159,11 +163,43 @@ def example6():
     b.set_title("Bloch Vector Points")
   
     b.set_points( d )
-    b.enable_draw_points()
+    b.enable_draw_single_batch_points()
       
     f=b.make_figure()
     f.show()
- 
+
+def example6b():    
+    pass
+
+def example7():
+    b = qdcl.BlochVisualization()
+    b.set_title("Bloch Vector Points")
+  
+    #b.set_points( d )
+    #b.enable_draw_points()
+
+    ptns1 = np.empty((0,3))
+    ptns1 = np.append(ptns1, [[ 1, 0, 0]], axis=0) # positive x
+    ptns1 = np.append(ptns1, [[-1, 0, 0]], axis=0) # negative x
+    
+    ptns2 = np.empty((0,3))
+    ptns2 = np.append(ptns2, [[ 0, 1, 0]], axis=0) # +y
+    ptns2 = np.append(ptns2, [[ 0,-1, 0]], axis=0) # -y
+    
+    ptns3 = np.empty((0,3))
+    ptns3 = np.append(ptns3, [[ 0, 0, 1]], axis=0) # +z 
+    ptns3 = np.append(ptns3, [[ 0, 0,-1]], axis=0) # -z
+
+    b.clear_points()
+    b.add_points( ptns1, "red", "+")
+    b.add_points( ptns2, "green", "o")
+    b.add_points( ptns3, "blue", ".")
+    b.enable_draw_multi_batch_points()
+         
+
+    f=b.make_figure()
+    f.show()
+
 
 #example1()
 #example2()
@@ -171,4 +207,5 @@ def example6():
 #example4a()
 #example4b()
 #example5()
-example6()
+#example6()
+example7()
