@@ -39,8 +39,8 @@ import qdclib as qdcl
 seed_value = 5678
 np.random.seed( seed_value )
 
-print("\n\nBasic example of kmedoids clustering states of 20 single qubits")
-print("states contains only real amplitudes")
+print("\n\nA basic example of the kmedoids clustering states for 20 single")
+print("qubit states containing only real amplitudes")
 print("seed value:", seed_value)
 
 d = qdcl.create_spherical_probes(20, 2)
@@ -52,7 +52,7 @@ print(" " * 4,np.linalg.norm(d, axis=1))
 # Scatter plot of 2D data 
 #
 
-print("Plot all states on unit circle")
+print("Plot all states on a unit circle")
 
 fig, ax = plt.subplots()
 ax.set_aspect('equal')
@@ -71,7 +71,7 @@ labels, centers = qdcl.kmedoids_quantum_states( d, n_clusters, _func_distance=qd
 print("Norms of each point in centers:")
 print(" " * 4,np.linalg.norm(centers, axis=1))
 
-print("Plot all states on unit circle")
+print("Plot all states on a unit circle")
 print("with centers after clustering")
 
 fig, ax = plt.subplots()
@@ -84,7 +84,7 @@ for idx in range(n_clusters):
 ax.add_patch(circle)
 fig.show()
 
-print("Distance between probes and centers for each classes")
+print("Distance between probes and centers for each class")
 t = qdcl.create_distance_table( d, centers, labels, n_clusters, qdcl.cosine_distance )
 #t = qdcl.create_distance_table( d, centers, labels, n_clusters, qdcl.dot_product_as_distance )
 print("")
