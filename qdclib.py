@@ -219,12 +219,6 @@ def convert_bloch_vector_to_pure_state( _x, _y, _z ):
     pure_state_qubit = convert_spherical_point_to_pure_state( theta, phi  )
     return pure_state_qubit
 
-class BlochVectorsTable:
-    pass
-
-class PureStatesTable:
-    pass
-
 class BlochVisualization:
 
     def __init__( self ):
