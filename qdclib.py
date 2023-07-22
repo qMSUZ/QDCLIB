@@ -170,6 +170,7 @@ def convert_qubit_pure_state_to_bloch_vector( qstate ):
 
 def convert_spherical_point_to_bloch_vector( _r, _theta, _phi ):
     
+    
     xcoord = _r * np.cos( _phi ) * np.cos( _theta )
     ycoord = _r * np.cos( _phi ) * np.sin( _theta )
     zcoord = _r * np.sin( _phi )
@@ -194,7 +195,7 @@ def convert_spherical_point_to_pure_state( _theta, _phi):
     _theta : TYPE
         DESCRIPTION.
         
-        0 <= _theta <= np.pi 
+        0 <= _theta <= 2.0 * np.pi 
         0 <= _phi <= np.pi 
         
     _phi : TYPE
@@ -1346,15 +1347,22 @@ def create_focused_qubits_probes( _n_points, _n_focus_points, _width_of_cluster=
     
     return d
 
-def create_focused_qubits_probes_with_uniform_placed_centers( _n_points, _n_theta, _n_psi, _width_of_cluster=0.1, return_labels = False, return_centers = False ):
+def create_focused_qubits_probes_with_uniform_placed_centers( _n_points, _n_theta, _n_psi, _width_of_cluster=0.1, _return_labels = False, _return_centers = False ):
+    
     centers_on_sphere = [ ]
     
+    _theta = 0.0
+    _psi = 0.0
+    _theta_delta= (2.0*np.pi) / _n_theta
+    _psi_delta= (np.pi) / _n_psi
     for i in range( _n_theta ):
-        for j in range( _n_psi+1 ):
-            _theta = 2.0 * np.pi * (i/_n_theta)
-            _psi = (np.pi/2.0) - np.pi*(j/_n_psi)
+        for j in range( _n_psi ):
             sp = convert_spherical_point_to_bloch_vector(1.0, _theta, _psi)
             centers_on_sphere.append( ( sp[0], sp[1], sp[2]) ) 
+            _theta = _theta +_theta_delta
+            _psi = _psi + _psi_delta
+
+    convert_spherical_point_to_bloch_vector
 
     d, labels = make_blobs( n_samples=_n_points,
                        n_features=3,
@@ -1365,10 +1373,10 @@ def create_focused_qubits_probes_with_uniform_placed_centers( _n_points, _n_thet
         d[i] = d[i] / np.linalg.norm(d[i])
     
     
-    if return_labels==True and return_centers==False:
+    if _return_labels==True and _return_centers==False:
         return d, labels
 
-    if return_labels==True and return_centers==True:
+    if _return_labels==True and _return_centers==True:
         return d, labels, centers_on_sphere
     
     return d

@@ -634,7 +634,7 @@ def create_ghz_alpha_qubit_state(n, alpha):
     return g
 
 def create_generalized_n_qutrit_ghz_state(N, alpha):
-    d=3
+    #d=3
     q = np.zeros( 3 ** N)
     q[0]=np.sin( alpha )
     

@@ -155,9 +155,9 @@ def example5():
     f.show()
 
 
-def example6():
+def example6a():
     
-    d = qdcl.create_focused_qubits_probes_with_uniform_placed_centers(100, 4, 2, 0.05)
+    d = qdcl.create_focused_qubits_probes_with_uniform_placed_centers(100, 2, 2, 0.05)
 
     b = qdcl.BlochVisualization()
     b.set_title("Bloch Vector Points")
@@ -169,7 +169,34 @@ def example6():
     f.show()
 
 def example6b():    
-    pass
+    
+    colors_names=["blue",
+                  "green",
+                  "red",
+                  "cyan",
+                  "magenta",
+                  "yellow",
+                  "black",
+                  "gray",
+                  ]
+    
+    marks=["+",'.',"o"]
+    
+    d, labels = qdcl.create_focused_qubits_probes_with_uniform_placed_centers(100, 2, 2, 0.05, _return_labels=True)
+
+    
+    b = qdcl.BlochVisualization()
+    b.set_title("Bloch Vector Points")
+    
+    b.clear_points()
+    for l in range(labels.max()+1):
+        tmp_ptns = np.empty((0,3))
+        tmp_ptns = d[labels[:]==l]
+        b.add_points( tmp_ptns, colors_names[l % 8] , marks[l % 3])
+    b.enable_draw_multi_batch_points()
+      
+    f=b.make_figure()
+    f.show()
 
 def example7():
     b = qdcl.BlochVisualization()
@@ -207,5 +234,6 @@ def example7():
 #example4a()
 #example4b()
 #example5()
-#example6()
-example7()
+#example6a()
+example6b()
+#example7()
