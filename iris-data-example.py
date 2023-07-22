@@ -100,13 +100,13 @@ def read_iris_data( fname ):
     return df.values, Q, QPrime, Y,  Q0, Q1, Q2
 
 
-iris_data, d,  dprime, Y, d0, d1, d2 = read_iris_data( 'data/iris_data.txt')
+org_iris_data, d,  dprime, Y, d0, d1, d2 = read_iris_data( 'data/iris_data.txt')
 
 n_components = 3
 pca = decomposition.PCA( n_components )
 #d_r = pca.fit(d).transform(d)
 #d_r = pca.fit(dprime).transform(dprime)
-d_r = pca.fit(iris_data[:, 0:4]).transform(iris_data[:, 0:4])
+d_r = pca.fit(org_iris_data[:, 0:4]).transform(org_iris_data[:, 0:4])
 
    
 fig = plt.figure( figsize = (12,12) )
@@ -120,6 +120,10 @@ ax.set_ylabel('Y Label')
 ax.set_zlabel('Z Label')
 plt.show()
 
+class1=d_r[   0:49 , : ]
+class2=d_r[  50:99 , : ]
+class3=d_r[ 100:149, : ]
+
 ptns = np.empty((0,3))
 for i in range(0, 150):
 #for i in range(0, 50, 1):
@@ -132,8 +136,12 @@ for i in range(0, 150):
 b = qdcl.BlochVisualization()
 b.set_title("Bloch Vector Points")
 
-b.set_points( ptns )
-b.enable_draw_points()
+b.clear_points()
+b.add_points( class1, "red", "+")
+b.add_points( class2, "green", "o")
+b.add_points( class3, "blue", ".")
+
+b.enable_draw_multi_batch_points()
 
 f=b.make_figure()
 f.show()
