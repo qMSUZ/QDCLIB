@@ -1421,6 +1421,11 @@ def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _func_distance=None):
         DESCRIPTION.
 
     """
+
+    if _func_distance == None:
+        raise ArgumentValueError("The _func_distance argment is None, a distance function shoud be provided.")
+        return None
+
     _n_probes = _X.shape[0]
     _distances = np.zeros( (_n_probes, _n_clusters) )
     centers = _X[np.random.choice(_n_probes, _n_clusters, replace=False)]
