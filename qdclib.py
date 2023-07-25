@@ -1185,7 +1185,7 @@ def bures_distance( uvector, vvector, r=0, check=0 ):
     
     return rslt
 
-def hs_distance( uvector, vvector, r=0 ):
+def hs_distance( uvector, vvector, r=0, check=0 ):
     """
     Caclutales the Hilbert-Schmidt distance between two pure states.
 
@@ -1196,6 +1196,9 @@ def hs_distance( uvector, vvector, r=0 ):
     r : integer
         The number of decimals to use while rounding the number (default is 0,
         i.e. the number is not rounded).
+    check : Boolean
+        If check==1 then paramatres uvector, vvector are checked for being 
+        normalized vectors (as default it is not checked).
 
     Returns
     -------
@@ -1219,10 +1222,23 @@ def hs_distance( uvector, vvector, r=0 ):
     >>> u=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
     >>> print(hs_distance(u, v, 3))
         1.0
+    If entered vector v is not a correct quantum state:
+    >>> v=np.array([1,1])
+    >>> u=np.array([1,0])
+    >>> print(hs_distance(u, v, 0, 1))
+        ...
+        ValueError: The given vector is not a correct quantum state!
 
     """
-    qu=_internal_qdcl_vector_state_to_density_matrix(uvector)
-    qv=_internal_qdcl_vector_state_to_density_matrix(vvector)
+    if check==0:
+        qu=_internal_qdcl_vector_state_to_density_matrix(uvector)
+        qv=_internal_qdcl_vector_state_to_density_matrix(vvector)
+    elif check==1:
+        qu=vector_state_to_density_matrix(uvector)
+        qv=vector_state_to_density_matrix(vvector)
+    else:
+        raise ValueError("Incorrect value of the parameter 'check'!")
+        return None
     rp=sympy.re(np.trace(np.subtract(qu,qv) @ np.subtract(qu,qv)))
     if r==0:
         rslt=math.sqrt(rp)
