@@ -525,6 +525,22 @@ def create_circle_plot_for_2d_data(_qX):
     ax.scatter( _qX[:,0], _qX[:,1])
     ax.add_patch(circle)
     
+    ax.set_xlabel('Feature 1 (X axis)')
+    ax.set_ylabel('Feature 2 (Y axis)')
+
+    return fig
+
+
+def create_plot_for_2d_data(_qX):
+    # shape _qX to check
+
+    fig, ax = plt.subplots()
+    ax.set_aspect('equal')
+    ax.scatter( _qX[:,0], _qX[:,1])
+    
+    ax.set_xlabel('Feature 1 (X axis)')
+    ax.set_ylabel('Feature 2 (Y axis)')
+    
     return fig
 
 def create_circle_plot_with_centers_for_2d_data(_qX, _n_clusters, _centers, _labels):

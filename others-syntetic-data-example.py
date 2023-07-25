@@ -38,5 +38,31 @@ import pandas as pd
 import numpy as np
 
 from sklearn import decomposition
+from sklearn.datasets import make_circles
+from sklearn.datasets import make_moons
+
+def circle_example():
+    d, labels = make_circles(n_samples=100, factor=0.3, noise=0.05, random_state=0)
+    #X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=0)
+        
+    f = qdcl.create_circle_plot_for_2d_data(d)    
+    
+    # n_clusters = 2
+    # labels, centers = qdcl.kmeans_spherical( d, n_clusters, 128, qdcl.cosine_distance)
+    # f=qdcl.create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
+    # f.show()
+
+
+def moon_example():
+    d, labels = make_moons( n_samples = 100,  noise=0.05, )
+    #X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=0)
+
+    f = qdcl.create_plot_for_2d_data(d)
+    
+    # n_clusters = 2
+    # labels, centers = qdcl.kmeans_spherical( d, n_clusters, 128, qdcl.cosine_distance)
+    # f=qdcl.create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
+    # f.show()
+
 
 
