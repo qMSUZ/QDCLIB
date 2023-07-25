@@ -2536,3 +2536,12 @@ def pr_state(q, N, d):
     for v in q:
         print(dec_to_base(idx, d).zfill(N), v)
         idx=idx+1
+
+def version():
+    pass
+
+def about():
+    pass
+
+def how_to_cite():
+    pass
