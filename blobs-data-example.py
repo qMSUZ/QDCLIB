@@ -38,5 +38,24 @@ import pandas as pd
 import numpy as np
 
 from sklearn import decomposition
+from sklearn.datasets import make_blobs
 
+def blobs_example():
+    centers = [
+                (-5,  5), (0,  5), (5,  5),
+                (-5,  0), (0,  0), (5,  0),
+                (-5, -5), (0, -5), (5, -5),
+              ]
+    d, labels = make_blobs(n_samples=200, centers=centers, cluster_std=0.5, shuffle=False, random_state=1234)
 
+    #X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=0)
+        
+    f = qdcl.create_plot_for_2d_data(d)    
+    
+    # n_clusters = 2
+    # labels, centers = qdcl.kmeans_spherical( d, n_clusters, 128, qdcl.cosine_distance)
+    # f=qdcl.create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
+    # f.show()
+    
+    
+blobs_example()    
