@@ -129,6 +129,39 @@ def _internal_qdcl_vector_state_to_density_matrix(q):
 def _internal_qdcl_create_density_matrix_from_vector_state(q):
     return _internal_qdcl_vector_state_to_density_matrix(q)
 
+def vector_state_to_density_matrix(q):
+    """
+    Calculates density matrix for a given vector state.
+
+    Parameters
+    ----------
+    q : numpy array object
+        A normalized vector state.
+
+    Returns
+    -------
+    numpy ndarray
+        A density matrix.
+        
+    Examples
+    --------
+    A density matrix for a correct state:
+    >>> x=vector_state_to_density_matrix(np.array([1/math.sqrt(2),-1/math.sqrt(2)]))
+    >>> print(x)
+        [[ 0.5 -0.5]
+         [-0.5  0.5]]
+    If the state vector is not normalized:
+    >>> print(vector_state_to_density_matrix(np.array([0+1j,1])))
+        Traceback (most recent call last): ... 
+        ValueError: The given vector is not a correct quantum state!
+
+    """
+    if (math.isclose(np.linalg.norm(q), 1, abs_tol=0.000001)):
+        return np.outer(q, np.transpose(q.conj()))
+    else:
+        raise ValueError("The given vector is not a correct quantum state!")
+        return None
+
 # code based on chop
 # discussed at:
 #   https://stackoverflow.com/questions/43751591/does-python-have-a-similar-function-of-chop-in-mathematica
@@ -1152,7 +1185,7 @@ def bures_distance( uvector, vvector, r=0, check=0 ):
     
     return rslt
 
-def hs_distance( uvector, vvector, r=0 ):
+def hs_distance( uvector, vvector, r=0, check=0 ):
     """
     Caclutales the Hilbert-Schmidt distance between two pure states.
 
@@ -1163,6 +1196,9 @@ def hs_distance( uvector, vvector, r=0 ):
     r : integer
         The number of decimals to use while rounding the number (default is 0,
         i.e. the number is not rounded).
+    check : Boolean
+        If check==1 then paramatres uvector, vvector are checked for being 
+        normalized vectors (as default it is not checked).
 
     Returns
     -------
@@ -1186,10 +1222,23 @@ def hs_distance( uvector, vvector, r=0 ):
     >>> u=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
     >>> print(hs_distance(u, v, 3))
         1.0
+    If entered vector v is not a correct quantum state:
+    >>> v=np.array([1,1])
+    >>> u=np.array([1,0])
+    >>> print(hs_distance(u, v, 0, 1))
+        ...
+        ValueError: The given vector is not a correct quantum state!
 
     """
-    qu=_internal_qdcl_vector_state_to_density_matrix(uvector)
-    qv=_internal_qdcl_vector_state_to_density_matrix(vvector)
+    if check==0:
+        qu=_internal_qdcl_vector_state_to_density_matrix(uvector)
+        qv=_internal_qdcl_vector_state_to_density_matrix(vvector)
+    elif check==1:
+        qu=vector_state_to_density_matrix(uvector)
+        qv=vector_state_to_density_matrix(vvector)
+    else:
+        raise ValueError("Incorrect value of the parameter 'check'!")
+        return None
     rp=sympy.re(np.trace(np.subtract(qu,qv) @ np.subtract(qu,qv)))
     if r==0:
         rslt=math.sqrt(rp)
