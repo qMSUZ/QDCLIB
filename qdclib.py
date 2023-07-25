@@ -129,6 +129,39 @@ def _internal_qdcl_vector_state_to_density_matrix(q):
 def _internal_qdcl_create_density_matrix_from_vector_state(q):
     return _internal_qdcl_vector_state_to_density_matrix(q)
 
+def vector_state_to_density_matrix(q):
+    """
+    Calculates density matrix for a given vector state.
+
+    Parameters
+    ----------
+    q : numpy array object
+        A normalized vector state.
+
+    Returns
+    -------
+    numpy ndarray
+        A density matrix.
+        
+    Examples
+    --------
+    A density matrix for a correct state:
+    >>> x=vector_state_to_density_matrix(np.array([1/math.sqrt(2),-1/math.sqrt(2)]))
+    >>> print(x)
+        [[ 0.5 -0.5]
+         [-0.5  0.5]]
+    If the state vector is not normalized:
+    >>> print(vector_state_to_density_matrix(np.array([0+1j,1])))
+        Traceback (most recent call last): ... 
+        ValueError: The given vector is not a correct quantum state!
+
+    """
+    if (math.isclose(np.linalg.norm(q), 1, abs_tol=0.000001)):
+        return np.outer(q, np.transpose(q.conj()))
+    else:
+        raise ValueError("The given vector is not a correct quantum state!")
+        return None
+
 # code based on chop
 # discussed at:
 #   https://stackoverflow.com/questions/43751591/does-python-have-a-similar-function-of-chop-in-mathematica
