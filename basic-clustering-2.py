@@ -38,13 +38,13 @@ import qdclib as qdcl
 # -1.0/np.sqrt(2)|0> +  1.0/np.sqrt(2)|1> 
 #  1.0/np.sqrt(2)|0> +  1.0/np.sqrt(2)|1> 
 
-d, labels = qdcl.create_focused_qubits_probes_with_uniform_placed_centers(100, 2, 2, 0.05, return_labels=True)
+d, labels = qdcl.create_focused_qubits_probes_with_uniform_placed_centers(100, 2, 2, 0.05, _return_labels=True)
 
 b = qdcl.BlochVisualization()
 b.set_title("Bloch Vector Points")
   
 b.set_points( d )
-b.enable_draw_points()
+b.enable_draw_single_batch_points()
   
 f=b.make_figure()
 f.show()
