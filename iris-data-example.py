@@ -99,7 +99,6 @@ def read_iris_data( fname ):
             idx2 = idx2 + 1
     return df.values, Q, QPrime, Y,  Q0, Q1, Q2
 
-
 org_iris_data, d,  dprime, Y, d0, d1, d2 = read_iris_data( 'data/iris_data.txt')
 
 n_components = 3
