@@ -102,13 +102,6 @@ def read_iris_data( fname ):
 
 org_iris_data, d,  dprime, Y, d0, d1, d2 = read_iris_data( 'data/iris_data.txt')
 
-#n_components = 3
-#pca = decomposition.PCA( n_components )
-#d_r = pca.fit(d).transform(d)
-#d_r = pca.fit(dprime).transform(dprime)
-#d_r = pca.fit(org_iris_data[:, 0:4]).transform(org_iris_data[:, 0:4])
-
-
 fig = plt.figure( figsize = (12,12) )
 ax = fig.add_subplot( )
 ax.scatter( org_iris_data[0:49, 0],    org_iris_data[0:49, 1],    color="red")
@@ -140,39 +133,43 @@ ax.set_xlabel('X Label')
 ax.set_ylabel('Y Label')
 plt.show()
 
-#fig = plt.figure( figsize = (12,12) )
-#ax = fig.add_subplot(  )
-# ax.scatter( d_r[0:49, 0],    d_r[0:49, 1],    d_r[0:49, 2],    color="red")
-# ax.scatter( d_r[50:99, 0],   d_r[50:99, 1],   d_r[50:99, 2],   color="green")
-# ax.scatter( d_r[100:149, 0], d_r[100:149, 1], d_r[100:149, 2], color="blue")
-# ax.set_title("PCA for n_components = {}".format(n_components))
-# ax.set_xlabel('X Label')
-# ax.set_ylabel('Y Label')
-# ax.set_zlabel('Z Label')
-# plt.show()
+fig = plt.figure( figsize = (12,12) )
+ax = fig.add_subplot( projection = '3d' )
+ax.scatter( d[0:49, 0],    d[0:49, 1],    d[0:49, 2],    color="red")
+#ax.scatter( d_r[50:99, 0],   d_r[50:99, 1],   d_r[50:99, 2],   color="green")
+ax.scatter( d[100:149, 0], d[100:149, 1], d[100:149, 2], color="blue")
+ax.set_title("Iris data after scale and normalizatoion three first features")
+ax.set_xlabel('X Label')
+ax.set_ylabel('Y Label')
+ax.set_zlabel('Z Label')
+plt.show()
 
-class1=d[   0:49 , : ]
-# class2=d_r[  50:99 , : ]
-class3=d[ 100:149, : ]
+class1=d[    0:49, 0:3 ]
+#class2=d[  50:99, : ]
+class3=d[ 100:149, 0:3 ]
 
-# ptns = np.empty((0,3))
-# for i in range(0, 150):
-# #for i in range(0, 50, 1):
-# #for i in range(50, 100, 1):
-# #for i in range(100, 150, 1):    
-#     ptns = np.append(ptns, [ d_r[i] ], axis=0) 
-#     # points will be normalised by set_points
-#     # method
+
+# Find centers
+dataset = np.vstack( (class1, class3) )
+labels, centers = qdcl.kmeans_quantum_states( dataset, 2, _func_distance=qdcl.FIDELITY_DISTANCE )
+#labels, centers = qdcl.kmedoids_quantum_states( dataset, 2, _func_distance=qdcl.MANHATTAN_DISTANCE )
 
 b = qdcl.BlochVisualization()
-b.set_title("Bloch Vector Points")
+b.set_view(15, 30)
+
+b.set_title("Bloch Vector Points for first three features")
 
 b.clear_points()
 b.add_points( class1, "red", "+")
-#b.add_points( class2, "green", "o")
 b.add_points( class3, "blue", ".")
+
+b.set_vectors( centers )
+
 
 b.enable_draw_multi_batch_points()
 
 f=b.make_figure()
 f.show()
+
+
+

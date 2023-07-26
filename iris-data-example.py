@@ -135,17 +135,21 @@ class1=d_r[   0:49 , : ]
 class2=d_r[  50:99 , : ]
 class3=d_r[ 100:149, : ]
 
-ptns = np.empty((0,3))
-for i in range(0, 150):
-#for i in range(0, 50, 1):
-#for i in range(50, 100, 1):
-#for i in range(100, 150, 1):    
-    ptns = np.append(ptns, [ d_r[i] ], axis=0) 
-    # points will be normalised by set_points
-    # method
+# ptns = np.empty((0,3))
+# for i in range(0, 150):
+# #for i in range(0, 50, 1):
+# #for i in range(50, 100, 1):
+# #for i in range(100, 150, 1):    
+#     ptns = np.append(ptns, [ d_r[i] ], axis=0) 
+#     # points will be normalised by set_points
+#     # method
+
+#labels, centers = qdcl.kmeans_quantum_states( d_r, 3, _func_distance=qdcl.COSINE_DISTANCE )
+labels, centers = qdcl.kmedoids_quantum_states( d_r, 3, _func_distance=qdcl.MANHATTAN_DISTANCE )
 
 b = qdcl.BlochVisualization()
 b.set_title("Bloch Vector Points")
+#b.set_view(15, 30)
 
 b.clear_points()
 b.add_points( class1, "red", "+")
@@ -153,6 +157,8 @@ b.add_points( class2, "green", "o")
 b.add_points( class3, "blue", ".")
 
 b.enable_draw_multi_batch_points()
+
+b.set_vectors( centers )
 
 f=b.make_figure()
 f.show()

@@ -260,8 +260,11 @@ class BlochVisualization:
         self.additional_states = []
         self.additional_vectors = []
         
+    
         self.radius = 2.0
         self.resolution_of_mesh = 31
+        
+        self.default_arrow_size = 0.2
         
         self.figure = None
         self.axes = None
@@ -299,6 +302,9 @@ class BlochVisualization:
         
         return f
     
+    def set_view(self, a, b):
+        self.viewangle=[a,b]
+        
     def set_title(self, _title):
         self.title = _title
     
@@ -353,7 +359,14 @@ class BlochVisualization:
         self.additional_points.append( [ cp_points, (_color, _marker) ] )
     
     def set_vectors(self, _points=None):
-        pass
+        self.additional_vectors = _points.copy()
+        
+        for row in range(0, self.additional_vectors.shape[0]):
+            # normalization points
+            self.additional_vectors[row] /= np.linalg.norm(self.additional_vectors[row])
+            self.additional_vectors[row] *= (self.radius + 0.01)
+            
+        # rescale to radius r
 
     def clear_vectors(self):
         self.additional_vectors = [ ]
@@ -473,6 +486,8 @@ class BlochVisualization:
     
     def render_points( self ):
         # warning: ?axis needs reorganisation?
+        if  self.additional_points == []:
+            return
         
         if self.draw_mode == POINTS_DRAW:
             self.axes.scatter(
@@ -501,7 +516,22 @@ class BlochVisualization:
                     marker=m,
                 )
                 
-        #pass
+    def render_vectors( self ):
+        if self.additional_vectors == [ ]:
+            return        
+        for idx in range(self.additional_vectors.shape[0]):
+            self.axes.quiver(
+                0.0,0.0,0.0,
+                np.real(self.additional_vectors[idx,1]),
+                np.real(self.additional_vectors[idx,0]),
+                np.real(self.additional_vectors[idx,2]),
+                color="green",
+                arrow_length_ratio=self.default_arrow_size,
+                #marker="x",
+            )            
+    
+    def render_pure_states( self ):
+        pass
     
     def render_bloch_sphere( self ):        
         self.figure = plt.figure( figsize=self.figuresize )
@@ -535,7 +565,7 @@ class BlochVisualization:
         self.render_hemisphere()
 
         self.render_points()
-
+        self.render_vectors()
 
         self.render_equator_and_parallel()
 
