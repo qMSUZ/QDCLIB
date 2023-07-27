@@ -1217,8 +1217,8 @@ def bures_distance( uvector, vvector, r=0, check=0 ):
     >>> print(bures_distance(u, v))
         0.0
     A distance between the orthogonal states:
-    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)]])
-    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)]])
+    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)])
     >>> print(bures_distance(u, v))
         2.0
     A distance between two examplary states:
@@ -1270,8 +1270,8 @@ def hs_distance( uvector, vvector, r=0, check=0 ):
     >>> print(hs_distance(u, v))
         0.0
     A distance between the orthogonal states:
-    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)]])
-    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)]])
+    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)])
     >>> print(hs_distance(u, v, 5))
         1.41421
     A distance between two examplary states:
@@ -1304,7 +1304,7 @@ def hs_distance( uvector, vvector, r=0, check=0 ):
     return rslt
 
 
-def trace_distance( uvector, vvector, r=0 ):
+def trace_distance( uvector, vvector, r=0, check=0 ):
     """
     Calculates the distance based on density matrix trace of two pure states.
 
@@ -1315,6 +1315,9 @@ def trace_distance( uvector, vvector, r=0 ):
     r : integer
         The number of decimals to use while rounding the number (default is 0,
         i.e. the number is not rounded).
+    check : Boolean
+        If check==1 then paramatres uvector, vvector are checked for being 
+        normalized vectors (as default it is not checked).
 
     Returns
     -------
@@ -1338,14 +1341,27 @@ def trace_distance( uvector, vvector, r=0 ):
     >>> u=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
     >>> print(trace_distance(u, v, 5))
         0.70711
-
+    If entered vector v is not a correct quantum state:
+    >>> v=np.array([1,1])
+    >>> u=np.array([1,0])
+    >>> print(trace_distance(u, v, 0, 1))
+        ...
+        ValueError: The vector is not normalized!
+        
     """
-    if r==0:
-        rslt = np.sqrt( 1.0 - ( np.linalg.norm( np.vdot( vvector, uvector ) ) ** 2.0 ) )
+    x=1
+    y=1
+    if check==1:
+        x=vector_check(uvector)
+        y=vector_check(vvector)
+    if (x==1 and y==1):
+        if r==0:
+            rslt = np.sqrt( 1.0 - ( np.linalg.norm( np.vdot( vvector, uvector ) ) ** 2.0 ) )
+        else:
+            rslt = round( np.sqrt( 1.0 - ( np.linalg.norm( np.vdot( vvector, uvector ) ) ** 2.0 ) ), r )
+        return rslt
     else:
-        rslt = round( np.sqrt( 1.0 - ( np.linalg.norm( np.vdot( vvector, uvector ) ) ** 2.0 ) ), r )
-    
-    return rslt
+        return None
 
 
 def probability_as_distance_case_qubit_alpha(q0, q1, r=0, check=0 ):
