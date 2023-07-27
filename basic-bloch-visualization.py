@@ -50,7 +50,7 @@ def example1():
     ptns = np.append(ptns, [[ 0, 0,-1]], axis=0) # -z
 
     b.set_points( ptns )
-    b.enable_draw_single_batch_points()
+    b.enable_single_batch_draw()
 
     f=b.make_figure()
     f.show()
@@ -70,9 +70,9 @@ def example2():
     
     b = qdcl.BlochVisualization()
     b.set_title("Bloch Vector Points")
+    b.enable_single_batch_draw()
 
     b.set_points( ptns )
-    b.enable_draw_single_batch_points()
 
     f=b.make_figure()
     f.show()
@@ -84,6 +84,7 @@ def example3():
 
     b = qdcl.BlochVisualization()
     b.set_title("Pure states")
+    b.enable_single_batch_draw()
 
     purestates = np.empty((0,2))
 
@@ -94,7 +95,6 @@ def example3():
 
     
     b.set_pure_states( purestates )
-    b.enable_pure_states_draw()
 
     f=b.make_figure()
     f.show()
@@ -113,9 +113,9 @@ def example4a():
 
     b = qdcl.BlochVisualization()
     b.set_title("Pure states")
+    b.enable_single_batch_draw()
 
     b.set_pure_states( purestates )
-    b.enable_pure_states_draw()
 
     f=b.make_figure()
     f.show()
@@ -133,9 +133,9 @@ def example4b():
 
     b = qdcl.BlochVisualization()
     b.set_title("Pure states")
+    b.enable_single_batch_draw()
 
     b.set_pure_states( purestates )
-    b.enable_pure_states_draw()
 
     f=b.make_figure()
     f.show()
@@ -248,6 +248,27 @@ def example8():
     f=b.make_figure()
     f.show()
 
+def example9():
+
+    b = qdcl.BlochVisualization()
+    b.set_title("Bloch Vector Points")
+    
+    b.clear_points()
+    b.clear_vectors()
+    b.enable_single_batch_draw()
+    
+    ptns1 = np.empty((0,2))
+    ptns1 = np.append(ptns1, [ [1.0, 0.0] ], axis=0)
+    ptns1 = np.append(ptns1, [ [0.0, 1.0] ], axis=0)
+    
+    b.set_pure_states( ptns1, "red" )
+    b.set_pure_states_as_vectors( ptns1, "green" )
+
+
+    f=b.make_figure()
+    f.show()
+
+
 #example1()
 #example2()
 #example3()
@@ -257,4 +278,5 @@ def example8():
 #example6a()
 #example6b()
 #example7()
-example8()
+#example8()
+example9()

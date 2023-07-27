@@ -51,6 +51,8 @@ TRACE_DISTANCE     = 1003
 MANHATTAN_DISTANCE = 1004
 BURES_DISTANCE     = 1005
 HS_DISTANCE        = 1006
+P_CQA_DISTANCE     = 1007
+P_CQB_DISTANCE     = 1008
 
 POINTS_DRAW        = 2000
 LINES_DRAW         = 2001
@@ -258,8 +260,7 @@ class BlochVisualization:
         
         self.additional_points = []
         self.additional_states = []
-        self.additional_vectors = []
-        
+        self.additional_vectors = []        
     
         self.radius = 2.0
         self.resolution_of_mesh = 31
@@ -292,6 +293,9 @@ class BlochVisualization:
         self.main_font_color = "blue"
         self.main_font_size = 25
         self.title = "Basic title for Bloch Sphere"
+        
+        self.point_color = "green"
+        self.vector_color = "green"
 
         self.draw_mode = 0
 
@@ -328,10 +332,10 @@ class BlochVisualization:
     def reset_draw_mode( self ):
         self.draw_mode = 0
 
-    def enable_draw_single_batch_points( self ):
+    def enable_single_batch_draw( self ):
         self.draw_mode = POINTS_DRAW
 
-    def enable_draw_multi_batch_points( self ):
+    def enable_multi_batch_draw( self ):
         self.draw_mode = POINTS_MULTI_BATCH_DRAW
 
     def set_points(self, _points=None):
@@ -359,6 +363,11 @@ class BlochVisualization:
         self.additional_points.append( [ cp_points, (_color, _marker) ] )
     
     def set_vectors(self, _points=None):
+        
+        #
+        # type check
+        #
+        
         self.additional_vectors = _points.copy()
         
         for row in range(0, self.additional_vectors.shape[0]):
@@ -386,11 +395,26 @@ class BlochVisualization:
         
             ptns = np.append( ptns, [[ xcoord, ycoord, zcoord]], axis=0)  # for state
     
+        if _color is not None:
+            self.point_color=_color
         self.set_points( ptns )
-        
-    def enable_pure_states_draw( self ):
-        self.draw_mode = POINTS_DRAW        
 
+    def set_pure_states_as_vectors(self, _states=None, _color=None):
+        ptns = np.empty((0,3))
+        for qstate in _states:
+            qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
+            
+            # change sign for x coords
+            xcoord = - np.trace( _internal_pauli_x() @ qstateden )
+            ycoord =   np.trace( _internal_pauli_y() @ qstateden )
+            zcoord =   np.trace( _internal_pauli_z() @ qstateden )
+        
+            ptns = np.append( ptns, [[ xcoord, ycoord, zcoord]], axis=0)  # for state
+            
+        if _color is not None:
+            self.vector_color=_color
+        self.set_vectors( ptns )
+        
     def clear_pure_states(self):
         self.additional_states = [ ]
 
@@ -498,7 +522,7 @@ class BlochVisualization:
                 alpha=1,
                 edgecolor=None,
                 zdir="z",
-                color="green",
+                color=self.point_color,
                 marker=".",
             )
             
@@ -517,7 +541,7 @@ class BlochVisualization:
                 )
                 
     def render_vectors( self ):
-        if self.additional_vectors == [ ]:
+        if self.additional_vectors == []:
             return        
         for idx in range(self.additional_vectors.shape[0]):
             self.axes.quiver(
@@ -525,12 +549,15 @@ class BlochVisualization:
                 np.real(self.additional_vectors[idx,1]),
                 np.real(self.additional_vectors[idx,0]),
                 np.real(self.additional_vectors[idx,2]),
-                color="green",
+                color=self.vector_color,
                 arrow_length_ratio=self.default_arrow_size,
                 #marker="x",
             )            
     
     def render_pure_states( self ):
+        pass
+
+    def render_pure_states_as_vectors( self ):
         pass
     
     def render_bloch_sphere( self ):        
@@ -1320,6 +1347,16 @@ def trace_distance( uvector, vvector, r=0 ):
     
     return rslt
 
+
+def probability_as_distance_case_qubit_alpha(q0, q1, r=0, check=0 ):
+    rslt = np.abs( (np.linalg.norm(q0[0])**2) - (np.linalg.norm(q1[0])**2) )
+    return float(rslt)
+
+def probability_as_distance_case_qubit_beta(q0, q1, r=0, check=0 ):
+    rslt = np.abs( (np.linalg.norm(q0[1])**2) - (np.linalg.norm(q1[1])**2) )
+    return float(rslt)
+
+
 def create_zero_vector( _n_dim=3 ):
     """
     
@@ -1591,6 +1628,13 @@ def kmeans_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _max
     
     if _func_distance==HS_DISTANCE:
         _funcdist = hs_distance 
+
+    if _func_distance==P_CQA_DISTANCE:
+        _funcdist = probability_as_distance_case_qubit_alpha
+
+    if _func_distance==P_CQB_DISTANCE:
+        _funcdist = probability_as_distance_case_qubit_beta
+
     
     closest, centers = kmeans_spherical( _qX, _n_clusters, _max_iterations, _funcdist )
         
@@ -1713,6 +1757,12 @@ def kmedoids_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _m
     if _func_distance==HS_DISTANCE:
         _funcdist = hs_distance 
     
+    if _func_distance==P_CQA_DISTANCE:
+        _funcdist = probability_as_distance_case_qubit_alpha
+
+    if _func_distance==P_CQB_DISTANCE:
+        _funcdist = probability_as_distance_case_qubit_beta
+
 
     closest, centers = kmedoids( _qX, _n_clusters, _max_iterations, _funcdist )
         
