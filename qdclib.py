@@ -1243,8 +1243,8 @@ def hs_distance( uvector, vvector, r=0, check=0 ):
     >>> print(hs_distance(u, v))
         0.0
     A distance between the orthogonal states:
-    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)]])
-    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)]])
+    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)])
     >>> print(hs_distance(u, v, 5))
         1.41421
     A distance between two examplary states:
