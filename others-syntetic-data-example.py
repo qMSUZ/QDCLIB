@@ -41,7 +41,7 @@ from sklearn import decomposition
 from sklearn.datasets import make_circles
 from sklearn.datasets import make_moons
 
-def circle_example():
+def circles_example():
     d, org_labels = make_circles(n_samples=100, factor=0.3, noise=0.05, random_state=0)
     #X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=0)
         
@@ -84,7 +84,6 @@ def circle_example():
     # (np.abs(class1_d[:,0]) ** 2) + (np.abs(class1_d[:,1]) ** 2)
     
     n_clusters = 2
-    #labels, centers = qdcl.kmeans_quantum_states( ps_d, n_clusters, qdcl.P_CQA_DISTANCE)
     labels, centers = qdcl.kmedoids_quantum_states( ps_d, n_clusters, qdcl.P_CQA_DISTANCE)
     
     
@@ -120,4 +119,4 @@ def moon_example():
     # f.show()
 
 
-circle_example()
+circles_example()

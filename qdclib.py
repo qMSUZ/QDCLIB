@@ -1373,8 +1373,12 @@ def probability_as_distance_case_qubit_beta(uvector, vvector, r=0, check=0 ):
     return float(rslt)
 
 def swap_test_as_distance_p0(uvector, vvector, r=0, check=0):
-    rslt= 0.5 + 0.5 * np.linalg.norm( (uvector.T @ vvector) ) ** 2
-    return rslt
+    rslt = 0.5 + 0.5 * np.linalg.norm( (uvector.T @ vvector) ) ** 2
+    return float(rslt)
+
+def swap_test_as_distance_p1(uvector, vvector, r=0, check=0):
+    rslt = 1.0 - swap_test_as_distance_p0(uvector, vvector, r, check)
+    return float(rslt)
 
 def create_zero_vector( _n_dim=3 ):
     """
