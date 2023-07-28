@@ -1364,14 +1364,17 @@ def trace_distance( uvector, vvector, r=0, check=0 ):
         return None
 
 
-def probability_as_distance_case_qubit_alpha(q0, q1, r=0, check=0 ):
-    rslt = np.abs( (np.linalg.norm(q0[0])**2) - (np.linalg.norm(q1[0])**2) )
+def probability_as_distance_case_qubit_alpha(uvector, vvector, r=0, check=0 ):
+    rslt = np.abs( (np.linalg.norm(uvector[0])**2) - (np.linalg.norm(vvector[0])**2) )
     return float(rslt)
 
-def probability_as_distance_case_qubit_beta(q0, q1, r=0, check=0 ):
-    rslt = np.abs( (np.linalg.norm(q0[1])**2) - (np.linalg.norm(q1[1])**2) )
+def probability_as_distance_case_qubit_beta(uvector, vvector, r=0, check=0 ):
+    rslt = np.abs( (np.linalg.norm(uvector[1])**2) - (np.linalg.norm(vvector[1])**2) )
     return float(rslt)
 
+def swap_test_as_distance_p0(uvector, vvector, r=0, check=0):
+    rslt= 0.5 + 0.5 * np.linalg.norm( (uvector.T @ vvector) ) ** 2
+    return rslt
 
 def create_zero_vector( _n_dim=3 ):
     """
