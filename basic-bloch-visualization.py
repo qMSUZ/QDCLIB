@@ -143,13 +143,13 @@ def example4b():
 
 def example5():
 
-    d = qdcl.create_focused_qubits_probes( 30, 2, 0.25)
+    d = qdcl.create_focused_qubits_probes( 30, 3, 0.25)
 
     b = qdcl.BlochVisualization()
     b.set_title("Bloch Vector Points")
   
     b.set_points( d )
-    b.enable_draw_single_batch_points()
+    b.enable_single_batch_draw()
       
     f=b.make_figure()
     f.show()
@@ -163,7 +163,7 @@ def example6a():
     b.set_title("Bloch Vector Points")
   
     b.set_points( d )
-    b.enable_draw_single_batch_points()
+    b.enable_single_batch_draw()
       
     f=b.make_figure()
     f.show()
@@ -193,7 +193,7 @@ def example6b():
         tmp_ptns = np.empty((0,3))
         tmp_ptns = d[labels[:]==l]
         b.add_points( tmp_ptns, colors_names[l % 8] , marks[l % 3])
-    b.enable_draw_multi_batch_points()
+    b.enable_multi_batch_draw()
       
     f=b.make_figure()
     f.show()
@@ -221,7 +221,7 @@ def example7():
     b.add_points( ptns1, "red", "+")
     b.add_points( ptns2, "green", "o")
     b.add_points( ptns3, "blue", "x")
-    b.enable_draw_multi_batch_points()
+    b.enable_multi_batch_draw()
          
 
     f=b.make_figure()
@@ -234,7 +234,7 @@ def example8():
     
     b.clear_points()
     b.clear_vectors()
-    b.enable_draw_single_batch_points()
+    b.enable_single_batch_draw()
     
     ptns1 = np.empty((0,3))
     ptns1 = np.append(ptns1, [ qdcl.convert_spherical_point_to_bloch_vector(1.0, 

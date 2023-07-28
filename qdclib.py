@@ -53,6 +53,7 @@ BURES_DISTANCE     = 1005
 HS_DISTANCE        = 1006
 P_CQA_DISTANCE     = 1007
 P_CQB_DISTANCE     = 1008
+SWAP_TEST_DISTANCE = 1009
 
 POINTS_DRAW        = 2000
 LINES_DRAW         = 2001
@@ -173,6 +174,7 @@ def _internal_chop(expr, delta=10 ** -10):
     else:
         return [_internal_chop(x) for x in expr]
 
+chop = _internal_chop
 
 def convert_qubit_pure_state_to_bloch_vector( qstate ):
     """
@@ -339,6 +341,7 @@ class BlochVisualization:
         self.draw_mode = POINTS_MULTI_BATCH_DRAW
 
     def set_points(self, _points=None):
+        self.enable_single_batch_draw()
         self.additional_points = _points.copy()
         
         for row in range(0, self.additional_points.shape[0]):
@@ -363,7 +366,7 @@ class BlochVisualization:
         self.additional_points.append( [ cp_points, (_color, _marker) ] )
     
     def set_vectors(self, _points=None):
-        
+        self.enable_single_batch_draw()
         #
         # type check
         #
@@ -1018,7 +1021,7 @@ def cosine_distance( uvector, vvector, r = 0, check=0 ):
         else:
             distance_value = np.round(1.0 - similarity, r)
             
-        return distance_value
+        return np.linalg.norm( distance_value )
     else:
         return None
 
@@ -1373,12 +1376,12 @@ def probability_as_distance_case_qubit_beta(uvector, vvector, r=0, check=0 ):
     return float(rslt)
 
 def swap_test_as_distance_p0(uvector, vvector, r=0, check=0):
-    rslt = 0.5 + 0.5 * np.linalg.norm( (uvector.T @ vvector) ) ** 2
-    return float(rslt)
+    rslt = (0.5 + 0.5 * np.linalg.norm( (uvector @ vvector.T) ) ** 2)
+    return float(1.0 - rslt)
 
 def swap_test_as_distance_p1(uvector, vvector, r=0, check=0):
-    rslt = 1.0 - swap_test_as_distance_p0(uvector, vvector, r, check)
-    return float(rslt)
+    rslt = (1.0 - swap_test_as_distance_p0(uvector, vvector, r, check))
+    return float(1.0 - rslt)
 
 def create_zero_vector( _n_dim=3 ):
     """
@@ -1658,6 +1661,8 @@ def kmeans_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _max
     if _func_distance==P_CQB_DISTANCE:
         _funcdist = probability_as_distance_case_qubit_beta
 
+    if _func_distance == SWAP_TEST_DISTANCE:
+        _funcdist = swap_test_as_distance_p0
     
     closest, centers = kmeans_spherical( _qX, _n_clusters, _max_iterations, _funcdist )
         
@@ -1786,6 +1791,8 @@ def kmedoids_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _m
     if _func_distance==P_CQB_DISTANCE:
         _funcdist = probability_as_distance_case_qubit_beta
 
+    if _func_distance == SWAP_TEST_DISTANCE:
+        _funcdist = swap_test_as_distance_p0
 
     closest, centers = kmedoids( _qX, _n_clusters, _max_iterations, _funcdist )
         

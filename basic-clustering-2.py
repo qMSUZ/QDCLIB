@@ -44,7 +44,6 @@ b = qdcl.BlochVisualization()
 b.set_title("Bloch Vector Points")
   
 b.set_points( d )
-b.enable_draw_single_batch_points()
   
 f=b.make_figure()
 f.show()

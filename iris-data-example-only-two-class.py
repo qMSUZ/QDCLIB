@@ -151,8 +151,9 @@ class3=d[ 100:149, 0:3 ]
 
 # Find centers
 dataset = np.vstack( (class1, class3) )
-labels, centers = qdcl.kmeans_quantum_states( dataset, 2, _func_distance=qdcl.FIDELITY_DISTANCE )
+#labels, centers = qdcl.kmeans_quantum_states( dataset, 2, _func_distance=qdcl.FIDELITY_DISTANCE )
 #labels, centers = qdcl.kmedoids_quantum_states( dataset, 2, _func_distance=qdcl.MANHATTAN_DISTANCE )
+labels, centers = qdcl.kmedoids_quantum_states( dataset, 2, _func_distance=qdcl.MANHATTAN_DISTANCE )
 
 b = qdcl.BlochVisualization()
 b.set_view(15, 30)
@@ -166,7 +167,7 @@ b.add_points( class3, "blue", ".")
 b.set_vectors( centers )
 
 
-b.enable_draw_multi_batch_points()
+b.enable_multi_batch_draw()
 
 f=b.make_figure()
 f.show()
