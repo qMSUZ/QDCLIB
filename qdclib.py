@@ -1889,3 +1889,135 @@ def about():
 
 def how_to_cite():
     pass
+
+def true_positive_rate(TP, FN):
+    """
+    Calculates True Positive Rate for a classification task (supervised 
+    learning).
+
+    Parameters
+    ----------
+    TP : integer
+        The number of observations corretly clasiffied to the l-th class.
+    FN : integer
+        The number of observations belonging to the l-th class but 
+        incorrectly classiﬁed as not in l.
+
+    Returns
+    -------
+    float
+        The True Positive Rate.
+
+    """
+    return TP/(TP+FN)
+
+
+
+def true_negative_rate(TN, FP):
+    """
+    Calculates True Negative Rate for a classification task (supervised 
+    learning).
+
+    Parameters
+    ----------
+    TN : integer
+        The number of observations from a class different than l and correctly 
+        classiﬁed as not in l.
+    FP : integer
+        The number of observations belonging to a class different than l and 
+        incorrectly classiﬁed as l.
+
+    Returns
+    -------
+    float
+        The True Negative Rate.
+
+    """
+    return TN/(TN+FP)
+
+
+
+def false_positive_rate(FP, TN):
+    """
+    Calculates False Positive Rate for a classification task (supervised 
+    learning).
+
+    Parameters
+    ----------
+    FP : integer
+        The number of observations belonging to a class different than l and 
+        incorrectly classiﬁed as l.
+    TN : integer
+        The number of observations from a class different than l and correctly 
+        classiﬁed as not in l.
+
+    Returns
+    -------
+    float
+        The False Positive Rate.
+
+    """
+    return FP/(FP+TN)
+
+
+def false_negative_rate(FN, TP):
+    """
+    Calculates False Negative Rate for a classification task (supervised 
+    learning).
+
+    Parameters
+    ----------
+    FN : integer
+        The number of observations belonging to the l-th class but 
+        incorrectly classiﬁed as not in l.
+    TP : integer
+        The number of observations corretly clasiffied to the l-th class.
+
+    Returns
+    -------
+    float
+        The False Negative Rate.
+
+    """
+    return FN/(FN+TP)
+
+
+def classification_error(TP, STS):
+    """
+    Calculates the Classication Error (supervised learning).
+
+    Parameters
+    ----------
+    TP : integer
+        The number of observations corretly clasiffied to the l-th class.
+    STS : integer
+        The number of observations in the test set.
+
+    Returns
+    -------
+    float
+        The percentage of misclassiﬁed observations for the l-th class.
+
+    """
+    return 1-(TP/STS)
+
+
+def precision(TP, FP):
+    """
+    Calculates a Precision of the classification (supervised learning).
+
+    Parameters
+    ----------
+    TP : integer
+        The number of observations corretly clasiffied to the l-th class.
+    FP : integer
+        The number of observations belonging to a class different than l and 
+        incorrectly classiﬁed as l.
+
+    Returns
+    -------
+    float
+        The statistical variability in the l-th class.
+
+    """
+    return TP/(TP+FP)
