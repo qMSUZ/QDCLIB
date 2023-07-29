@@ -383,8 +383,17 @@ class BlochVisualization:
     def clear_vectors(self):
         self.additional_vectors = [ ]
 
-    def add_vectors(self, _points=None, _color=None):
-        pass
+    def add_vectors(self, _points=None, _color=None, _marker=None):
+        self.draw_mode = POINTS_MULTI_BATCH_DRAW
+        cp_points = _points.copy()
+
+        for row in range(0, cp_points.shape[0]):
+            # normalization points
+            cp_points[row] /= np.linalg.norm( cp_points[row] )
+            cp_points[row] *= (self.radius + 0.01)
+        
+        self.additional_vectors.append( [ cp_points, (_color, _marker) ] )
+
 
     def set_pure_states(self, _states=None, _color=None):
         ptns = np.empty((0,3))
@@ -421,7 +430,7 @@ class BlochVisualization:
     def clear_pure_states(self):
         self.additional_states = [ ]
 
-    def add_pure_states(self, _states=None):
+    def add_pure_states(self, _states=None, _color=None, _marker=None):
         pass
     
     def render_hemisphere(self):
