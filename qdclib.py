@@ -2021,3 +2021,37 @@ def precision(TP, FP):
 
     """
     return TP/(TP+FP)
+def cohens_kappa(TP, TN, FP, FN, STS):
+    """
+    Calculates the Cohen's Kappa (supervised learning) which shows the degree 
+    of reliability and accuracy of a statistical classiﬁcation.
+
+    Parameters
+    ----------
+    TP : integer
+        The number of observations corretly clasiffied to the l-th class.
+    TN : integer
+        The number of observations from a class different than l and correctly 
+        classiﬁed as not in l.
+    FP : integer
+        The number of observations belonging to a class different than l and 
+        incorrectly classiﬁed as l.
+    FN : integer
+        The number of observations belonging to the l-th class but 
+        incorrectly classiﬁed as not in l.
+    STS : integer
+        The number of observations in the test set.
+
+    Returns
+    -------
+    float
+        A value of the Cohen's Kappa [-1,1].
+
+    """
+    if (TP+TN+FP+FN)!=STS:
+        raise ValueError("The sum of TP, TN, FP, FN and the number of elements in the test set should be equal!")
+        return None
+    else:
+        pra=(TP+TN)/STS
+        pre=((TP+FP)*(TP+FN)+(FP+TN)*(TN+FN))/(STS*STS)
+        return (pra-pre)/(1-pre)
