@@ -181,9 +181,8 @@ b.clear_points()
 b.add_points( Q0_r, "red", "+")
 b.add_points( Q1_r, "blue", ".")
 
-b.set_vectors( Q0_centers )
-#b.set_vectors( Q1_centers )
-
+b.add_vectors( Q0_centers, "red")
+b.add_vectors( Q1_centers, "blue" )
 
 b.enable_multi_batch_draw()
 

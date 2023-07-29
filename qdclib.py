@@ -58,9 +58,10 @@ SWAP_TEST_DISTANCE = 1009
 POINTS_DRAW        = 2000
 LINES_DRAW         = 2001
 
-POINTS_MULTI_BATCH_DRAW = 3000
-LINES_MULTI_BATCH_DRAW  = 3001
-
+POINTS_MULTI_BATCH_DRAW   = 3000
+LINES_MULTI_BATCH_DRAW    = 3001
+VECTORS_SINGLE_BATCH_DRAW = 3002
+VECTORS_MULTI_BATCH_DRAW  = 3003
 
 def _internal_pauli_x():
     paulix=np.array( [0.0, 1.0, 1.0, 0.0] ).reshape(2,2)
@@ -260,9 +261,9 @@ class BlochVisualization:
 
     def __init__( self ):
         
-        self.additional_points = []
-        self.additional_states = []
-        self.additional_vectors = []        
+        self.additional_points  = [ ]
+        self.additional_states  = [ ]
+        self.additional_vectors = [ ]        
     
         self.radius = 2.0
         self.resolution_of_mesh = 31
@@ -296,11 +297,16 @@ class BlochVisualization:
         self.main_font_size = 25
         self.title = "Basic title for Bloch Sphere"
         
-        self.point_color = "green"
+        self.point_color  = "green"
         self.vector_color = "green"
 
-        self.draw_mode = 0
-
+        self.point_draw_mode       = 0
+        self.vector_draw_mode      = 0
+        self.pure_states_draw_mode = 0
+        
+    def reset():
+        pass
+    
     def make_figure( self ):
         
         self.prepare_mesh()
@@ -366,7 +372,9 @@ class BlochVisualization:
         self.additional_points.append( [ cp_points, (_color, _marker) ] )
     
     def set_vectors(self, _points=None):
-        self.enable_single_batch_draw()
+        self.additional_vectors = [ ]
+        self.vector_draw_mode = VECTORS_SINGLE_BATCH_DRAW
+        
         #
         # type check
         #
@@ -384,7 +392,7 @@ class BlochVisualization:
         self.additional_vectors = [ ]
 
     def add_vectors(self, _points=None, _color=None, _marker=None):
-        self.draw_mode = POINTS_MULTI_BATCH_DRAW
+        self.vector_draw_mode = VECTORS_MULTI_BATCH_DRAW
         cp_points = _points.copy()
 
         for row in range(0, cp_points.shape[0]):
@@ -424,7 +432,7 @@ class BlochVisualization:
             ptns = np.append( ptns, [[ xcoord, ycoord, zcoord]], axis=0)  # for state
             
         if _color is not None:
-            self.vector_color=_color
+            self.vector_color = _color
         self.set_vectors( ptns )
         
     def clear_pure_states(self):
@@ -555,16 +563,30 @@ class BlochVisualization:
     def render_vectors( self ):
         if self.additional_vectors == []:
             return        
-        for idx in range(self.additional_vectors.shape[0]):
-            self.axes.quiver(
-                0.0,0.0,0.0,
-                np.real(self.additional_vectors[idx,1]),
-                np.real(self.additional_vectors[idx,0]),
-                np.real(self.additional_vectors[idx,2]),
-                color=self.vector_color,
-                arrow_length_ratio=self.default_arrow_size,
-                #marker="x",
-            )            
+        if self.vector_draw_mode == VECTORS_SINGLE_BATCH_DRAW:
+            for idx in range(self.additional_vectors.shape[0]):
+                self.axes.quiver(
+                    0.0,0.0,0.0,
+                    np.real(self.additional_vectors[idx,1]),
+                    np.real(self.additional_vectors[idx,0]),
+                    np.real(self.additional_vectors[idx,2]),
+                    color=self.vector_color if not None else "green",
+                    arrow_length_ratio=self.default_arrow_size,
+                    #marker="x",
+                )            
+        
+        if self.vector_draw_mode == VECTORS_MULTI_BATCH_DRAW:
+            for t,(c,m) in self.additional_vectors:
+                for idx in range(t.shape[0]):
+                    self.axes.quiver(
+                        0.0,0.0,0.0,
+                        np.real(t[idx,1]),
+                        np.real(t[idx,0]),
+                        np.real(t[idx,2]),
+                        color=c if not None else "green",
+                        arrow_length_ratio=self.default_arrow_size,
+                        #marker="x",
+                    )            
     
     def render_pure_states( self ):
         pass
@@ -1889,16 +1911,6 @@ def get_distances_for_cluster( _data, _n_cluster ):
     """
     return _data[ _data[:, 1] == _n_cluster ]
 
-
-def version():
-    pass
-
-def about():
-    pass
-
-def how_to_cite():
-    pass
-
 def true_positive_rate(TP, FN):
     """
     Calculates True Positive Rate for a classification task (supervised 
@@ -2008,8 +2020,7 @@ def classification_error(TP, STS):
         The percentage of misclassiﬁed observations for the l-th class.
 
     """
-    return 1-(TP/STS)
-
+    return 1.0-(TP/STS)
 
 def precision(TP, FP):
     """
@@ -2030,6 +2041,7 @@ def precision(TP, FP):
 
     """
     return TP/(TP+FP)
+
 def cohens_kappa(TP, TN, FP, FN, STS):
     """
     Calculates the Cohen's Kappa (supervised learning) which shows the degree 
@@ -2064,3 +2076,12 @@ def cohens_kappa(TP, TN, FP, FN, STS):
         pra=(TP+TN)/STS
         pre=((TP+FP)*(TP+FN)+(FP+TN)*(TN+FN))/(STS*STS)
         return (pra-pre)/(1-pre)
+        
+def version():
+    pass
+
+def about():
+    pass
+
+def how_to_cite():
+    pass
