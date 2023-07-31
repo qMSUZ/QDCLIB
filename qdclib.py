@@ -839,6 +839,95 @@ def convert_data_to_vector_state(dataTuple):
         Qvec[i]=sympy.sqrt(Qvec[i]/sum_all)
     return Qvec
 
+def create_learning_and_test_set(inputDF, var_no, learn_set_size=0.8, norm_type=0):
+    """
+        Create learning and test set of quantum states - input data from 
+        Pandas Data Frame
+
+        Parameters
+        ----------
+        inputDF : pandas.DataFrame
+            File of input data.
+        var_no : interger
+            The number of variables to fetch from file. The last column 
+            (variable) is always treated as a target variable.
+        learn_set_size : float in range (0,1)
+            The percent of observations to include in the learning set (the rest
+            forms the test set). Default partition is 80% observations in 
+            the learning set and 20% in the test set.
+        norm_type : Boolean
+            If single normalization is to be utilized then norm_type==0 (realized 
+            by the function convert_data_to_vector_states). If double normalization 
+            has to be performed norm_type==1 (realized by the function 
+            convert_data_to_vector_states_double_norm).
+
+        Returns
+        -------
+        Tuple
+            Tuple of two numpy arrays containing learning and test set.
+
+        Examples
+        --------
+        From file 'name.xlsx', three columns were fetched to produce 2-qubit states.
+        >>> df = pd.read_excel(r'name.xlsx')
+        >>> tp=create_learning_and_test_set(df,3)
+        The number of variables is: 3
+        The number of classes is: 2
+        >>> print(tp[0])
+        [[0.51199211 0.46564845 0.72182796 0.         0.        ]
+         [0.50431663 0.47174501 0.72327131 0.         0.        ]
+         [0.50552503 0.46547467 0.72648316 0.         0.        ]
+         [0.50529115 0.45837363 0.731146   0.         0.        ]
+         [0.50716649 0.45822893 0.72993726 0.         0.        ]...
+        >>> print(tp[1])
+        [[0.50597801 0.47623957 0.71915376 0.         0.        ]
+         [0.4979296  0.47759729 0.72385561 0.         0.        ]
+         [0.49186938 0.47857315 0.72734604 0.         0.        ]
+         [0.50082988 0.47003216 0.72680066 0.         0.        ]
+         [0.49958661 0.47237749 0.72613547 0.         0.        ]...
+    """
+    if learn_set_size <=0 or learn_set_size>=1:
+        raise ValueError("Incorrect proportion between learning and testing set!")
+        return None
+    else:
+        if norm_type==0:
+            set_big=convert_data_to_vector_states(inputDF, var_no)
+        elif norm_type==1:
+            set_big=convert_data_to_vector_states_double_norm(inputDF, var_no)
+        else:
+            raise ValueError("Incorrect value of parameter norm_type!")
+            return None
+        target=pd.DataFrame(inputDF.iloc[: , -1]).to_numpy()
+        Tab_class, cl_counts = np.unique(target, return_counts=True)
+        class_no=len(Tab_class)
+        print('The number of classes is:',class_no)
+        set_big = np.append(set_big, target, axis=1)
+        Tab_data = np.ndarray(shape=(2,class_no))
+        for i in range(class_no):
+            Tab_data[0,i]=round(cl_counts[i]*learn_set_size)
+            Tab_data[1,i]=cl_counts[i]-Tab_data[0,i]
+        a,b=set_big.shape
+        lset = np.ndarray(shape=(1,b))
+        tset = np.ndarray(shape=(1,b))  #int(y)
+        counter=np.zeros(shape=class_no)
+        for j in range(a): 
+            cl=set_big[j,b-1]
+            z=0
+            i=0
+            while z==0:
+                if Tab_class[i]==cl:
+                    z=1
+                else:
+                    i+=1
+            if counter[i]<Tab_data[0,i]:
+                lset=np.append(lset, [set_big[j,:]], axis=0)
+                counter[i]+=1
+            else:
+                tset=np.append(tset, [set_big[j,:]], axis=0)
+        lset = np.delete(lset, 0, 0)
+        tset = np.delete(tset, 0, 0)
+        return lset,tset
+
 def is_vector_normalized(vec):
     """
     Checks if the entered vector is normalized (is a correct quantum state).
