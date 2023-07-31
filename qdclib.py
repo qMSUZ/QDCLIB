@@ -1487,13 +1487,73 @@ def trace_distance( uvector, vvector, r=0, check=0 ):
         return None
 
 
-def probability_as_distance_case_qubit_alpha(uvector, vvector, r=0, check=0 ):
-    rslt = np.abs( (np.linalg.norm(uvector[0])**2) - (np.linalg.norm(vvector[0])**2) )
-    return float(rslt)
+def probability_as_distance(uvector, vvector, amp_no, r=0, check=0 ):
+    """
+    Calculates the distance based on pointed aplitude probability for 
+    two pure states.
 
-def probability_as_distance_case_qubit_beta(uvector, vvector, r=0, check=0 ):
-    rslt = np.abs( (np.linalg.norm(uvector[1])**2) - (np.linalg.norm(vvector[1])**2) )
-    return float(rslt)
+    Parameters
+    ----------
+    uvector, vvector : numpy array objects
+        Vectors of complex numbers describing quantum states.
+    amp_no : integer
+        The number of amplitude (starting from zero) for which the distance 
+        should be calculated.
+    r : integer
+        The number of decimals to use while rounding the number (default is 0,
+        i.e. the number is not rounded).
+    check : Boolean
+        If check==1 then paramatres uvector, vvector are checked for being 
+        normalized vectors (as default it is not checked).
+
+    Returns
+    -------
+    rslt : float
+        The distance between given quantum states as distance between pointed 
+        aplitudes.
+    Examples
+    --------
+    A distance between exemplary states:
+    >>> v=np.array([1,0,0,0])
+    >>> u=np.array([0,0,1,0])
+    >>> print(probability_as_distance(u, v, 0))
+        1.0
+    A distance between exemplary states:
+    >>> v=np.array([1,0,0,0])
+    >>> u=np.array([0,0,1,0])
+    >>> print(probability_as_distance(u, v, 1))
+        0.0
+    A distance between states of different sizes:
+    >>> v=np.array([1,0,0,0])
+    >>> u=np.array([0,0,1])
+    >>> print(probability_as_distance(u, v, 1))
+        ...
+        ValueError: The given vectors heve different dimensions!
+    If entered vector v is not a correct quantum state:
+    >>> v=np.array([1,1])
+    >>> u=np.array([1,0])
+    >>> print(probability_as_distance(u, v, 1, 0, 1))
+        ...
+        ValueError: The vector is not normalized!
+        
+    """
+    if len(uvector)!=len(vvector):
+        raise ValueError("The given vectors heve different dimensions!")
+        return None
+    else:
+        x=1
+        y=1
+        if check==1:
+            x=vector_check(uvector)
+            y=vector_check(vvector)
+        if (x==1 and y==1):
+            rslt = np.abs( (np.linalg.norm(uvector[amp_no])**2) - (np.linalg.norm(vvector[amp_no])**2) )
+            if r==0:
+                return float(rslt)
+            else:
+                return round(float(rslt),r)
+        else:
+            return None
 
 def swap_test_as_distance_p0(uvector, vvector, r=0, check=0):
     rslt = (0.5 + 0.5 * np.linalg.norm( (uvector @ vvector.T) ) ** 2)
