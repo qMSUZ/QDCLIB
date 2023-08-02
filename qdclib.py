@@ -1555,6 +1555,74 @@ def probability_as_distance(uvector, vvector, amp_no, r=0, check=0 ):
         else:
             return None
 
+def probability_as_distance_all(uvector, vvector, r=0, check=0 ):
+    """
+    Calculates the distance based on probability amplitudes for 
+    two pure states.
+
+    Parameters
+    ----------
+    uvector, vvector : numpy array objects
+        Vectors of complex numbers describing quantum states.
+    r : integer
+        The number of decimals to use while rounding the number (default is 0,
+        i.e. the number is not rounded).
+    check : Boolean
+        If check==1 then paramatres uvector, vvector are checked for being 
+        normalized vectors (as default it is not checked).
+
+    Returns
+    -------
+    rslt : float
+        The distance between given quantum states as distance between values 
+        of all probability aplitudes.
+    Examples
+    --------
+    A distance between exemplary states:
+    >>> v=np.array([1,0,0,0])
+    >>> u=np.array([0,0,1,0])
+    >>> print(probability_as_distance_all(u, v))
+        0.5
+    A distance between exemplary states:
+    >>> v=np.array([[1/math.sqrt(5),1/math.sqrt(5),1/math.sqrt(5),math.sqrt(3)/math.sqrt(5)])
+    >>> u=np.array([0,0,0,1])
+    >>> print(probability_as_distance_all(u, v))
+        0.25
+    A distance between states of different sizes:
+    >>> v=np.array([1,0,0,0])
+    >>> u=np.array([0,0,1])
+    >>> print(probability_as_distance_all(u, v))
+        ...
+        ValueError: The given vectors heve different dimensions!
+    If entered vector v is not a correct quantum state:
+    >>> v=np.array([1,1])
+    >>> u=np.array([1,0])
+    >>> print(probability_as_distance_all(u, v, 0, 1))
+        ...
+        ValueError: The vector is not normalized!
+        
+    """
+    if len(uvector)!=len(vvector):
+        raise ValueError("The given vectors heve different dimensions!")
+        return None
+    else:
+        x=1
+        y=1
+        if check==1:
+            x=vector_check(uvector)
+            y=vector_check(vvector)
+        if (x==1 and y==1):
+            rslt=0.0
+            for i in range(len(uvector)):
+                rslt += np.abs( (np.linalg.norm(uvector[i])**2) - (np.linalg.norm(vvector[i])**2) )
+            rslt /= len(uvector)
+            if r==0:
+                return float(rslt)
+            else:
+                return round(float(rslt),r)
+        else:
+            return None
+
 def swap_test_as_distance_p0(uvector, vvector, r=0, check=0):
     rslt = (0.5 + 0.5 * np.linalg.norm( (uvector @ vvector.T) ) ** 2)
     return float(1.0 - rslt)
