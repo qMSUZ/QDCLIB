@@ -679,12 +679,36 @@ def create_circle_plot_for_2d_data(_qX, first_col, second_col):
     return fig
 
 
-def create_plot_for_2d_data(_qX):
-    # shape _qX to check
+def create_scatter_plot_for_2d_data(_qX, first_col, second_col):
+    """
+        Drawing a scatter plot for two-dimensional data. 
+
+        Parameters
+        ----------
+        _qX : numpy ndarray
+            File of input data.
+        first_col : interger
+            The variable defining the first dimension. 
+        second_col : interger
+            The variable defining the second dimension. 
+
+        Returns
+        -------
+        fig : plot
+
+        Example
+        -------
+        From file 'SYNTH_Training.xlsx', we fetch first two columns and draw
+        two-dimensional plot:
+        >>> df = pd.read_excel(r'SYNTH_Training.xlsx')
+        >>> tab = pd.DataFrame(df).to_numpy()
+        >>> create_scatter_plot_for_2d_data(tab, 0, 1)
+        
+    """
 
     fig, ax = plt.subplots()
     ax.set_aspect('equal')
-    ax.scatter( _qX[:,0], _qX[:,1])
+    ax.scatter( _qX[:,first_col], _qX[:,second_col])
     
     ax.set_xlabel('Feature 1 (X axis)')
     ax.set_ylabel('Feature 2 (Y axis)')
