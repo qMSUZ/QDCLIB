@@ -640,13 +640,37 @@ class BlochVisualization:
     def save_to_file(self, filename = None):
         pass
 
-def create_circle_plot_for_2d_data(_qX):
-    # shape _qX to check
+def create_circle_plot_for_2d_data(_qX, first_col, second_col):
+    """
+        Drawing a circle plot for two-dimensional data. 
+
+        Parameters
+        ----------
+        _qX : numpy ndarray
+            File of input data.
+        first_col : interger
+            The variable defining the first dimension. 
+        second_col : interger
+            The variable defining the second dimension. 
+
+        Returns
+        -------
+        fig : plot
+
+        Example
+        -------
+        From file 'SYNTH_Training.xlsx', we fetch first two columns and draw
+        two-dimensional plot:
+        >>> df = pd.read_excel(r'SYNTH_Training.xlsx')
+        >>> tab = pd.DataFrame(df).to_numpy()
+        >>> create_circle_plot_for_2d_data(tab, 0, 1)
+        
+    """
 
     fig, ax = plt.subplots()
     ax.set_aspect('equal')
     circle = plt.Circle( (0,0), 1,  color='r', fill=False)
-    ax.scatter( _qX[:,0], _qX[:,1])
+    ax.scatter( _qX[:,first_col], _qX[:,second_col])
     ax.add_patch(circle)
     
     ax.set_xlabel('Feature 1 (X axis)')
