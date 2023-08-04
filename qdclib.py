@@ -44,6 +44,12 @@ import pandas as pd
 import math as math
 import sympy as sympy
 
+#
+# Quantum Computing Simulator (QCS)
+#
+
+# import qcs
+
 COSINE_DISTANCE    = 1000
 DOT_DISTANCE       = 1001
 FIDELITY_DISTANCE  = 1002
@@ -253,9 +259,21 @@ def convert_spherical_point_to_pure_state( _theta, _phi):
     return pure_state_qubit
 
 def convert_bloch_vector_to_pure_state( _x, _y, _z ):
+    
     r,theta,phi = convert_bloch_vector_to_spherical_point( _x, _y, _z)
     pure_state_qubit = convert_spherical_point_to_pure_state( theta, phi  )
+    
     return pure_state_qubit
+
+def stereographic_projection( _x, _y, _z ):
+    
+    two_component_vector = create_zero_vector( 2 )
+    
+    two_component_vector[0] = _x / (1.0 - _z)
+    two_component_vector[1] = _y / (1.0 - _z)
+    
+    return two_component_vector
+    
 
 class BlochVisualization:
 
@@ -304,7 +322,7 @@ class BlochVisualization:
         self.vector_draw_mode      = 0
         self.pure_states_draw_mode = 0
         
-    def reset():
+    def reset( self ):
         pass
     
     def make_figure( self ):
@@ -638,6 +656,25 @@ class BlochVisualization:
         return self.figure
     
     def save_to_file(self, filename = None):
+        pass
+
+class QuantumSVM:
+    
+    def __int__( self ):
+        pass
+    
+    def reset( self ):
+        pass
+        
+class VQEClassification:
+    
+    def __int__( self ):
+        pass
+    
+    def objective_function( self ):
+        pass
+    
+    def reset( self ):
         pass
 
 def create_circle_plot_for_2d_data(_qX, first_col, second_col):
