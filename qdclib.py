@@ -265,7 +265,7 @@ def convert_bloch_vector_to_pure_state( _x, _y, _z ):
     
     return pure_state_qubit
 
-def stereographic_projection( _x, _y, _z ):
+def stereographic_projection_to_two_component_vector( _x, _y, _z ):
     
     two_component_vector = create_zero_vector( 2 )
     
@@ -278,7 +278,7 @@ def stereographic_projection( _x, _y, _z ):
 class BlochVisualization:
 
     def __init__( self ):
-        
+               
         self.additional_points  = [ ]
         self.additional_states  = [ ]
         self.additional_vectors = [ ]        
@@ -670,12 +670,13 @@ class VQEClassification:
     
     def __int__( self ):
         pass
+
+    def reset( self ):
+        pass
     
     def objective_function( self ):
         pass
     
-    def reset( self ):
-        pass
 
 def create_circle_plot_for_2d_data(_qX, first_col, second_col):
     """
