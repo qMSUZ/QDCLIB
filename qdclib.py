@@ -753,7 +753,52 @@ def create_scatter_plot_for_2d_data(_qX, first_col, second_col):
     return fig
 
 def create_circle_plot_with_centers_for_2d_data(_qX, _n_clusters, _centers, _labels):
-    # shape _qX to check
+    """
+        Drawing a circle plot for two-dimensional data with pointed out clusters
+        centers. 
+
+        Parameters
+        ----------
+        _qX : numpy ndarray
+            Input data from which first two columns will be fetched 
+            (coordinates of the points). 
+        _n_clusters : integer
+            The number of clusters.
+        _centers : numpy ndarray
+            The coordinates of clusters centers.
+        _labels : numpy ndarray
+            The labels for each pair of coordinates from _qX. 
+
+        Returns
+        -------
+        fig : plot
+
+        Example
+        -------
+        We can use other functions from this library to generate probes 
+        (create_focused_circle_probes_with_uniform_placed_centers) and use 
+        k-means method to cluster them (kmeans_quantum_states). Finally, the
+        plot will be drawn:
+        >>> n_clusters = 3
+        >>> d = create_focused_circle_probes_with_uniform_placed_centers(20, n_clusters, _width_of_cluster=0.15)
+        >>> labels, centers = kmeans_quantum_states( d, n_clusters, _func_distance=COSINE_DISTANCE )
+        >>> print(d)
+            [[-0.00353932  0.99999374]
+             [ 0.00823482  0.99996609]
+             [-0.79415079 -0.60772076]
+             [ 0.19272468  0.98125287]
+             [ 0.12038379  0.99272743]
+             [-0.22356451  0.97468913]...
+        >>> print(labels)
+            [0 0 2 0 0 0 1 2 1 2 1 2 1 2 1 1 2 2 0 1]
+        >>> print(centers)
+            [[ 0.04627963  0.99892852]
+             [ 0.80666692 -0.59100633]
+             [-0.82687593 -0.56238438]]
+        >>> f = create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
+        >>> f.show()
+        
+    """
     
     fig, ax = plt.subplots()
     ax.set_aspect('equal')
