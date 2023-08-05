@@ -50,6 +50,7 @@ import sympy as sympy
 
 # import qcs
 
+
 COSINE_DISTANCE    = 1000
 DOT_DISTANCE       = 1001
 FIDELITY_DISTANCE  = 1002
@@ -68,6 +69,11 @@ POINTS_MULTI_BATCH_DRAW   = 3000
 LINES_MULTI_BATCH_DRAW    = 3001
 VECTORS_SINGLE_BATCH_DRAW = 3002
 VECTORS_MULTI_BATCH_DRAW  = 3003
+
+OPT_COBYLA = 4000
+OPT_SPSA   = 4001
+OPT_SLSQP  = 4002
+OPT_POWELL = 4003
 
 def _internal_pauli_x():
     paulix=np.array( [0.0, 1.0, 1.0, 0.0] ).reshape(2,2)
@@ -669,7 +675,11 @@ class QuantumSVM:
 class VQEClassification:
     
     def __int__( self ):
-        pass
+        self.params_filename = None, 
+        self.save_params=0
+        
+        self.optymizer = None
+        self.optimizer_type = OPT_COBYLA
 
     def reset( self ):
         pass
@@ -677,6 +687,20 @@ class VQEClassification:
     def objective_function( self ):
         pass
     
+    def create_variational_circuit( self, _n_qubits, _tab_parameters, _circuit_type_form, _n_layers):
+        pass    
+    
+    def train_vqe( self, _initial_params, _state_for_train):    
+        pass
+    
+    def set_angles_file_name( self, _fname ):
+        self.params_filename = _fname
+    
+    def save_angles_to_file( self, _fname = None ):
+        pass
+
+    def load_angles_from_file( self, _fname = None ):
+        pass
 
 def create_circle_plot_for_2d_data(_qX, first_col, second_col):
     """
@@ -2424,6 +2448,7 @@ def cohens_kappa(TP, TN, FP, FN, STS):
         pra=(TP+TN)/STS
         pre=((TP+FP)*(TP+FN)+(FP+TN)*(TN+FN))/(STS*STS)
         return (pra-pre)/(1-pre)
+
         
 def version():
     pass
