@@ -45,3 +45,7 @@ labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl
 
 f=qdcl.create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
 f.show()
+
+cm = qdcl.create_covariance_matrix(d)
+print("Covariance matrix")
+print(cm)

@@ -2449,6 +2449,18 @@ def cohens_kappa(TP, TN, FP, FN, STS):
         pre=((TP+FP)*(TP+FN)+(FP+TN)*(TN+FN))/(STS*STS)
         return (pra-pre)/(1-pre)
 
+
+def create_covariance_matrix( _qX ):  
+    
+    _n_samples = np.shape(_qX)[0]
+    
+    scale = (1.0 / (_n_samples - 1.0))
+    
+    _qXDiffWithMean = _qX - _qX.mean(axis=0)
+    
+    covariance_matrix = scale * (( _qXDiffWithMean ).T.dot( _qXDiffWithMean ))
+
+    return np.array(covariance_matrix, dtype=complex)
         
 def version():
     pass
