@@ -1,0 +1,6 @@
+1 (WinF) window float glass
+2 (WinNF) window non-float glass
+3 (Veh) vehicle glass
+5 (Con)  containers
+6 (Tabl) tableware
+7 (Head) vehicle headlamp glass
