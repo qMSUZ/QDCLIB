@@ -178,6 +178,10 @@ def vector_state_to_density_matrix(q):
         raise ValueError("The given vector is not a correct quantum state!")
         return None
 
+
+def create_quantum_centroid(_qX, _n_elems_in_class=-1):
+    pass
+
 # code based on chop
 # discussed at:
 #   https://stackoverflow.com/questions/43751591/does-python-have-a-similar-function-of-chop-in-mathematica
