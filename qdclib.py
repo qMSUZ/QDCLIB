@@ -162,7 +162,7 @@ def vector_state_to_density_matrix(q):
     Examples
     --------
     A density matrix for a correct state:
-    >>> x=vector_state_to_density_matrix(np.array([1/math.sqrt(2),-1/math.sqrt(2)]))
+    >>> x=vector_state_to_density_matrix(np.array([1/np.sqrt(2),-1/np.sqrt(2)]))
     >>> print(x)
         [[ 0.5 -0.5]
          [-0.5  0.5]]
@@ -280,6 +280,18 @@ def stereographic_projection_to_two_component_vector( _x, _y, _z ):
     
     return two_component_vector
     
+def vector_data_encode_with_inverse_stereographic_projection( _v ):
+    d = _v.shape[0]
+    
+    rsltvec = np.zeros( shape=(d+1,) )
+    normv = np.linalg.norm( _v )
+
+    for idx in range(d): 
+        rsltvec[ idx ] = _v[ idx ] / (normv * np.sqrt( (normv ** 2) + 1.0))
+
+    rsltvec[d]=(normv / np.sqrt( (normv ** 2) + 1.0))
+
+    return rsltvec
 
 class BlochVisualization:
 
@@ -2449,6 +2461,17 @@ def cohens_kappa(TP, TN, FP, FN, STS):
         pre=((TP+FP)*(TP+FN)+(FP+TN)*(TN+FN))/(STS*STS)
         return (pra-pre)/(1-pre)
 
+
+def difference_matrix(rho1, rho2):
+    
+    # dimension check for rho1, rho2
+    # rows,cols = rho1.shape
+    
+    result_rho = np.zeros(rho1.shape)
+    
+    result_rho = rho1 - rho2
+    
+    return result_rho
 
 def create_covariance_matrix( _qX ):  
     
