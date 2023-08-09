@@ -758,7 +758,7 @@ def create_circle_plot_for_2d_data(_qX, first_col=0, second_col=1):
 
     return fig
 
-def create_scatter_plot_for_2d_data(_qX, first_col, second_col):
+def create_scatter_plot_for_2d_data(_qX, first_col=0, second_col=1):
     """
         Drawing a scatter plot for two-dimensional data. 
 
@@ -767,9 +767,11 @@ def create_scatter_plot_for_2d_data(_qX, first_col, second_col):
         _qX : numpy ndarray
             File of input data.
         first_col : interger
-            The variable defining the first dimension. 
+            The variable defining the first dimension (default column indexed 
+            as 0). 
         second_col : interger
-            The variable defining the second dimension. 
+            The variable defining the second dimension (default column indexed 
+            as 1). 
 
         Returns
         -------
@@ -781,7 +783,7 @@ def create_scatter_plot_for_2d_data(_qX, first_col, second_col):
         two-dimensional plot:
         >>> df = pd.read_excel(r'SYNTH_Training.xlsx')
         >>> tab = pd.DataFrame(df).to_numpy()
-        >>> create_scatter_plot_for_2d_data(tab, 0, 1)
+        >>> create_scatter_plot_for_2d_data(tab)
         
     """
 
