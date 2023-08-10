@@ -180,7 +180,11 @@ def vector_state_to_density_matrix(q):
 
 
 def create_quantum_centroid(_qX, _n_elems_in_class=-1):
-    pass
+    rows, cols = _qX.shape
+    
+    centroid=np.zeros(shape=(cols,cols))
+    
+    return centroid
 
 # code based on chop
 # discussed at:
@@ -2301,6 +2305,15 @@ def get_distances_for_cluster( _data, _n_cluster ):
 
     """
     return _data[ _data[:, 1] == _n_cluster ]
+
+def get_data_for_class(_data, _labels, _class):
+    return _data[ _labels==_class ]
+
+def get_min_label_class(_labels):
+    return np.max( _labels )
+
+def get_max_label_class(_labels):
+    return np.max( _labels )
 
 def true_positive_rate(TP, FN):
     """
