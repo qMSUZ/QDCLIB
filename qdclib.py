@@ -722,7 +722,7 @@ class VQEClassification:
     def load_angles_from_file( self, _fname = None ):
         pass
 
-def create_circle_plot_for_2d_data(_qX, first_col=0, second_col=1):
+def create_circle_plot_for_2d_data(_qX, _first_col=0, _second_col=1, _limits=None):
     """
         Drawing a circle plot for two-dimensional data. 
 
@@ -730,31 +730,47 @@ def create_circle_plot_for_2d_data(_qX, first_col=0, second_col=1):
         ----------
         _qX : numpy ndarray
             File of input data.
-        first_col : interger
+        _first_col : interger
             The variable defining the first dimension (default column indexed 
             as 0). 
-        second_col : interger
+        _second_col : interger
             The variable defining the second dimension (default column indexed 
             as 1). 
-
+        _limits : DESC TO FIX a single row numpy ndarray
+            DESC TO FIX
         Returns
         -------
         fig : plot
 
-        Example
+        Example 1
         -------
         From file 'SYNTH_Training.xlsx', we fetch first two columns and draw
         two-dimensional plot:
         >>> df = pd.read_excel(r'SYNTH_Training.xlsx')
         >>> tab = pd.DataFrame(df).to_numpy()
         >>> create_circle_plot_for_2d_data(tab)
+        Example 2
+        -------
+        DESC TO FIX
+        >>> f=qdcl.create_circle_plot_for_2d_data( 
+                qdcl.get_data_for_class(d,labels,3),
+                0, 1, [-1,1,-1,1] )
         
     """
 
     fig, ax = plt.subplots()
     ax.set_aspect('equal')
-    circle = plt.Circle( (0,0), 1,  color='r', fill=False)
-    ax.scatter( _qX[:,first_col], _qX[:,second_col])
+    
+    if _limits == None:
+        ax.set_xlim( [-1.0, 1.0] )
+        ax.set_ylim( [-1.0, 1.0] )
+        circle = plt.Circle( (0,0), 1,  color='r', fill=False)
+    else:
+        ax.set_xlim( _limits[0], _limits[1] )
+        ax.set_ylim( _limits[2], _limits[3] )
+        circle = plt.Circle( (0,0), _limits[4],  color='r', fill=False)
+
+    ax.scatter( _qX[ :, _first_col ], _qX[ :, _second_col ])
     ax.add_patch(circle)
     
     ax.set_xlabel('Feature 1 (X axis)')
@@ -762,7 +778,7 @@ def create_circle_plot_for_2d_data(_qX, first_col=0, second_col=1):
 
     return fig
 
-def create_scatter_plot_for_2d_data(_qX, first_col=0, second_col=1):
+def create_scatter_plot_for_2d_data(_qX, _first_col=0, _second_col=1, _limits=None):
     """
         Drawing a scatter plot for two-dimensional data. 
 
@@ -770,18 +786,19 @@ def create_scatter_plot_for_2d_data(_qX, first_col=0, second_col=1):
         ----------
         _qX : numpy ndarray
             File of input data.
-        first_col : interger
+        _first_col : interger
             The variable defining the first dimension (default column indexed 
             as 0). 
-        second_col : interger
+        _second_col : interger
             The variable defining the second dimension (default column indexed 
             as 1). 
-
+        _limits : DESC TO FIX a single row numpy ndarray
+            DESC TO FIX
         Returns
         -------
         fig : plot
 
-        Example
+        Example 1
         -------
         From file 'SYNTH_Training.xlsx', we fetch first two columns and draw
         two-dimensional plot:
@@ -789,11 +806,26 @@ def create_scatter_plot_for_2d_data(_qX, first_col=0, second_col=1):
         >>> tab = pd.DataFrame(df).to_numpy()
         >>> create_scatter_plot_for_2d_data(tab)
         
+        Example 2
+        -------
+        DESC TO FIX
+        >>> f=qdcl.create_scatter_plot_for_2d_data( 
+                qdcl.get_data_for_class(d,labels,3),
+                0, 1, [-1,1,-1,1] )
+        
     """
 
     fig, ax = plt.subplots()
     ax.set_aspect('equal')
-    ax.scatter( _qX[:,first_col], _qX[:,second_col])
+
+    if _limits == None:
+        ax.set_xlim( [-1.0, 1.0] )
+        ax.set_ylim( [-1.0, 1.0] )
+    else:
+        ax.set_xlim( _limits[0], _limits[1] )
+        ax.set_ylim( _limits[2], _limits[3] )
+    
+    ax.scatter( _qX[ :, _first_col ], _qX[ :, _second_col ])
     
     ax.set_xlabel('Feature 1 (X axis)')
     ax.set_ylabel('Feature 2 (Y axis)')
@@ -2310,7 +2342,7 @@ def get_data_for_class(_data, _labels, _class):
     return _data[ _labels==_class ]
 
 def get_min_label_class(_labels):
-    return np.max( _labels )
+    return np.min( _labels )
 
 def get_max_label_class(_labels):
     return np.max( _labels )
