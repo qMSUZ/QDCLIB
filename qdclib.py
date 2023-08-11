@@ -184,6 +184,14 @@ def create_quantum_centroid(_qX, _n_elems_in_class=-1):
     
     centroid=np.zeros(shape=(cols,cols))
     
+    for idx in range(0, rows):
+        centroid = centroid + _internal_qdcl_create_density_matrix_from_vector_state( _qX[ idx, : ] )
+    
+    if _n_elems_in_class==-1:
+        centroid = centroid * (1.0/ float(rows))
+    else:
+        centroid = centroid * (1.0/ float(_n_elems_in_class))
+        
     return centroid
 
 # code based on chop
@@ -1637,7 +1645,7 @@ def hs_distance( uvector, vvector, r=0, check=0 ):
     return rslt
 
 
-def trace_distance( uvector, vvector, r=0, check=0 ):
+def trace_distance_vector( uvector, vvector, r=0, check=0 ):
     """
     Calculates the distance based on density matrix trace of two pure states.
 
@@ -1696,6 +1704,20 @@ def trace_distance( uvector, vvector, r=0, check=0 ):
     else:
         return None
 
+def trace_distance_density_matrix( _rho, _sigma):
+   
+    _val = 0.0
+    
+    _diff_dm =  _rho - _sigma
+    
+    evals = np.linalg.eig( _diff_dm )
+    
+    for idx in range(0, len(evals[0]) ):
+        _val = _val + np.abs(evals[0][idx])
+    
+    _val = 0.5 * _val;
+    
+    return _val
 
 def probability_as_distance(uvector, vvector, amp_no, r=0, check=0 ):
     """
