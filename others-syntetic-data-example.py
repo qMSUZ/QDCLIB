@@ -50,8 +50,10 @@ def circles_example():
         
     f = qdcl.create_circle_plot_for_2d_data(d)    
        
-    class0 = d[ org_labels==0 ]
-    class1 = d[ org_labels==1 ]
+    #class0 = d[ org_labels==0 ]
+    class0 = qdcl.get_data_for_class(d, org_labels, 0)
+    #class1 = d[ org_labels==1 ]
+    class1 = qdcl.get_data_for_class(d, org_labels, 1)
     
     # convert data to Bloch's vectors
     # and then to quantum states
@@ -124,13 +126,14 @@ def circles_example():
 
 
         idx=0
-        distance_table=np.zeros( shape=(ps_d.shape[0], 3) )
+        distance_table=np.zeros( shape=(ps_d.shape[0], 4) )
         for e in ps_d:
             distance_table[idx, 0] = func_distance(e, centers[0])
             distance_table[idx, 1] = func_distance(e, centers[1])
-            distance_table[idx, 2] = org_labels[idx]
+            distance_table[idx, 2] = labels[idx]
+            distance_table[idx, 3] = org_labels[idx]
             idx=idx+1
-        print("Distance between probes and centers for each class and orginal label")
+        print("Distance between probes and centers for each class and kmedoids label, oryginal label")
         print("smaller value at two first columns points out the class")
         print(distance_table)
 

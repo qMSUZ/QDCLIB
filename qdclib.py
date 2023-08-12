@@ -730,6 +730,24 @@ class VQEClassification:
     def load_angles_from_file( self, _fname = None ):
         pass
 
+class DistanceQuantumClassification:
+    def __int__( self ):
+        pass
+    
+    def reset( self ):
+        pass
+
+class ClusteringByPotentialEnergy:
+    def __int__( self ):
+        self.dimension = 2
+    
+    def set_dimension( self, _d ):
+        self.dimension = _d
+        
+    def reset( self ):
+        pass
+    
+
 def create_circle_plot_for_2d_data(_qX, _first_col=0, _second_col=1, _limits=None):
     """
         Drawing a circle plot for two-dimensional data. 
@@ -1645,7 +1663,7 @@ def hs_distance( uvector, vvector, r=0, check=0 ):
     return rslt
 
 
-def trace_distance_vector( uvector, vvector, r=0, check=0 ):
+def trace_distance_vector( _uvector, _vvector, _r=0, _check=0 ):
     """
     Calculates the distance based on density matrix trace of two pure states.
 
@@ -1690,17 +1708,17 @@ def trace_distance_vector( uvector, vvector, r=0, check=0 ):
         ValueError: The vector is not normalized!
         
     """
-    x=1
-    y=1
-    if check==1:
-        x=vector_check(uvector)
-        y=vector_check(vvector)
-    if (x==1 and y==1):
-        if r==0:
-            rslt = np.sqrt( 1.0 - ( np.linalg.norm( np.vdot( vvector, uvector ) ) ** 2.0 ) )
+    _x=1
+    _y=1
+    if _check==1:
+        _x=vector_check(_uvector)
+        _y=vector_check(_vvector)
+    if (_x==1 and _y==1):
+        if _r==0:
+            _rslt = np.sqrt( 1.0 - ( np.linalg.norm( np.vdot( _vvector, _uvector ) ) ** 2.0 ) )
         else:
-            rslt = round( np.sqrt( 1.0 - ( np.linalg.norm( np.vdot( vvector, uvector ) ) ** 2.0 ) ), r )
-        return rslt
+            _rslt = round( np.sqrt( 1.0 - ( np.linalg.norm( np.vdot( _vvector, _uvector ) ) ** 2.0 ) ), _r )
+        return _rslt
     else:
         return None
 
@@ -1710,10 +1728,10 @@ def trace_distance_density_matrix( _rho, _sigma):
     
     _diff_dm =  _rho - _sigma
     
-    evals = np.linalg.eig( _diff_dm )
+    _evals = np.linalg.eig( _diff_dm )
     
-    for idx in range(0, len(evals[0]) ):
-        _val = _val + np.abs(evals[0][idx])
+    for idx in range(0, len(_evals[0]) ):
+        _val = _val + np.abs(_evals[0][idx])
     
     _val = 0.5 * _val;
     
@@ -1786,6 +1804,13 @@ def probability_as_distance(uvector, vvector, amp_no, r=0, check=0 ):
                 return round(float(rslt),r)
         else:
             return None
+
+def probability_as_distance_case_qubit_alpha(uvector, vvector, r=0, check=0):
+    return probability_as_distance(uvector, vvector, 0, r, check)
+
+def probability_as_distance_case_qubit_beta(uvector, vvector, r=0, check=0):
+    return probability_as_distance(uvector, vvector, 1, r, check)
+
 
 def probability_as_distance_all(uvector, vvector, r=0, check=0 ):
     """
@@ -2124,7 +2149,7 @@ def kmeans_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _max
         _funcdist = fidelity_as_distance
 
     if _func_distance==TRACE_DISTANCE:
-        _funcdist = trace_distance
+        _funcdist = trace_distance_vector
 
     if _func_distance==MANHATTAN_DISTANCE:
         _funcdist = manhattan_distance
@@ -2178,7 +2203,7 @@ def kmedoids_calculate_costs(_qX, _medoids, _func_distance = None):
         closest_medoid = distances.argmin()
         clusters[closest_medoid].append(probe)
         total_cost_for_clusters = total_cost_for_clusters + distances.min()
-
+ 
     clusters = {k:np.array(v) for k,v in clusters.items()}
     return clusters, total_cost_for_clusters
 
@@ -2231,6 +2256,8 @@ def kmedoids(_qX, _n_clusters, _max_iterations=128, _func_distance = None):
         _iteration = _iteration + 1
     
     # create labels
+    # etykiety sa błednie przydzialane
+    # trzeba poprawić
     labels=np.zeros(samples)
     for l in range(_n_clusters):
         for v in current_clusters[l]:
