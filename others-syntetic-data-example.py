@@ -41,9 +41,8 @@ from sklearn import decomposition
 from sklearn.datasets import make_circles
 from sklearn.datasets import make_moons
 
-def circles_example():
+def circles_example( _verbose = 0):
     
-    verbose = 0
     
     d, org_labels = make_circles(n_samples=100, factor=0.3, noise=0.05, random_state=0)
     #X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=0)
@@ -118,7 +117,7 @@ def circles_example():
     f=b.make_figure()
     f.show()
 
-    if verbose > 0:
+    if _verbose > 0:
         t = qdcl.create_distance_table( ps_d, centers, org_labels, n_clusters, func_distance )
         print("Distance between probes and centers for each class")
         print("data are sorted by class")
@@ -175,4 +174,4 @@ def moon_example():
     f=b.make_figure()
     f.show()
     
-circles_example()
+circles_example( 1 )

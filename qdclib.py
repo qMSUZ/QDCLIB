@@ -2256,13 +2256,16 @@ def kmedoids(_qX, _n_clusters, _max_iterations=128, _func_distance = None):
         _iteration = _iteration + 1
     
     # create labels
-    # etykiety sa błednie przydzialane
-    # trzeba poprawić
     labels=np.zeros(samples)
-    for l in range(_n_clusters):
-        for v in current_clusters[l]:
-            idx=np.where(v == _qX)[0][0]
-            labels[idx]=l
+    tmpdist=np.zeros(_n_clusters)
+    for idx in range(0, samples):
+        labels[idx] = -1
+        ridx=0
+        for v in medoids:
+            tmpdist[ridx]=_func_distance(_qX[idx], v)
+            ridx=ridx+1
+        labels[idx] = tmpdist.argmin()
+            
 
     return labels, medoids
 
@@ -2281,7 +2284,7 @@ def kmedoids_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _m
         _funcdist = fidelity_as_distance
 
     if _func_distance==TRACE_DISTANCE:
-        _funcdist = trace_distance
+        _funcdist = trace_distance_vector
 
     if _func_distance==MANHATTAN_DISTANCE:
         _funcdist = manhattan_distance
