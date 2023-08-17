@@ -62,6 +62,9 @@ P_CQA_DISTANCE     = 1007
 P_CQB_DISTANCE     = 1008
 SWAP_TEST_DISTANCE = 1009
 
+EUCLIDEAN_DISTANCE_WITH_SQRT    = 1010
+EUCLIDEAN_DISTANCE_WITHOUT_SQRT = 1011
+
 POINTS_DRAW        = 2000
 LINES_DRAW         = 2001
 
@@ -736,6 +739,8 @@ class DistanceQuantumClassification:
     
     def reset( self ):
         pass
+
+
 
 class ClusteringByPotentialEnergy:
     def __int__( self ):
@@ -1887,6 +1892,18 @@ def swap_test_as_distance_p0(uvector, vvector, r=0, check=0):
 def swap_test_as_distance_p1(uvector, vvector, r=0, check=0):
     rslt = (1.0 - swap_test_as_distance_p0(uvector, vvector, r, check))
     return float(1.0 - rslt)
+
+
+def euclidean_distance_without_sqrt(uvector, vvector, r=0, check=0):
+    rslt = np.sum( ( np.abs( (uvector - vvector) ) ) ** 2.0 )
+    
+    return rslt
+
+def euclidean_distance_with_sqrt(uvector, vvector, r=0, check=0):
+    rslt = np.sum( ( np.abs( (uvector - vvector) ) ) ** 2.0 )
+    
+    return np.sqrt(rslt)
+    
 
 def create_zero_vector( _n_dim=3 ):
     """
