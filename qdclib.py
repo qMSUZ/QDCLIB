@@ -695,6 +695,7 @@ class BlochVisualization:
     def save_to_file(self, filename = None):
         pass
 
+# in preparation
 class QuantumSVM:
     
     def __int__( self ):
@@ -703,6 +704,7 @@ class QuantumSVM:
     def reset( self ):
         pass
         
+# in preparation    
 class VQEClassification:
     
     def __int__( self ):
@@ -733,6 +735,7 @@ class VQEClassification:
     def load_angles_from_file( self, _fname = None ):
         pass
 
+# in preparation
 class DistanceQuantumClassification:
     def __int__( self ):
         pass
@@ -740,17 +743,55 @@ class DistanceQuantumClassification:
     def reset( self ):
         pass
 
+# in preparation
+class QuantumSpectralClustering:
+    def __int__( self ):
+        pass
+    
+    def reset( self ):
+        pass
 
-
+# in preparation
 class ClusteringByPotentialEnergy:
     def __int__( self ):
         self.dimension = 2
-    
-    def set_dimension( self, _d ):
-        self.dimension = _d
-        
+        self.bigE = 0
+        self.data_for_cluster = [] 
+        self._func_distance = None
+
     def reset( self ):
         pass
+    
+    def set_distnace(self, _f_dist):
+        self._func_distance = _f_dist
+        
+    def set_dimension( self, _d ):
+        self.dimension = _d
+    
+    def set_data(self, _qdX):
+        self.data_for_cluster = _qdX
+    
+    def calc_V( self, _x, _E, _psi, _sigma ):
+        
+        two_sigma_sqr = ( 2.0 * (_sigma ** 2.0) )
+        coeff = 1.0 / ( 2.0 * (two_sigma_sqr) * _psi )
+        
+        sumval  = 0.0
+        sumval1 = 0.0
+        sumval2 = 0.0
+        
+        for dval in self.data_for_cluster:
+            dij2 = self._func_distance( _x, dval ) ** 2.0
+            evalue = np.exp( -1.0 * (dij2)/(two_sigma_sqr) )
+            sumval1 = sumval1 + dij2 * evalue
+            sumval2 = sumval2 + evalue
+        
+        sumval = sumval + (sumval1/sumval2)
+        
+        rslt = _E - (self.dimension/2.0) + coeff * sumval
+        
+        return rslt
+    
     
 
 def create_circle_plot_for_2d_data(_qX, _first_col=0, _second_col=1, _limits=None):
@@ -2273,7 +2314,7 @@ def kmedoids(_qX, _n_clusters, _max_iterations=128, _func_distance = None):
         _iteration = _iteration + 1
     
     # create labels
-    labels=np.zeros(samples)
+    labels=np.zeros(samples, dtype=np.int64)
     tmpdist=np.zeros(_n_clusters)
     for idx in range(0, samples):
         labels[idx] = -1
@@ -2281,7 +2322,7 @@ def kmedoids(_qX, _n_clusters, _max_iterations=128, _func_distance = None):
         for v in medoids:
             tmpdist[ridx]=_func_distance(_qX[idx], v)
             ridx=ridx+1
-        labels[idx] = tmpdist.argmin()
+        labels[idx] = np.int64(tmpdist.argmin())
             
 
     return labels, medoids
