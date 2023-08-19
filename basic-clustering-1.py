@@ -35,8 +35,8 @@ import qdclib as qdcl
 
 n_clusters = 4
 d = qdcl.create_focused_circle_probes_with_uniform_placed_centers(30, n_clusters, _width_of_cluster=0.15)
-labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
-#labels, centers = qdcl.kmedoids_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
+#labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
+labels, centers = qdcl.kmedoids_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
 
 #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.DOT_DISTANCE )
 #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.FIDELITY_DISTANCE )
