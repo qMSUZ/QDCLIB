@@ -103,7 +103,6 @@ def read_iris_data( fname ):
 
 org_iris_data, d,  dprime, Y, d0, d1, d2 = read_iris_data( 'data/iris_data.txt')
 
-
 n_components = 2
 
 pca = decomposition.PCA( n_components )
@@ -125,16 +124,14 @@ ax.set_xlabel('X Label')
 ax.set_ylabel('Y Label')
 plt.show()
 
-
-
-# Gaussian KDE for Iris data expresed as qubit states after two components PCA
-
 minx=np.min(ddata[:, 0])
 maxx=np.max(ddata[:, 0])
 
 miny=np.min(ddata[:, 1])
 maxy=np.max(ddata[:, 1])
 
+
+# Gaussian KDE for Iris data expresed as qubit states after two components PCA
     
 X, Y = np.mgrid[minx:maxx:150j, miny:maxy:150j]
 positions = np.vstack([X.ravel(), Y.ravel()])
@@ -161,14 +158,21 @@ plt.show()
 
 cpe = qdcl.ClusteringByPotentialEnergy()
 cpe.set_data( ddata )
-
-cpe.set_distnace( qdcl.euclidean_distance_without_sqrt )
 cpe.set_dimension( 2 )
 
-e_value = 0.0
-psi_value=1.0
 sigma=0.25
 
-# 
-# the rest of code
-#
+Z = cpe.calc_v_function_on_2d_mesh_grid(0.025, 150, 150 )
+
+fig = plt.figure( figsize = (12,12) )
+ax = fig.add_subplot( )
+ax.set_xlim([minx, maxx])
+ax.set_ylim([miny, maxy])
+ax.imshow(np.rot90(Z), cmap=plt.cm.gist_earth_r, extent=[minx, maxx, miny, maxy])
+ax.scatter( ddata[0:49, 0],    ddata[0:49, 1],    color="red")
+ax.scatter( ddata[50:99, 0],   ddata[50:99, 1],   color="green")
+ax.scatter( ddata[100:149, 0], ddata[100:149, 1], color="blue")
+ax.contour(X, Y, Z)
+(e0,e1,e2,e3) =  ax.get_images()[0].get_extent()
+ax.set_aspect( np.abs( (e1-e0)/(e3-e2) ) )
+plt.show()

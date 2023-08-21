@@ -764,34 +764,62 @@ class ClusteringByPotentialEnergy:
     
     def set_distnace(self, _f_dist):
         self._func_distance = _f_dist
-        
+            
     def set_dimension( self, _d ):
         self.dimension = _d
     
     def set_data(self, _qdX):
         self.data_for_cluster = _qdX
-    
-    def calc_V( self, _x, _E, _psi, _sigma ):
         
+    def calc_V( self, _x, _E, _sigma ):
         two_sigma_sqr = ( 2.0 * (_sigma ** 2.0) )
-        coeff = 1.0 / ( 2.0 * (two_sigma_sqr) * _psi )
         
+        _psi    = 0.0
         sumval  = 0.0
         sumval1 = 0.0
         sumval2 = 0.0
-        
+
         for dval in self.data_for_cluster:
-            dij2 = self._func_distance( _x, dval ) ** 2.0
-            evalue = np.exp( -1.0 * (dij2)/(two_sigma_sqr) )
-            sumval1 = sumval1 + dij2 * evalue
-            sumval2 = sumval2 + evalue
+            # individual index in probe
+            for idx in range(self.dimension):
+                #dij2 = self._func_distance( _x, dval ) ** 2.0
+                dij2 = (_x[idx] - dval[idx]) ** 2
+                evalue = np.exp( -1.0 * ( (dij2)/(two_sigma_sqr) ) )
+                _psi = _psi + evalue
+                sumval1 = sumval1 + dij2 * evalue
+                sumval2 = sumval2 + evalue
         
         sumval = sumval + (sumval1/sumval2)
+        
+        coeff = 1.0 / ( 2.0 * (two_sigma_sqr) * _psi )
         
         rslt = _E - (self.dimension/2.0) + coeff * sumval
         
         return rslt
+
+    def calc_V_with_distance( self, _x, _E, _sigma ):
+        pass
+
     
+    def calc_v_function_on_2d_mesh_grid(self, _sigma, _mesh_grid_x = 50, _mesh_grid_y = 50 ):
+
+        minx=np.min(self.data_for_cluster[:, 0])
+        maxx=np.max(self.data_for_cluster[:, 0])
+        
+        miny=np.min(self.data_for_cluster[:, 1])
+        maxy=np.max(self.data_for_cluster[:, 1])    
+
+        X, Y = np.mgrid[minx:maxx:_mesh_grid_x*1J, miny:maxy:_mesh_grid_y*1J]
+        Z = np.zeros( shape=X.shape)
+        for idx in range(_mesh_grid_x):
+            for idy in range(_mesh_grid_y):
+                v=(self.calc_V( [X[idx,idy], Y[idx,idy]], 0.0, _sigma))
+                Z[idx,idy] = (-v)/(1.0+v)
+        
+        return Z
+
+    def calc_v_function_with_distance_on_2d_mesh_grid(self, _sigma):
+        pass
     
 
 def create_circle_plot_for_2d_data(_qX, _first_col=0, _second_col=1, _limits=None):
