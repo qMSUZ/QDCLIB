@@ -762,7 +762,7 @@ class ClusteringByPotentialEnergy:
     def reset( self ):
         pass
     
-    def set_distnace(self, _f_dist):
+    def set_distance(self, _f_dist):
         self._func_distance = _f_dist
             
     def set_dimension( self, _d ):
@@ -798,28 +798,67 @@ class ClusteringByPotentialEnergy:
         return rslt
 
     def calc_V_with_distance( self, _x, _E, _sigma ):
-        pass
+        two_sigma_sqr = ( 2.0 * (_sigma ** 2.0) )
+        
+        _psi    = 0.0
+        sumval  = 0.0
+        sumval1 = 0.0
+        sumval2 = 0.0
+
+        for dval in self.data_for_cluster:
+            dij2 = self._func_distance( _x, dval ) ** 2.0
+            evalue = np.exp( -1.0 * ( (dij2)/(two_sigma_sqr) ) )
+            _psi = _psi + evalue
+            sumval1 = sumval1 + dij2 * evalue
+            sumval2 = sumval2 + evalue
+        
+        sumval = sumval + (sumval1/sumval2)
+        
+        coeff = 1.0 / ( 2.0 * (two_sigma_sqr) * _psi )
+        
+        rslt = _E - (self.dimension/2.0) + coeff * sumval
+        
+        return rslt
 
     
     def calc_v_function_on_2d_mesh_grid(self, _sigma, _mesh_grid_x = 50, _mesh_grid_y = 50 ):
 
-        minx=np.min(self.data_for_cluster[:, 0])
-        maxx=np.max(self.data_for_cluster[:, 0])
+        minx = np.min( self.data_for_cluster[:, 0] )
+        maxx = np.max( self.data_for_cluster[:, 0] )
         
-        miny=np.min(self.data_for_cluster[:, 1])
-        maxy=np.max(self.data_for_cluster[:, 1])    
+        miny = np.min( self.data_for_cluster[:, 1] )
+        maxy = np.max( self.data_for_cluster[:, 1] )    
 
-        X, Y = np.mgrid[minx:maxx:_mesh_grid_x*1J, miny:maxy:_mesh_grid_y*1J]
-        Z = np.zeros( shape=X.shape)
-        for idx in range(_mesh_grid_x):
-            for idy in range(_mesh_grid_y):
-                v=(self.calc_V( [X[idx,idy], Y[idx,idy]], 0.0, _sigma))
+        X, Y = np.mgrid[ minx:maxx:_mesh_grid_x*1J, miny:maxy:_mesh_grid_y*1J ]
+        Z    = np.zeros( shape=X.shape )
+        
+        for idx in range( _mesh_grid_x ):
+            for idy in range( _mesh_grid_y ):
+                v=self.calc_V( [X[idx,idy], Y[idx,idy]], 0.0, _sigma)
                 Z[idx,idy] = (-v)/(1.0+v)
         
         return Z
 
-    def calc_v_function_with_distance_on_2d_mesh_grid(self, _sigma):
-        pass
+    def calc_v_function_with_distance_on_2d_mesh_grid(self, _sigma, _mesh_grid_x = 50, _mesh_grid_y = 50):
+        
+        if self._func_distance == None:
+            raise  ValueError("Distance function has been not assigned!!!")
+        
+        minx = np.min( self.data_for_cluster[:, 0] )
+        maxx = np.max( self.data_for_cluster[:, 0] )
+        
+        miny = np.min( self.data_for_cluster[:, 1] )
+        maxy = np.max( self.data_for_cluster[:, 1] )    
+
+        X, Y = np.mgrid[ minx:maxx:_mesh_grid_x*1J, miny:maxy:_mesh_grid_y*1J ]
+        Z    = np.zeros( shape=X.shape )
+        
+        for idx in range( _mesh_grid_x ):
+            for idy in range( _mesh_grid_y ):
+                v=self.calc_V_with_distance( [X[idx,idy], Y[idx,idy]], 0.0, _sigma)
+                Z[idx,idy] = (-v)/(1.0+v)
+        
+        return Z
     
 
 def create_circle_plot_for_2d_data(_qX, _first_col=0, _second_col=1, _limits=None):
@@ -1369,12 +1408,18 @@ def manhattan_distance(uvector, vvector, r=0, check=0):
     """
     x=1
     y=1
+    dim=0
     if check==1:
         x=vector_check(uvector)
         y=vector_check(vvector)
-    if (x==1 and y==1):
+    if (x==1) and (y==1):
         d=0.0
-        dim=uvector.shape[0]
+        if isinstance(uvector, np.ndarray):
+            dim=uvector.shape[0]
+            
+        if isinstance(uvector, list):
+            dim=len(uvector)
+            
         for idx in range(dim):
             d = d + np.abs( (uvector[idx] - vvector[idx]) )
         if r!=0:
