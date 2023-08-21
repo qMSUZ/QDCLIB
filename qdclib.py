@@ -1006,7 +1006,9 @@ def convert_data_to_vector_states_double_norm(inputDF, cols=0):
     #intervals
     maxs=np.amax(Ktab, axis=0)
     mins=np.amin(Ktab, axis=0)
-    intervals=maxs-mins
+    intervals=np.zeros(shape=(b))
+    for i in range(b):
+        intervals[i]=maxs[i]-mins[i]
     KNtab=np.ndarray(shape=(a,b))
     for j in range(b):
         for i in range(a):
