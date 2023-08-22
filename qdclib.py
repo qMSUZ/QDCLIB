@@ -1087,12 +1087,17 @@ def convert_data_to_vector_states_double_norm(inputDF, cols=0):
         Qtab=np.zeros(shape=(a,c))
     else:
         Qtab=np.ndarray(shape=(a,b))
+    k=0
     for i in range(a):
         sum_all=0
         for j in range(b):
             sum_all+=KNtab[i,j]
-        for j in range(b):
-            Qtab[i,j]=sympy.sqrt(KNtab[i,j]/sum_all)
+        if sum_all==0:
+            print('Warning: an observation with all zero values occured and it will be deleted!')
+        else:
+            for j in range(b):
+                Qtab[k,j]=sympy.sqrt(KNtab[i,j]/sum_all)
+            k+=1
     return Qtab
 
 def convert_data_to_vector_states(inputDF, cols=0):
