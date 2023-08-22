@@ -1036,6 +1036,8 @@ def convert_data_to_vector_states_double_norm(inputDF, cols=0):
         each variable is normalized to avoid domination of some variables 
         (approach known from the classical machine learning), finally, 
         each observation is normalized (to generate correct quantum state). 
+        If the first normalization results with an observation with all zero 
+        values, then this observation will be deteled.
 
         Parameters
         ----------
@@ -1080,19 +1082,36 @@ def convert_data_to_vector_states_double_norm(inputDF, cols=0):
     for j in range(b):
         for i in range(a):
             KNtab[i,j]=(Ktab[i,j]-mins[j])/intervals[j]
+    #detection of an observation with all zero values
+    h=0
+    i=0
+    aa=a
+    while (h==0 and i<a):
+        sum_all=0
+        for j in range(b):
+            sum_all+=KNtab[i,j]
+        if sum_all==0:
+            h=1
+            aa-=1
+        i+=1
     #quantum normalization
     if math.ceil(math.log2(b)) != math.floor(math.log2(b)):
         c=math.ceil(math.log2(b))
         c=2**c
-        Qtab=np.zeros(shape=(a,c))
+        Qtab=np.zeros(shape=(aa,c))
     else:
-        Qtab=np.ndarray(shape=(a,b))
+        Qtab=np.ndarray(shape=(aa,b))
+    k=0
     for i in range(a):
         sum_all=0
         for j in range(b):
             sum_all+=KNtab[i,j]
-        for j in range(b):
-            Qtab[i,j]=sympy.sqrt(KNtab[i,j]/sum_all)
+        if sum_all==0:
+            print('Warning: an observation with all zero values occured and it will be deleted!')
+        else:
+            for j in range(b):
+                Qtab[k,j]=sympy.sqrt(KNtab[i,j]/sum_all)
+            k+=1
     return Qtab
 
 def convert_data_to_vector_states(inputDF, cols=0):
