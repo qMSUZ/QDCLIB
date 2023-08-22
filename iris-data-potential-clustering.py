@@ -162,7 +162,7 @@ cpe.set_dimension( 2 )
 
 #cpe.set_distance( qdcl.euclidean_distance_with_sqrt )
 #cpe.set_distance( qdcl.euclidean_distance_without_sqrt )
-#cpe.set_distance( qdcl.manhattan_distance )
+cpe.set_distance( qdcl.manhattan_distance )
 
 Z = cpe.calc_v_function_on_2d_mesh_grid(0.025, 150, 150 )
 #Z = cpe.calc_v_function_with_distance_on_2d_mesh_grid(0.025, 150, 150 )

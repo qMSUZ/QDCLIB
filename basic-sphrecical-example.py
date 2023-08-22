@@ -91,8 +91,8 @@ def example2():
     print("\n\nexample 2\n\n")
 
     n_clusters = 5
-    d = qdcl.create_focused_spherical_probes_2d(30, n_clusters, _width_of_cluster=0.15)
-    labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.DOT_DISTANCE )
+    d = qdcl.create_focused_circle_probes(30, n_clusters, _width_of_cluster=0.15)
+    labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
     
     f=qdcl.create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
     f.show()
@@ -102,7 +102,7 @@ def example3():
     print("\n\nexample 3\n\n")
 
     n_clusters = 5
-    d = qdcl.create_focused_spherical_probes_2d(30, n_clusters, _width_of_cluster=0.15)
+    d = qdcl.create_focused_circle_probes(30, n_clusters, _width_of_cluster=0.15)
     labels, centers = qdcl.kmedoids( d, n_clusters, _max_iterations=128, _func_distance=qdcl.fidelity_as_distance )
     
     f=qdcl.create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
@@ -115,7 +115,7 @@ def example3():
     
 
     
-example1()
+#example1()
 #example2()
-#example3()
+example3()
                                 
