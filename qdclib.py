@@ -754,7 +754,7 @@ class QuantumSpectralClustering:
 # in preparation
 class ClusteringByPotentialEnergy:
     def __int__( self ):
-        self.dimension = 2
+        self.dimension = -1
         self.bigE = 0
         self.data_for_cluster = [] 
         self._func_distance = None
@@ -780,10 +780,8 @@ class ClusteringByPotentialEnergy:
         sumval2 = 0.0
 
         for dval in self.data_for_cluster:
-            # individual index in probe
             for idx in range(self.dimension):
-                #dij2 = self._func_distance( _x, dval ) ** 2.0
-                dij2 = (_x[idx] - dval[idx]) ** 2
+                dij2 = (_x[idx] - dval[idx]) ** 2.0
                 evalue = np.exp( -1.0 * ( (dij2)/(two_sigma_sqr) ) )
                 _psi = _psi + evalue
                 sumval1 = sumval1 + dij2 * evalue
