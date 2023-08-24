@@ -44,6 +44,8 @@ import pandas as pd
 import math as math
 import sympy as sympy
 
+import cvxopt
+
 #
 # Quantum Computing Simulator (QCS)
 #
@@ -73,10 +75,14 @@ LINES_MULTI_BATCH_DRAW    = 3001
 VECTORS_SINGLE_BATCH_DRAW = 3002
 VECTORS_MULTI_BATCH_DRAW  = 3003
 
-OPT_COBYLA = 4000
-OPT_SPSA   = 4001
-OPT_SLSQP  = 4002
-OPT_POWELL = 4003
+LINEAR_KERNEL     = 4000
+POLYNOMIAL_KERNEL = 4001
+GAUSSIAN_KERNEL   = 4002
+
+OPT_COBYLA = 5000
+OPT_SPSA   = 5001
+OPT_SLSQP  = 5002
+OPT_POWELL = 5003
 
 QDCL_SEED = 1234
 
@@ -697,14 +703,56 @@ class BlochVisualization:
     def save_to_file(self, filename = None):
         pass
 
+
+def linear_kernel(x0, x1):
+    v = np.dot(x0, x1)
+    
+    return v
+
+def polynomial_kernel( x0, x1, _const_val=1.0, _poly_degree=3):
+    v = (np.dot(x0, x1) + _const_val) ** _poly_degree
+    
+    return v
+
+def gaussian_kernel( x0, x1, _sigma=0.5):
+    v = np.exp( -_sigma * np.linalg.norm(x0 - x1) ** 2.0 )
+    
+    return v
+
+
 # in preparation
 class QuantumSVM:
     
     def __int__( self ):
-        pass
+        self.data_for_classification = [] 
+        
+        self._n_samples = -1
+        self._n_features = -1
+        self._sigma = 0.5
+        self._degree = -1
+        self._kernel = None
     
     def reset( self ):
         pass
+
+    def set_data(self, _qdX):
+        self.data_for_classification = _qdX
+        self._n_samples = _qdX.shape[0]
+        self._n_features = _qdX.shape[1]
+        
+
+    def classic_fit( self ):
+        pass
+    
+    def quantum_fit( self ):
+        pass
+    
+    def classic_predict(self, _qdX):
+        pass
+
+    def quantum_predict(self, _qdX):
+        pass
+
         
 # in preparation    
 class VQEClassification:
@@ -2129,8 +2177,8 @@ def create_data_separated_by_line( _n_samples = 100, _centers=None ):
         mean_for_d1 = np.array( _centers[0] )
         mean_for_d2 = np.array( _centers[1] )
     
-    cov = np.array([[0.5, 0.8], 
-                    [0.8, 0.5]])
+    cov = np.array([[0.8, 0.5], 
+                    [0.5, 0.8]])
     
     d1 = np.random.multivariate_normal(mean_for_d1, cov, _n_samples)
     d2 = np.random.multivariate_normal(mean_for_d2, cov, _n_samples)
@@ -2139,6 +2187,9 @@ def create_data_separated_by_line( _n_samples = 100, _centers=None ):
     labels_d2 = np.multiply( np.ones( shape=(_n_samples, ) ), -1.0)
     
     return d1, d2, labels_d1, labels_d2
+
+def split_data_and_labels():
+    pass
 
 def create_spherical_probes( _n_points, _n_dim=2):
     """
