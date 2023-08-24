@@ -50,7 +50,7 @@ import sympy as sympy
 
 # import qcs
 
-
+CUSTOM_DISTANCE    =  999
 COSINE_DISTANCE    = 1000
 DOT_DISTANCE       = 1001
 FIDELITY_DISTANCE  = 1002
@@ -77,6 +77,8 @@ OPT_COBYLA = 4000
 OPT_SPSA   = 4001
 OPT_SLSQP  = 4002
 OPT_POWELL = 4003
+
+QDCL_SEED = 1234
 
 def _internal_pauli_x():
     paulix=np.array( [0.0, 1.0, 1.0, 0.0] ).reshape(2,2)
@@ -2081,6 +2083,60 @@ def create_one_vector( _axis=0, _n_dim=3 ):
     
     return _vector_one
 
+def data_vertical_stack(d1, d2):
+    return np.vstack( (d1,d2) )
+
+
+def create_blob_2d( _n_samples = 100, _center=None):   
+
+    if _center == None:
+        mean_for_d1 = np.array([0, 0])
+
+    cov = np.array([[1.0, 0.0], 
+                    [0.0, 1.0]])
+    
+    d1 = np.random.multivariate_normal(mean_for_d1, cov, _n_samples)
+
+    return d1
+
+
+# add labels 
+def create_data_non_line_separated( _n_samples = 50, _centers=None ):        
+   
+    mean1 = [-2,  2]
+    mean2 = [ 1, -1]
+    mean3 = [ 3, -3]
+    mean4 = [-4,  4]
+
+    cov = [[1.0, 0.9], 
+           [0.9, 1.0]]
+    d1 = np.random.multivariate_normal(mean1, cov, _n_samples)
+    d1 = np.vstack( (d1, np.random.multivariate_normal(mean3, cov, _n_samples)) )
+    d2 = np.random.multivariate_normal(mean2, cov, _n_samples)
+    d2 = np.vstack( (d2, np.random.multivariate_normal(mean4, cov, _n_samples)) )
+    
+    
+    line_data=data_vertical_stack( d1, d2 )
+
+    return line_data
+
+# add labels 
+def create_data_separated_by_line( _n_samples = 100, _centers=None ):        
+    
+    if _centers == None:
+        mean_for_d1 = np.array([0, 3])
+        mean_for_d2 = np.array([3, 0])
+    else:
+        mean_for_d1 = np.array( _centers[0] )
+        mean_for_d2 = np.array( _centers[1] )
+    
+    cov = np.array([[0.5, 0.8], 
+                    [0.8, 0.5]])
+    
+    d1 = np.random.multivariate_normal(mean_for_d1, cov, _n_samples)
+    d2 = np.random.multivariate_normal(mean_for_d2, cov, _n_samples)
+    
+    return d1, d2
 
 def create_spherical_probes( _n_points, _n_dim=2):
     """

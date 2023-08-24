@@ -41,7 +41,7 @@ from sklearn import decomposition
 from sklearn.datasets import make_circles
 from sklearn.datasets import make_moons
 
-def circles_example( _verbose = 0):
+def circles_example( _verbose = 0 ):
     
     
     d, org_labels = make_circles(n_samples=100, factor=0.3, noise=0.05, random_state=0)
@@ -136,8 +136,8 @@ def circles_example( _verbose = 0):
         print("smaller value at two first columns points out the class")
         print(distance_table)
 
-def moon_example():
-    d, org_labels = make_moons( n_samples = 100,  noise=0.05, )
+def moon_example( _verbose = 0 ):
+    d, org_labels = make_moons( _n_samples = 100,  noise=0.05, )
     #X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=0)
 
     f = qdcl.create_plot_for_2d_data(d)
@@ -173,5 +173,53 @@ def moon_example():
     
     f=b.make_figure()
     f.show()
+
+
+def example_simple_2d_blob( _verbose = 0 ):
     
-circles_example( 1 )
+    blob_data = qdcl.create_blob_2d( _n_samples = 500 )
+    
+    limits_blob_data = [ np.min(blob_data[:,0]), np.max(blob_data[:,0]), np.min(blob_data[:,1]), np.max(blob_data[:,1]) ]   
+    limits_blob_data = output_list = [v * 1.25 for v in limits_blob_data]
+    
+    f = qdcl.create_scatter_plot_for_2d_data( blob_data, _limits=limits_blob_data )
+    
+   
+def example_linearly_separable_data_2d(  _verbose = 0 ):
+    centers=[[0,3],[3,0]]
+    line1x, line2x = qdcl.create_data_separated_by_line ( _centers=centers )
+    
+    line_data=qdcl.data_vertical_stack( line1x, line2x )
+    limits_line_data = [ np.min(line_data[:,0]), np.max(line_data[:,0]), np.min(line_data[:,1]), np.max(line_data[:,1]) ]
+   
+    f = qdcl.create_scatter_plot_for_2d_data( line_data, _limits=limits_line_data )
+
+def example_non_linearly_separable_data_2d(  _verbose = 0 ):    
+    
+    # _n_samples = 50
+    
+    # mean1 = [-2,  2]
+    # mean2 = [ 1, -1]
+    # mean3 = [ 3, -3]
+    # mean4 = [-4,  4]
+
+    # cov = [[1.0, 0.9], 
+    #        [0.9, 1.0]]
+    # d1 = np.random.multivariate_normal(mean1, cov, _n_samples)
+    # d1 = np.vstack( (d1, np.random.multivariate_normal(mean3, cov, _n_samples)) )
+    # d2 = np.random.multivariate_normal(mean2, cov, _n_samples)
+    # d2 = np.vstack( (d2, np.random.multivariate_normal(mean4, cov, _n_samples)) )
+    
+    
+    # line_data=qdcl.data_vertical_stack( d1, d2 )
+    line_data = qdcl.create_data_non_line_separated( 100 )
+    limits_line_data = [ np.min(line_data[:,0]), np.max(line_data[:,0]), np.min(line_data[:,1]), np.max(line_data[:,1]) ]
+    limits_line_data = output_list = [v * 1.25 for v in limits_line_data]
+    
+    f = qdcl.create_scatter_plot_for_2d_data( line_data, _limits=limits_line_data )
+            
+# circles_example( 1 )
+# moon_example()
+# example_simple_2d_blob()
+# example_linearly_separable_data_2d()
+example_non_linearly_separable_data_2d()
