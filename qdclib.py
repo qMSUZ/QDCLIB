@@ -2120,7 +2120,6 @@ def create_data_non_line_separated( _n_samples = 50, _centers=None ):
 
     return line_data
 
-# add labels 
 def create_data_separated_by_line( _n_samples = 100, _centers=None ):        
     
     if _centers == None:
@@ -2136,7 +2135,10 @@ def create_data_separated_by_line( _n_samples = 100, _centers=None ):
     d1 = np.random.multivariate_normal(mean_for_d1, cov, _n_samples)
     d2 = np.random.multivariate_normal(mean_for_d2, cov, _n_samples)
     
-    return d1, d2
+    labels_d1 = np.ones( shape=(_n_samples, ) )
+    labels_d2 = np.multiply( np.ones( shape=(_n_samples, ) ), -1.0)
+    
+    return d1, d2, labels_d1, labels_d2
 
 def create_spherical_probes( _n_points, _n_dim=2):
     """

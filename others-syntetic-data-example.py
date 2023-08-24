@@ -187,7 +187,7 @@ def example_simple_2d_blob( _verbose = 0 ):
    
 def example_linearly_separable_data_2d(  _verbose = 0 ):
     centers=[[0,3],[3,0]]
-    line1x, line2x = qdcl.create_data_separated_by_line ( _centers=centers )
+    line1x, line2x, label1, label2 = qdcl.create_data_separated_by_line ( _centers=centers )
     
     line_data=qdcl.data_vertical_stack( line1x, line2x )
     limits_line_data = [ np.min(line_data[:,0]), np.max(line_data[:,0]), np.min(line_data[:,1]), np.max(line_data[:,1]) ]
@@ -195,23 +195,7 @@ def example_linearly_separable_data_2d(  _verbose = 0 ):
     f = qdcl.create_scatter_plot_for_2d_data( line_data, _limits=limits_line_data )
 
 def example_non_linearly_separable_data_2d(  _verbose = 0 ):    
-    
-    # _n_samples = 50
-    
-    # mean1 = [-2,  2]
-    # mean2 = [ 1, -1]
-    # mean3 = [ 3, -3]
-    # mean4 = [-4,  4]
-
-    # cov = [[1.0, 0.9], 
-    #        [0.9, 1.0]]
-    # d1 = np.random.multivariate_normal(mean1, cov, _n_samples)
-    # d1 = np.vstack( (d1, np.random.multivariate_normal(mean3, cov, _n_samples)) )
-    # d2 = np.random.multivariate_normal(mean2, cov, _n_samples)
-    # d2 = np.vstack( (d2, np.random.multivariate_normal(mean4, cov, _n_samples)) )
-    
-    
-    # line_data=qdcl.data_vertical_stack( d1, d2 )
+   
     line_data = qdcl.create_data_non_line_separated( 100 )
     limits_line_data = [ np.min(line_data[:,0]), np.max(line_data[:,0]), np.min(line_data[:,1]), np.max(line_data[:,1]) ]
     limits_line_data = output_list = [v * 1.25 for v in limits_line_data]
@@ -221,5 +205,5 @@ def example_non_linearly_separable_data_2d(  _verbose = 0 ):
 # circles_example( 1 )
 # moon_example()
 # example_simple_2d_blob()
-# example_linearly_separable_data_2d()
-example_non_linearly_separable_data_2d()
+example_linearly_separable_data_2d()
+# example_non_linearly_separable_data_2d()
