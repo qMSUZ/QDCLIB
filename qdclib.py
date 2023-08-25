@@ -747,6 +747,10 @@ class QuantumSVM:
         self._relative_tolerance = 1e-08
         self._feasibility_tolerance = 1e-08
         self._alphas_tolerance  = 1e-5        
+        
+        self.bigN=-1
+        self.xtildestate = []
+        self.utildestate = []
     
     def reset( self ):
         pass
@@ -758,6 +762,9 @@ class QuantumSVM:
         
         self._n_samples = _qdX.shape[0]
         self._n_features = _qdX.shape[1]
+        
+    def update_data_for_quantum_svm(self):
+        self.bigN = int(2 ** round(np.log(self._n_samples)/np.log(2)))
         
     def set_kernel( self, _func_kernel ):
         self._kernel = _func_kernel
@@ -835,10 +842,7 @@ class QuantumSVM:
                 self.w += self.alphas[n] * self.sv_labels[n] * self.sv[n]
         else:
             self.w = None
-        
-    def quantum_fit( self ):
-        pass
-    
+            
     def classic_project ( self, _qdX ):
        
         if self.w is not None:
@@ -867,12 +871,28 @@ class QuantumSVM:
         
         return np.sign( self.classic_project(_qdX) )
   
+    def quantum_fit( self ):
+        pass
+
+    def quantum_single_project ( self, _qdX ):
+        P =  0.5 * (1.0 - self.utildestate @ _qdX.T  )
+        return P
+
+    def quantum_single_predict(self, _qdX):
+        label=0
+        val = self.quantum_project( _qdX )
+        if val<0.5:
+            label = +1.0
+        else:
+            label = -1.0
+        
+        return label
+    
     def quantum_project ( self, _qdX ):
         pass
 
     def quantum_predict(self, _qdX):
         pass
-
         
 # in preparation    
 class VQEClassification:
