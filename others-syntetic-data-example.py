@@ -189,10 +189,14 @@ def example_linearly_separable_data_2d(  _verbose = 0 ):
     centers=[[0,3],[3,0]]
     line1x, line2x, label1, label2 = qdcl.create_data_separated_by_line ( _centers=centers )
     
+    train_d, train_labels, test_d, test_labels = qdcl.split_data_and_labels(line1x, label1, line2x, label2, 0.30)
+    
     line_data=qdcl.data_vertical_stack( line1x, line2x )
     limits_line_data = [ np.min(line_data[:,0]), np.max(line_data[:,0]), np.min(line_data[:,1]), np.max(line_data[:,1]) ]
    
     f = qdcl.create_scatter_plot_for_2d_data( line_data, _limits=limits_line_data )
+    f = qdcl.create_scatter_plot_for_2d_data( train_d, _limits=limits_line_data )
+    f = qdcl.create_scatter_plot_for_2d_data( test_d, _limits=limits_line_data )
 
 def example_non_linearly_separable_data_2d(  _verbose = 0 ):    
    

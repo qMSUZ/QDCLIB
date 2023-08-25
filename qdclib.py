@@ -724,7 +724,8 @@ def gaussian_kernel( x0, x1, _sigma=0.5):
 class QuantumSVM:
     
     def __int__( self ):
-        self.data_for_classification = [] 
+        self.data_for_classification = [ ]
+        self.data_labels = [ ] 
         
         self._n_samples = -1
         self._n_features = -1
@@ -735,8 +736,11 @@ class QuantumSVM:
     def reset( self ):
         pass
 
-    def set_data(self, _qdX):
+    def set_data(self, _qdX, _labels):
+        
         self.data_for_classification = _qdX
+        self.data_labels = _labels
+        
         self._n_samples = _qdX.shape[0]
         self._n_features = _qdX.shape[1]
         
@@ -2074,7 +2078,7 @@ def swap_test_as_distance_p0(uvector, vvector, r=0, check=0):
 
 def swap_test_as_distance_p1(uvector, vvector, r=0, check=0):
     rslt = (1.0 - swap_test_as_distance_p0(uvector, vvector, r, check))
-    return float(1.0 - rslt)
+    return float(rslt)
 
 
 def euclidean_distance_without_sqrt(uvector, vvector, r=0, check=0):
@@ -2158,9 +2162,9 @@ def create_data_non_line_separated( _n_samples = 50, _centers=None ):
 
     cov = [[1.0, 0.9], 
            [0.9, 1.0]]
-    d1 = np.random.multivariate_normal(mean1, cov, _n_samples)
+    d1 = np.random.multivariate_normal( mean1, cov, _n_samples )
     d1 = np.vstack( (d1, np.random.multivariate_normal(mean3, cov, _n_samples)) )
-    d2 = np.random.multivariate_normal(mean2, cov, _n_samples)
+    d2 = np.random.multivariate_normal( mean2, cov, _n_samples )
     d2 = np.vstack( (d2, np.random.multivariate_normal(mean4, cov, _n_samples)) )
     
     
@@ -2188,8 +2192,28 @@ def create_data_separated_by_line( _n_samples = 100, _centers=None ):
     
     return d1, d2, labels_d1, labels_d2
 
-def split_data_and_labels():
-    pass
+def split_data_and_labels( _qdX1, _labels1,  _qdX2, _labels2, _ratio ):
+    
+    idx_for_cutoff = int( _qdX1.shape[0] * _ratio )
+    
+    train_d1      =    _qdX1[:idx_for_cutoff]
+    train_labels1 = _labels1[:idx_for_cutoff]
+    train_d2      =    _qdX2[:idx_for_cutoff]
+    train_labels2 = _labels2[:idx_for_cutoff]
+    
+    train_d      = np.vstack( (train_d1, train_d2) )
+    train_labels = np.hstack( (train_labels1, train_labels2) )
+    
+    test_d1      =    _qdX1[idx_for_cutoff:]
+    test_labels1 = _labels1[idx_for_cutoff:]
+    test_d2      =    _qdX2[idx_for_cutoff:]
+    test_labels2 = _labels2[idx_for_cutoff:]
+    
+    test_d      = np.vstack( (test_d1, test_d2) )
+    test_labels = np.hstack( (test_labels1, test_labels2) )
+        
+    
+    return train_d, train_labels, test_d, test_labels
 
 def create_spherical_probes( _n_points, _n_dim=2):
     """
