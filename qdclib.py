@@ -725,7 +725,7 @@ def gaussian_kernel( x0, x1, _sigma=0.5):
 # classic part is based on sklearn SVM classs
 #  https://github.com/scikit-learn/scikit-learn/tree/main/sklearn/svm
 #
-# another simple implementation
+# and another simple implementation
 #   https://github.com/DrIanGregory/MachineLearning-SupportVectorMachines/
 #
 
@@ -742,7 +742,11 @@ class QuantumSVM:
         self._kernel = None
         self._kernel_type = LINEAR_KERNEL
         self._value_of_c = None
-        
+        self._show_progress = False
+        self._absolute_tolerance = 1e-08
+        self._relative_tolerance = 1e-08
+        self._feasibility_tolerance = 1e-08
+        self._alphas_tolerance  = 1e-5        
     
     def reset( self ):
         pass
@@ -760,7 +764,12 @@ class QuantumSVM:
   
     def set_type_kernel( self, _t_kernel):
         self._kernel_type = _t_kernel
-  
+
+    
+# implementation of this classical part 
+# is inspired by:
+#   https://github.com/DrIanGregory/MachineLearning-SupportVectorMachines/
+#   https://github.com/BHARATHBN-123/MachineLearning-SupportVectorMachines
     def classic_fit( self ):
         
         gram_matrix = np.zeros( (self._n_samples, self._n_samples) )
@@ -794,20 +803,20 @@ class QuantumSVM:
             tmp2 = np.identity(self._n_samples)
             G = cvxopt.matrix(np.vstack((tmp1, tmp2)))
             tmp1 = np.zeros(self._n_samples)
-            tmp2 = np.ones(self._n_samples) * self.C
+            tmp2 = np.ones(self._n_samples) * self._value_of_c
             h = cvxopt.matrix(np.hstack((tmp1, tmp2)))
         
-        cvxopt.solvers.options['show_progress'] = True
-        cvxopt.solvers.options['abstol'] = 1e-10
-        cvxopt.solvers.options['reltol'] = 1e-10
-        cvxopt.solvers.options['feastol'] = 1e-10
+        cvxopt.solvers.options['show_progress'] = self._show_progress
+        cvxopt.solvers.options['abstol']        = self._absolute_tolerance
+        cvxopt.solvers.options['reltol']        = self._relative_tolerance
+        cvxopt.solvers.options['feastol']       = self._feasibility_tolerance
 
         solution = cvxopt.solvers.qp(P, q, G, h, A, b)        
 
         alphas = np.ravel( solution['x'] )
 
         
-        sv = alphas > 1e-5
+        sv = alphas > self._alphas_tolerance 
         ind = np.arange( len(alphas) )[sv]
         self.alphas = alphas[sv]
         self.sv = self.data_for_classification[sv]
@@ -840,15 +849,15 @@ class QuantumSVM:
                 sum_tmp = 0
                 for a, sv_labels, sv in zip(self.alphas, self.sv_labels, self.sv):
 
-                    if self._kernel_type == 'linear':
-                        sum_tmp += a * sv_labels * self.linear_kernel(_qdX[i], sv)
+                    if self._kernel_type == LINEAR_KERNEL:
+                        sum_tmp += a * sv_labels * linear_kernel(_qdX[i], sv)
                     
-                    if self._kernel_type=='gaussian':
-                        sum_tmp += a * sv_labels * self.gaussian_kernel(_qdX[i], sv, self._sigma)
+                    if self._kernel_type == GAUSSIAN_KERNEL:
+                        sum_tmp += a * sv_labels * gaussian_kernel(_qdX[i], sv, self._sigma)
                         self._value_of_c = None 
                     
-                    if self._kernel_type == 'polynomial':
-                        sum_tmp += a * sv_labels * self.polynomial_kernel(_qdX[i], sv, self._value_of_c, self._degree)
+                    if self._kernel_type == POLYNOMIAL_KERNEL:
+                        sum_tmp += a * sv_labels * polynomial_kernel(_qdX[i], sv, self._value_of_c, self._degree)
 
                 labels_predict[i] = sum_tmp
                 
@@ -868,7 +877,7 @@ class QuantumSVM:
 # in preparation    
 class VQEClassification:
     
-    def __int__( self ):
+    def __init__( self ):
         self.params_filename = None, 
         self.save_params=0
         
@@ -898,7 +907,7 @@ class VQEClassification:
 
 # in preparation
 class DistanceQuantumClassification:
-    def __int__( self ):
+    def __init__( self ):
         pass
     
     def reset( self ):

@@ -201,8 +201,9 @@ def example_linearly_separable_data_2d(  _verbose = 0 ):
     objsvm=qdcl.QuantumSVM()
     objsvm.set_data(train_d, train_labels)
     objsvm.classic_fit()
-    
     labels_predict = objsvm.classic_predict( test_d )
+    
+    
     
 
 def example_non_linearly_separable_data_2d(  _verbose = 0 ):    
