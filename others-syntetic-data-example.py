@@ -197,6 +197,13 @@ def example_linearly_separable_data_2d(  _verbose = 0 ):
     f = qdcl.create_scatter_plot_for_2d_data( line_data, _limits=limits_line_data )
     f = qdcl.create_scatter_plot_for_2d_data( train_d, _limits=limits_line_data )
     f = qdcl.create_scatter_plot_for_2d_data( test_d, _limits=limits_line_data )
+    
+    objsvm=qdcl.QuantumSVM()
+    objsvm.set_data(train_d, train_labels)
+    objsvm.classic_fit()
+    
+    labels_predict = objsvm.classic_predict( test_d )
+    
 
 def example_non_linearly_separable_data_2d(  _verbose = 0 ):    
    

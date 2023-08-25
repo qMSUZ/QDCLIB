@@ -721,9 +721,17 @@ def gaussian_kernel( x0, x1, _sigma=0.5):
 
 
 # in preparation
+#
+# classic part is based on sklearn SVM classs
+#  https://github.com/scikit-learn/scikit-learn/tree/main/sklearn/svm
+#
+# another simple implementation
+#   https://github.com/DrIanGregory/MachineLearning-SupportVectorMachines/
+#
+
 class QuantumSVM:
     
-    def __int__( self ):
+    def __init__( self ):
         self.data_for_classification = [ ]
         self.data_labels = [ ] 
         
@@ -732,6 +740,9 @@ class QuantumSVM:
         self._sigma = 0.5
         self._degree = -1
         self._kernel = None
+        self._kernel_type = LINEAR_KERNEL
+        self._value_of_c = None
+        
     
     def reset( self ):
         pass
@@ -744,14 +755,110 @@ class QuantumSVM:
         self._n_samples = _qdX.shape[0]
         self._n_features = _qdX.shape[1]
         
-
+    def set_kernel( self, _func_kernel ):
+        self._kernel = _func_kernel
+  
+    def set_type_kernel( self, _t_kernel):
+        self._kernel_type = _t_kernel
+  
     def classic_fit( self ):
-        pass
+        
+        gram_matrix = np.zeros( (self._n_samples, self._n_samples) )
+        
+        for i in range( self._n_samples ):
+            for j in range( self._n_samples ):
+                if self._kernel_type == LINEAR_KERNEL:
+                    gram_matrix[i, j] = linear_kernel(self.data_for_classification[i], 
+                                                      self.data_for_classification[j])
+                if self._kernel_type == GAUSSIAN_KERNEL:
+                    gram_matrix[i, j] = gaussian_kernel(self.data_for_classification[i],
+                                                        self.data_for_classification[j], 
+                                                        self._gamma)
+                    self._value_of_c = None
+                if self._kernel_type == POLYNOMIAL_KERNEL:
+                    gram_matrix[i, j] = polynomial_kernel(self.data_for_classification[i],
+                                                          self.data_for_classification[j], 
+                                                          self._value_of_c, self._degree)
+        
+        P = cvxopt.matrix( np.outer(self.data_labels, self.data_labels) * gram_matrix )
+        q = cvxopt.matrix( np.ones(self._n_samples) * -1.0 )
+        A = cvxopt.matrix( self.data_labels, (1, self._n_samples) )
+        b = cvxopt.matrix( 0.0 )
     
+        if self._value_of_c == None or self._value_of_c==0:
+            G = cvxopt.matrix( np.diag( np.ones(self._n_samples) * -1.0 ) )
+            h = cvxopt.matrix( np.zeros( self._n_samples ) )
+        else:
+            
+            tmp1 = np.diag( np.ones( self._n_samples) * -1.0 )
+            tmp2 = np.identity(self._n_samples)
+            G = cvxopt.matrix(np.vstack((tmp1, tmp2)))
+            tmp1 = np.zeros(self._n_samples)
+            tmp2 = np.ones(self._n_samples) * self.C
+            h = cvxopt.matrix(np.hstack((tmp1, tmp2)))
+        
+        cvxopt.solvers.options['show_progress'] = True
+        cvxopt.solvers.options['abstol'] = 1e-10
+        cvxopt.solvers.options['reltol'] = 1e-10
+        cvxopt.solvers.options['feastol'] = 1e-10
+
+        solution = cvxopt.solvers.qp(P, q, G, h, A, b)        
+
+        alphas = np.ravel( solution['x'] )
+
+        
+        sv = alphas > 1e-5
+        ind = np.arange( len(alphas) )[sv]
+        self.alphas = alphas[sv]
+        self.sv = self.data_for_classification[sv]
+        self.sv_labels = self.data_labels[sv]
+
+        
+        self.b = 0
+        for n in range( len(self.alphas) ):
+            self.b += self.sv_labels[n]
+            self.b -= np.sum( self.alphas * self.sv_labels * gram_matrix[ind[n], sv] )
+        self.b = self.b / len( self.alphas )
+
+        if self._kernel_type == LINEAR_KERNEL:
+            self.w = np.zeros(self._n_features)
+            for n in range(len(self.alphas)):
+                self.w += self.alphas[n] * self.sv_labels[n] * self.sv[n]
+        else:
+            self.w = None
+        
     def quantum_fit( self ):
         pass
     
+    def classic_project ( self, _qdX ):
+       
+        if self.w is not None:
+            return np.dot(_qdX, self.w) + self.b
+        else:
+            labels_predict = np.zeros(len(_qdX))
+            for i in range(len(_qdX)):
+                sum_tmp = 0
+                for a, sv_labels, sv in zip(self.alphas, self.sv_labels, self.sv):
+
+                    if self._kernel_type == 'linear':
+                        sum_tmp += a * sv_labels * self.linear_kernel(_qdX[i], sv)
+                    
+                    if self._kernel_type=='gaussian':
+                        sum_tmp += a * sv_labels * self.gaussian_kernel(_qdX[i], sv, self._sigma)
+                        self._value_of_c = None 
+                    
+                    if self._kernel_type == 'polynomial':
+                        sum_tmp += a * sv_labels * self.polynomial_kernel(_qdX[i], sv, self._value_of_c, self._degree)
+
+                labels_predict[i] = sum_tmp
+                
+        return labels_predict + self.b
+
     def classic_predict(self, _qdX):
+        
+        return np.sign( self.classic_project(_qdX) )
+  
+    def quantum_project ( self, _qdX ):
         pass
 
     def quantum_predict(self, _qdX):
