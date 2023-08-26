@@ -191,6 +191,8 @@ def example_linearly_separable_data_2d(  _verbose = 0 ):
     
     train_d, train_labels, test_d, test_labels = qdcl.split_data_and_labels(line1x, label1, line2x, label2, 0.30)
     
+    n_samples = train_d.shape[0]
+    
     line_data=qdcl.data_vertical_stack( line1x, line2x )
     limits_line_data = [ np.min(line_data[:,0]), np.max(line_data[:,0]), np.min(line_data[:,1]), np.max(line_data[:,1]) ]
    
@@ -198,12 +200,26 @@ def example_linearly_separable_data_2d(  _verbose = 0 ):
     f = qdcl.create_scatter_plot_for_2d_data( train_d, _limits=limits_line_data )
     f = qdcl.create_scatter_plot_for_2d_data( test_d, _limits=limits_line_data )
     
+    # classic SVM with QuantumSVM class
+    
     objsvm=qdcl.QuantumSVM()
     objsvm.set_data(train_d, train_labels)
     objsvm.classic_fit()
     labels_predict = objsvm.classic_predict( test_d )
     
+    # and quantum version of SVM with QuantumSVM class
     
+    objqsvm=qdcl.QuantumSVM()
+
+    q_train_d = np.empty((0,2), dtype=complex)
+    for d in train_d:
+        q=qdcl.encode_probe(d)
+        q_train_d = np.append(q_train_d, [[ q[0], q[1] ]], axis=0)
+
+    K = qdcl.create_kernel_matrix_for_training_data( q_train_d, 0.5, n_samples )
+    Kinv=np.linalg.inv(K)
+    
+    # Id= qdcl.chop_and_round_for_array( Kinv @ K )
     
 
 def example_non_linearly_separable_data_2d(  _verbose = 0 ):    

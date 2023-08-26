@@ -216,6 +216,15 @@ def _internal_chop(expr, delta=10 ** -10):
 
 chop = _internal_chop
 
+def chop_and_round_for_array(expr,  delta=10 ** -10):
+
+    for i in range( expr.shape[0] ):
+        for j in range( expr.shape[1] ):
+            expr[i,j] = round( chop(expr[i,j]), int(-np.log(delta)/np.log(10)) )
+            
+    return expr
+    
+    
 def convert_qubit_pure_state_to_bloch_vector( qstate ):
     """
     
@@ -720,6 +729,41 @@ def gaussian_kernel( x0, x1, _sigma=0.5):
     return v
 
 
+def encode_probe( _qdX ):
+    nrm = np.linalg.norm( _qdX )
+    _n_features = _qdX.shape[0]
+    x = np.zeros( shape=(_n_features,), dtype=complex )
+    for k in range(_n_features):
+        x[k] = 1.0/nrm * _qdX[k]
+        
+    return x
+
+def create_kernel_matrix_for_training_data( _qdX, _sigma, _n_samples ):
+    
+    K = np.zeros( (_n_samples + 1, _n_samples + 1), dtype=complex )
+    sigmaI = np.multiply( 1.0/_sigma, np.eye(_n_samples) )
+    
+    gram_matrix = np.zeros( (_n_samples, _n_samples), dtype=complex )
+    
+    for i in range( _n_samples ):
+        for j in range( _n_samples ):
+            gram_matrix[i,j] = np.dot( _qdX[i], _qdX[j] )
+
+    K[0 , 1:] = 1.0
+    K[1:, 0 ] = 1.0
+    K[1:, 1:]  = gram_matrix + sigmaI
+    
+    return K
+
+def create_right_b_alpha_vector( _kernel_matrix, _labels, _n_samples ):
+    
+    tmpvec = np.zeros( (_n_samples + 1,), dtype=complex )
+    tmpvec[1:] = _labels
+    
+    return np.linalg.inv(_kernel_matrix) @ tmpvec
+
+def create_b_c_and_alphas(_kernel_matrix, _labels, _n_samples ):
+    pass
 # in preparation
 #
 # classic part is based on sklearn SVM classs
@@ -870,7 +914,7 @@ class QuantumSVM:
     def classic_predict(self, _qdX):
         
         return np.sign( self.classic_project(_qdX) )
-  
+    
     def quantum_fit( self ):
         pass
 
