@@ -192,6 +192,7 @@ def example_linearly_separable_data_2d(  _verbose = 0 ):
     train_d, train_labels, test_d, test_labels = qdcl.split_data_and_labels(line1x, label1, line2x, label2, 0.30)
     
     n_samples = train_d.shape[0]
+    n_samples_test = test_d.shape[0]
     
     line_data=qdcl.data_vertical_stack( line1x, line2x )
     limits_line_data = [ np.min(line_data[:,0]), np.max(line_data[:,0]), np.min(line_data[:,1]), np.max(line_data[:,1]) ]
@@ -209,17 +210,43 @@ def example_linearly_separable_data_2d(  _verbose = 0 ):
     
     # and quantum version of SVM with QuantumSVM class
     
-    objqsvm=qdcl.QuantumSVM()
-
     q_train_d = np.empty((0,2), dtype=complex)
     for d in train_d:
         q=qdcl.encode_probe(d)
         q_train_d = np.append(q_train_d, [[ q[0], q[1] ]], axis=0)
 
-    K = qdcl.create_kernel_matrix_for_training_data( q_train_d, 0.5, n_samples )
-    Kinv=np.linalg.inv(K)
+    q_test_d = np.empty((0,2), dtype=complex)
+    for d in test_d:
+        q=qdcl.encode_probe(d)
+        q_test_d = np.append(q_test_d, [[ q[0], q[1] ]], axis=0)
+
+
+
+    objqsvm=qdcl.QuantumSVM()    
+    objqsvm.set_data(train_d, train_labels)
     
+    K = qdcl.create_kernel_matrix_for_training_data( q_train_d, 0.1, n_samples )
+    # Kinv=np.linalg.inv(K)
     # Id= qdcl.chop_and_round_for_array( Kinv @ K )
+   
+    b_alpha_vector = qdcl.create_right_b_alpha_vector( K, train_labels, n_samples )
+    
+    b, C, alphas = qdcl.create_b_c_and_alphas( b_alpha_vector, n_samples)
+    
+    Nu = qdcl.create_nu_coefficent(train_d, b, alphas, n_samples )
+    Nx = qdcl.create_nx_coefficent(train_d[0], n_samples ) 
+    
+    print("Training data")
+    for idx in range(n_samples):
+        P = 0.5 * ( 1.0 - qdcl.create_dot_ux_for_classification( Nu, Nx, b, alphas, q_train_d, q_train_d[idx], n_samples))
+        print("P=",P," Label = ", 1 if P <= 0.5 else -1, "org label", train_labels[idx])
+        #print("P < 1/2 we classify probe as +1, otherwise −1")
+
+    print("Test data")
+    for idx in range(n_samples_test):
+        P = 0.5 * ( 1.0 - qdcl.create_dot_ux_for_classification( Nu, Nx, b, alphas, q_train_d, q_test_d[idx], n_samples))
+        print("P=",P," Label = ", 1 if P <= 0.5 else -1, "org label", test_labels[idx])
+        #print("P < 1/2 we classify probe as +1, otherwise −1")
     
 
 def example_non_linearly_separable_data_2d(  _verbose = 0 ):    

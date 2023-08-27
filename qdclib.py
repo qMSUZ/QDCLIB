@@ -728,7 +728,6 @@ def gaussian_kernel( x0, x1, _sigma=0.5):
     
     return v
 
-
 def encode_probe( _qdX ):
     nrm = np.linalg.norm( _qdX )
     _n_features = _qdX.shape[0]
@@ -762,8 +761,36 @@ def create_right_b_alpha_vector( _kernel_matrix, _labels, _n_samples ):
     
     return np.linalg.inv(_kernel_matrix) @ tmpvec
 
-def create_b_c_and_alphas(_kernel_matrix, _labels, _n_samples ):
-    pass
+def create_b_c_and_alphas(_b_alpha_vector, _n_samples ):
+    
+    b = _b_alpha_vector[0]
+    alphas=_b_alpha_vector[1:_n_samples+1]
+    C = b*b + np.sum( _b_alpha_vector[1:_n_samples+1] * _b_alpha_vector[1:_n_samples+1] )
+    
+    return b, C, alphas
+
+def create_nu_coefficent(_qdX, _b, _alphas, _n_samples):
+    vsum=0
+    for idx in range(_n_samples):
+        vx = _qdX[idx]
+        va = _alphas[idx]
+        vsum=vsum + (va ** 2.0) * (np.linalg.norm(vx) ** 2.0)
+    
+    return (_b ** 2.0) + vsum
+
+def create_nx_coefficent( _probe_x, _n_samples):
+    return _n_samples * (np.linalg.norm( _probe_x ) ** 2.0) + 1
+
+def create_dot_ux_for_classification(_nu, _nx, _b, _alphas, _qdX, _probe_x, _n_samples):
+    vsum=0
+    norm_of_probe_x = np.linalg.norm( _probe_x )
+    for idx in range(_n_samples):
+        vx = _qdX[idx]
+        va = _alphas[idx]
+        vsum=vsum + va * np.linalg.norm(vx) * norm_of_probe_x * np.dot(vx, _probe_x)
+    
+    return ( 1.0/np.sqrt( _nx * _nu) ) * (_b + vsum)
+
 # in preparation
 #
 # classic part is based on sklearn SVM classs
@@ -778,7 +805,11 @@ class QuantumSVM:
     def __init__( self ):
         self.data_for_classification = [ ]
         self.data_labels = [ ] 
+    
+        self.q_data_for_classification = [ ]
+        self.q_data_labels = [ ] 
         
+    
         self._n_samples = -1
         self._n_features = -1
         self._sigma = 0.5
@@ -791,10 +822,15 @@ class QuantumSVM:
         self._relative_tolerance = 1e-08
         self._feasibility_tolerance = 1e-08
         self._alphas_tolerance  = 1e-5        
-        
-        self.bigN=-1
-        self.xtildestate = []
-        self.utildestate = []
+    
+    
+        self._bigN = -1
+        self._nu = [ ]
+        self._nx = [ ]
+        self._b = 0
+        self._C = 0
+        self._alphas = None
+        self._b_alpha_vector = None
     
     def reset( self ):
         pass
@@ -807,9 +843,29 @@ class QuantumSVM:
         self._n_samples = _qdX.shape[0]
         self._n_features = _qdX.shape[1]
         
-    def update_data_for_quantum_svm(self):
-        self.bigN = int(2 ** round(np.log(self._n_samples)/np.log(2)))
+        self._bigN = int(2 ** round(np.log(self._n_samples)/np.log(2)))
         
+    def update_data_for_quantum_svm(self):
+
+        self.q_data_for_classification = np.empty( (0,2), dtype=complex)
+        for d in self.data_for_classification:
+            q = encode_probe(d)
+            self.q_data_for_classification = np.append(self.q_data_for_classification, [ [ q[0], q[1] ] ], axis=0)
+        
+        self.K = create_kernel_matrix_for_training_data( self.q_data_for_classification, 
+                                                         self._sigma,
+                                                         self._n_samples )
+        
+        # Kinv=np.linalg.inv(K)
+        # Id= qdcl.chop_and_round_for_array( Kinv @ K )
+
+        self.b_alpha_vector = create_right_b_alpha_vector( self.K,
+                                                           self.data_labels,
+                                                           self._n_samples )
+    
+        self._b, self._C, self._alphas = qdcl.create_b_c_and_alphas( self._b_alpha_vector,
+                                                                     self._n_samples )
+
     def set_kernel( self, _func_kernel ):
         self._kernel = _func_kernel
   
@@ -916,27 +972,56 @@ class QuantumSVM:
         return np.sign( self.classic_project(_qdX) )
     
     def quantum_fit( self ):
-        pass
+        self.update_data_for_quantum_svm()
+        self._nu = create_nu_coefficent( self.data_for_classification, 
+                                         self._b, 
+                                         self._alphas, 
+                                         self._n_samples )
 
     def quantum_single_project ( self, _qdX ):
-        P =  0.5 * (1.0 - self.utildestate @ _qdX.T  )
+        # P =  0.5 * (1.0 - self.utildestate @ _qdX.T  )
+        self._nx = create_nx_coefficent( _qdX, self._n_samples ) 
+        P = 0.5 * ( 1.0 - create_dot_ux_for_classification( self._nu, 
+                                                            self._nx, 
+                                                            self._b, 
+                                                            self._alphas, 
+                                                            self.q_data_for_classification, 
+                                                            _qdX, 
+                                                            self._n_samples))
         return P
 
     def quantum_single_predict(self, _qdX):
-        label=0
-        val = self.quantum_project( _qdX )
-        if val<0.5:
-            label = +1.0
+        _label = 0
+        _val = self.quantum_single_project( _qdX )
+        if _val<0.5:
+            _label = +1.0
         else:
-            label = -1.0
+            _label = -1.0
         
-        return label
+        return _label
     
     def quantum_project ( self, _qdX ):
-        pass
+        
+        probabilities=np.zero( (_qdX.shape[0],) )
+        
+        idx=0
+        for p in _qdX:
+            probabilities[idx] = self.quantum_single_project( p )
+            idx=idx+1
+        
+        return probabilities
 
-    def quantum_predict(self, _qdX):
-        pass
+    def quantum_predict( self, _qdX):
+
+        labels=np.zero( (_qdX.shape[0],) )
+
+        idx=0
+        for p in _qdX:
+            labels[idx] = self.quantum_single_predict( p )
+            idx=idx+1
+
+        
+        return labels
         
 # in preparation    
 class VQEClassification:
@@ -2254,7 +2339,7 @@ def probability_as_distance_all(uvector, vvector, r=0, check=0 ):
 
 def swap_test_as_distance_p0(uvector, vvector, r=0, check=0):
     rslt = (0.5 + 0.5 * np.linalg.norm( (uvector @ vvector.T) ) ** 2)
-    return float(1.0 - rslt)
+    return rslt
 
 def swap_test_as_distance_p1(uvector, vvector, r=0, check=0):
     rslt = (1.0 - swap_test_as_distance_p0(uvector, vvector, r, check))
