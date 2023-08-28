@@ -2337,6 +2337,68 @@ def probability_as_distance_all(uvector, vvector, r=0, check=0 ):
         else:
             return None
 
+def swap_test_value(uvector, vvector, r=0, check=0):
+    """
+    Calculates the probability of measuring |0> on the first qubit of the Swap-Test 
+    circuit when two other inputs of this circuit serve to enter states uvector
+    and vvector. If the mentioned probability of measuring |0> is 1, the states
+    uvector and vvector are the same; for any othogonal states uvector and 
+    vvector Pr(|0>)=0.5.
+
+    Parameters
+    ----------
+    uvector, vvector : numpy array objects
+        Vectors of complex numbers describing quantum states.
+    r : integer
+        The number of decimals to use while rounding the number (default is 0,
+        i.e. the number is not rounded).
+    check : Boolean
+        If check==1 then paramatres uvector, vvector are checked for being 
+        normalized vectors (as default it is not checked).
+
+    Returns
+    -------
+    rslt : float
+        The probability of measuring |0> on the first qubit.
+    Examples
+    --------
+    A Swap-Test value for the same states:
+    >>> v=np.array([1,0])
+    >>> u=np.array([1,0])
+    >>> print(swap_test_value(u, v))
+        1.0
+    A Swap-Test value for the orthogonal states:
+    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)])
+    >>> print(swap_test_value(u, v))
+        0.5
+    A Swap-Test value for two examplary states:
+    >>> v=np.array([1/math.sqrt(2),1/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> print(swap_test_value(u, v, 3))
+        0.75
+    If entered vector v is not a correct quantum state:
+    >>> v=np.array([1,1])
+    >>> u=np.array([1,0])
+    >>> print(swap_test_value(u, v, 0, 1))
+        ...
+        ValueError: The vector is not normalized!
+        
+    """
+    x=1
+    y=1
+    if check==1:
+        x=vector_check(uvector)
+        y=vector_check(vvector)
+    if (x==1 and y==1):
+        if r==0:
+            rslt = float(0.5 + 0.5 * np.linalg.norm( (uvector @ (np.conj(vvector))) ) ** 2)
+        else:
+            rslt = round( float(0.5 + 0.5 * np.linalg.norm( (uvector @ (np.conj(vvector))) ) ** 2), r )
+        return rslt
+    else:
+        return None
+
 def swap_test_as_distance_p0(uvector, vvector, r=0, check=0):
     rslt = (0.5 + 0.5 * np.linalg.norm( (uvector @ vvector.T) ) ** 2)
     return rslt
