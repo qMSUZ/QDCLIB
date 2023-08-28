@@ -809,7 +809,6 @@ class QuantumSVM:
         self.q_data_for_classification = [ ]
         self.q_data_labels = [ ] 
         
-    
         self._n_samples = -1
         self._n_features = -1
         self._sigma = 0.5
@@ -823,7 +822,6 @@ class QuantumSVM:
         self._feasibility_tolerance = 1e-08
         self._alphas_tolerance  = 1e-5        
     
-    
         self._bigN = -1
         self._nu = [ ]
         self._nx = [ ]
@@ -831,6 +829,9 @@ class QuantumSVM:
         self._C = 0
         self._alphas = None
         self._b_alpha_vector = None
+        
+        self._quantum_kernel = None
+        self._user_matrix_kernel_for_quantum_svm = False
     
     def reset( self ):
         pass
@@ -852,9 +853,14 @@ class QuantumSVM:
             q = encode_probe(d)
             self.q_data_for_classification = np.append(self.q_data_for_classification, [ [ q[0], q[1] ] ], axis=0)
         
-        self.K = create_kernel_matrix_for_training_data( self.q_data_for_classification, 
-                                                         self._sigma,
-                                                         self._n_samples )
+        if self._user_matrix_kernel_for_quantum_svm == True:
+            self.K = self._quantum_kernel( self.q_data_for_classification, 
+                                           self._sigma,
+                                           self._n_samples )
+        else:
+            self.K = create_kernel_matrix_for_training_data( self.q_data_for_classification, 
+                                           self._sigma,
+                                           self._n_samples )
         
         # Kinv=np.linalg.inv(K)
         # Id= qdcl.chop_and_round_for_array( Kinv @ K )
@@ -868,7 +874,11 @@ class QuantumSVM:
 
     def set_kernel( self, _func_kernel ):
         self._kernel = _func_kernel
-  
+
+    def set_kernel_quantum_svm( self, _func_kernel ):
+        self._quantum_kernel = _func_kernel
+        self._user_matrix_kernel_for_quantum_svm = True
+
     def set_type_kernel( self, _t_kernel):
         self._kernel_type = _t_kernel
 
