@@ -2461,8 +2461,52 @@ def swap_test_as_distance_p0(uvector, vvector, r=0, check=0):
     return float(std/0.5)
 
 def swap_test_as_distance_p1(uvector, vvector, r=0, check=0):
-    rslt = (1.0 - swap_test_as_distance_p0(uvector, vvector, r, check))
-    return float(rslt)
+    """
+    Calculates the distance between two vectors based on the Swap-Test (according
+    to the probability of measuring |1> on the first qubit).
+    The Swap-Test value is subtracted from one and projected into range [0;1].
+
+    Parameters
+    ----------
+    uvector, vvector : numpy array objects
+        Vectors of complex numbers describing quantum states.
+    r : integer
+        The number of decimals to use while rounding the number (default is 0,
+        i.e. the number is not rounded).
+    check : Boolean
+        If check==1 then paramatres uvector, vvector are checked for being 
+        normalized vectors (as default it is not checked).
+
+    Returns
+    -------
+    Float
+        The distance based on the Swap-Test, i.e. a float in range [0.0;1.0].
+    Examples
+    --------
+    A Swap-Test distance value for the same states:
+    >>> v=np.array([1,0])
+    >>> u=np.array([1,0])
+    >>> print(swap_test_as_distance_p1(u, v))
+        1.0
+    A Swap-Test distance value for the orthogonal states:
+    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)])
+    >>> print(swap_test_as_distance_p1(u, v))
+        0.0
+    A Swap-Test distance value for two examplary states:
+    >>> v=np.array([1/math.sqrt(2),1/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> print(swap_test_as_distance_p1(u, v, 3))
+        0.5
+    If entered vector v is not a correct quantum state:
+    >>> v=np.array([1,1])
+    >>> u=np.array([1,0])
+    >>> print(swap_test_as_distance_p1(u, v, 0, 1))
+        ...
+        ValueError: The vector is not normalized!
+        
+    """
+    return float(1.0 - swap_test_as_distance_p0(uvector, vvector, r, check))
 
 
 def euclidean_distance_without_sqrt(uvector, vvector, r=0, check=0):
