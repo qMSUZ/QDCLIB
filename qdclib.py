@@ -830,48 +830,56 @@ class QuantumSVM:
         self._alphas = None
         self._b_alpha_vector = None
         
+        self.K = None
+        
         self._quantum_kernel = None
         self._user_matrix_kernel_for_quantum_svm = False
     
     def reset( self ):
         pass
 
-    def set_data(self, _qdX, _labels):
-        
-        self.data_for_classification = _qdX
-        self.data_labels = _labels
-        
+    def set_data(self, _qdX, _labels, _is_it_quantum=False):
+
+        self.data_labels = _labels                
+            
         self._n_samples = _qdX.shape[0]
         self._n_features = _qdX.shape[1]
         
+        if _is_it_quantum == False:
+            self.data_for_classification = _qdX
+        else:
+            self.data_for_classification = _qdX
+            q_train_d = np.empty((0, self._n_features), dtype=complex)
+
+            for d in _qdX:
+                q=encode_probe(d)
+                q_train_d = np.append(q_train_d, [[ q[0], q[1] ]], axis=0)
+
+            self.q_data_for_classification = q_train_d
+            self.q_data_labels = _labels
+        
         self._bigN = int(2 ** round(np.log(self._n_samples)/np.log(2)))
         
-    def update_data_for_quantum_svm(self):
-
-        self.q_data_for_classification = np.empty( (0,2), dtype=complex)
-        for d in self.data_for_classification:
-            q = encode_probe(d)
-            self.q_data_for_classification = np.append(self.q_data_for_classification, [ [ q[0], q[1] ] ], axis=0)
-        
-        if self._user_matrix_kernel_for_quantum_svm == True:
-            self.K = self._quantum_kernel( self.q_data_for_classification, 
-                                           self._sigma,
-                                           self._n_samples )
-        else:
-            self.K = create_kernel_matrix_for_training_data( self.q_data_for_classification, 
-                                           self._sigma,
-                                           self._n_samples )
-        
+    def prepare_quantum_objects(self):
+        self.K = create_kernel_matrix_for_training_data( self.q_data_for_classification, 
+                                                         self._sigma, 
+                                                         self._n_samples )
         # Kinv=np.linalg.inv(K)
         # Id= qdcl.chop_and_round_for_array( Kinv @ K )
-
-        self.b_alpha_vector = create_right_b_alpha_vector( self.K,
-                                                           self.data_labels,
-                                                           self._n_samples )
-    
-        self._b, self._C, self._alphas = qdcl.create_b_c_and_alphas( self._b_alpha_vector,
-                                                                     self._n_samples )
-
+           
+        self._b_alpha_vector = create_right_b_alpha_vector( self.K, 
+                                                            self.q_data_labels, 
+                                                            self._n_samples )
+        
+        self._b, self._C, self._alphas = create_b_c_and_alphas( self._b_alpha_vector, 
+                                                                self._n_samples)
+        
+        # self._nu = create_nu_coefficent(self.data_for_classification, self._b, self._alphas, self._n_samples )
+        # self._nx = create_nx_coefficent(self.data_for_classification[0], self._n_samples )
+        
+    def update_data_for_quantum_svm(self):
+        self.prepare_quantum_objects()
+        
     def set_kernel( self, _func_kernel ):
         self._kernel = _func_kernel
 
@@ -1023,10 +1031,16 @@ class QuantumSVM:
 
     def quantum_predict( self, _qdX):
 
-        labels=np.zero( (_qdX.shape[0],) )
+        q_test_d = np.empty((0,2), dtype=complex)
+        for d in _qdX:
+            q = encode_probe(d)
+            q_test_d = np.append(q_test_d, [[ q[0], q[1] ]], axis=0)
+        
+
+        labels=np.zeros( (q_test_d.shape[0],) )
 
         idx=0
-        for p in _qdX:
+        for p in q_test_d:
             labels[idx] = self.quantum_single_predict( p )
             idx=idx+1
 
@@ -1187,6 +1201,8 @@ class ClusteringByPotentialEnergy:
         
         return Z
     
+    def find_clusters_centers(self):
+        pass
 
 def create_circle_plot_for_2d_data(_qX, _first_col=0, _second_col=1, _limits=None):
     """
