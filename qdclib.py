@@ -1088,15 +1088,23 @@ class DistanceQuantumClassification:
 
 # in preparation
 class QuantumSpectralClustering:
-    def __int__( self ):
+    def __init__( self ):
         pass
     
     def reset( self ):
         pass
+    
+    def set_data(self, _qdX):
+        pass
+    
+    def create_data_matrix(self):
+        pass
+    
+    
 
 # in preparation
 class ClusteringByPotentialEnergy:
-    def __int__( self ):
+    def __init__( self ):
         self.dimension = -1
         self.bigE = 0
         self.data_for_cluster = [] 
