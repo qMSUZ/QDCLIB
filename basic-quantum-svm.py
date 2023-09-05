@@ -123,5 +123,5 @@ def quantum_svm():
 
     
 # classic_svm()
-quantum_svm_direct_api()
-# quantum_svm()
+# quantum_svm_direct_api()
+quantum_svm()

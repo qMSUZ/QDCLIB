@@ -3436,7 +3436,41 @@ def create_covariance_matrix( _qX ):
     covariance_matrix = scale * (( _qXDiffWithMean ).T.dot( _qXDiffWithMean ))
 
     return np.array(covariance_matrix, dtype=complex)
+
+def create_adjacency_matrix( _qdX, _threshold, _func_distance = None):
+    
+    if _func_distance == None:
+        raise ValueError("Distance function has been not assigned!!!") 
+    
+    rows = _qdX.shape[0]
+    # cols = _qdX.shape[1]
+
+    adj_matrix = np.zeros ( shape=(rows, rows) ) 
+
+    for x in range(rows):
+        for y in range(rows):
+            if x!=y and _func_distance(_qdX[x], _qdX[y]) < _threshold:
+                adj_matrix[x,y] = 1
+            else:
+                adj_matrix[x,y] = 0
+
+    return adj_matrix
+
+def create_laplacian_matrix( _adj_matrix ):
+    lap_matrix = np.zeros( shape=(_adj_matrix.shape[0], 
+                                  _adj_matrix.shape[1]) ) 
+    rows = _adj_matrix.shape[0]
+    for x in range(rows):
+        for y in range(rows):
+            if _adj_matrix[x,y] == 1:
+                lap_matrix[x,y]=-1
+        lap_matrix[x,x] = np.sum(_adj_matrix[x])
+    
+    return lap_matrix
         
+def create_incidence_matrix( _adj_matrix ):
+    pass
+
 def version():
     pass
 

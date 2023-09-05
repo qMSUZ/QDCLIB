@@ -50,12 +50,32 @@ def blobs_example():
 
     #X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=0)
         
-    f = qdcl.create_plot_for_2d_data(d)    
+    f = qdcl.create_scatter_plot_for_2d_data(d, _limits=[-7.0, 7.0, -7.0, 7.0])    
     
     # n_clusters = 2
     # labels, centers = qdcl.kmeans_spherical( d, n_clusters, 128, qdcl.cosine_distance)
     # f=qdcl.create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
     # f.show()
     
+def spectral_clustering():
+    centers = [
+                (-5,  5), (5, -5),
+              ]
+    d, labels = make_blobs( n_samples=200, centers=centers, cluster_std=0.5, shuffle=False, random_state=1234 )
     
-blobs_example()    
+    f = qdcl.create_scatter_plot_for_2d_data( d, _limits=[-7.0, 7.0, -7.0, 7.0] )
+    
+    adj_matrix = qdcl.create_adjacency_matrix( d, 2.0, qdcl.euclidean_distance_with_sqrt )
+
+    lap_matrix = qdcl.create_laplacian_matrix( adj_matrix )
+
+    fig, ax = plt.subplots()
+    im = ax.imshow( adj_matrix )
+
+    fig, ax = plt.subplots()
+    im = ax.imshow( lap_matrix )
+
+
+
+# blobs_example()
+spectral_clustering()
