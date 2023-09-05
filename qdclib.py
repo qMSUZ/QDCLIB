@@ -811,6 +811,7 @@ class QuantumSVM:
         
         self._n_samples = -1
         self._n_features = -1
+        
         self._sigma = 0.5
         self._degree = -1
         self._kernel = None
@@ -1089,18 +1090,29 @@ class DistanceQuantumClassification:
 # in preparation
 class QuantumSpectralClustering:
     def __init__( self ):
-        pass
+        self.input_data_matrix = [ ]
+
+        self._n_samples = -1
+        self._n_features = -1
+        
+        self._distance_min = 0
+
     
     def reset( self ):
         pass
     
     def set_data(self, _qdX):
-        pass
+        
+        self.input_data_matrix = _qdX
+        
+        self._n_samples = _qdX.shape[0]
+        self._n_features = _qdX.shape[1]
     
     def create_data_matrix(self):
         pass
     
-    
+    def update_data_for_quantum_spectral_clustering(self):
+        pass
 
 # in preparation
 class ClusteringByPotentialEnergy:
