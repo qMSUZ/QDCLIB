@@ -78,4 +78,47 @@ def spectral_clustering():
 
 
 # blobs_example()
-spectral_clustering()
+# spectral_clustering()
+
+
+
+_n_samples = 20
+_n_clusters = 2
+
+centers = [
+            (-5,  5), (5, -5),
+          ]
+
+d, labels = make_blobs( n_samples=_n_samples, centers=centers, cluster_std=0.5, shuffle=False, random_state=1234 )
+# f = qdcl.create_scatter_plot_for_2d_data(d, _limits=[-7.0, 7.0, -7.0, 7.0])
+
+
+# ck = qdcl.create_ck_table_zero_filled( _n_samples ) 
+# ck[:10]=0
+# ck[10:]=1
+
+ck = qdcl.random_assign_clusters_to_ck(_n_samples, _n_clusters)
+
+# centroids = np.zeros( shape=(_n_clusters, _qdX.shape[1]) )
+
+# for k in range(_n_clusters):
+#     num_of_ck = qdcl.number_of_probes_in_cluster(ck, k)  
+#     w = np.zeros( shape=(1, _qdX.shape[1]) ) 
+    
+#     for n in range( _n_samples ):
+#         if qdcl.gnk_function(ck, n, k) == True:
+#             w = w + _qdX[n] 
+        
+#     w = w / (np.sqrt( num_of_ck )) 
+    
+#     centroids[k] = w
+
+centroids = qdcl.create_initial_centroids(d, _n_samples, _n_samples)
+
+centroids = qdcl.quantum_kmeans_update_centroids( d, ck, _n_samples, _n_samples )
+
+ck = qdcl.quantum_kmeans_update_clusters(d,
+                                         ck,
+                                         centroids, 
+                                         _n_samples, _n_clusters, 
+                                         qdcl.euclidean_distance_with_sqrt )
