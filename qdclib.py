@@ -2957,6 +2957,7 @@ def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _func_distance=None):
             # fix required for other function distances 
             centers[i,:] = _X[closest == i].mean(axis=0)
             centers[i,:] = centers[i,:] / np.linalg.norm(centers[i,:])
+            
         
         if all(closest == old_closest):
             break
@@ -3472,14 +3473,17 @@ def create_incidence_matrix( _adj_matrix ):
     pass
 
 
-
-
-def create_ck_table_zero_filled( _n_samples ):
+def create_float_table_zero_filled( _n_samples ):
     
-    ck_tbl = np.zeros( shape = (_n_samples, 1) )
+    ck_tbl = np.zeros( shape = (_n_samples,), dtype=float )
     
     return ck_tbl
 
+def create_ck_table_zero_filled( _n_samples ):
+    
+    ck_tbl = np.zeros( shape = (_n_samples,) )
+    
+    return ck_tbl
 
 def random_assign_clusters_to_ck(_n_samples, _n_clusters):
     
@@ -3502,16 +3506,16 @@ def create_initial_centroids(_qdX, _n_samples, _n_clusters):
         _local_ck[idx_local_ck] = _qdX[idx]
         idx_local_ck = idx_local_ck + 1
         
-        
+
     return _local_ck
     
     
-def get_indices_for_k(_ck, _k):
+def get_indices_for_cluster_k(_ck, _k):
     
     return np.where( _ck == _k)
 
 
-def gnk_function( _ck, _n, _k, ):
+def belong_n_probe_to_k_cluster( _ck, _n, _k, ):
     
     val = None
     
@@ -3523,35 +3527,39 @@ def gnk_function( _ck, _n, _k, ):
     return val
 
 def number_of_probes_in_cluster(_ck, _k):
+
     return (_ck == _k).sum()    
 
-def quantum_kmeans_update_clusters(_qdX, _ck, _centroids, _n_samples, _n_clusters,  _func_distance=None):
+def quantum_kmeans_clusters_assignment(_qdX, _centroids, _n_samples, _n_clusters,  _func_distance=None):
+    
     new_ck = create_ck_table_zero_filled( _n_samples )
     
-    for _n in range( _n_samples ):
-        new_ck[_n] = 0
-        
-    return new_ck
+    distance_table = np.zeros( shape=(_n_samples, _n_clusters))
+    
+    for _n in range(_n_samples):
+        for _k in range(_n_clusters):
+            if _func_distance==None:
+                distance_table[ _n, _k] = np.linalg.norm( _qdX[_n] - _centroids[_k]) ** 2.0
+            else:
+                distance_table[ _n, _k] = _func_distance( _qdX[_n] - _centroids[_k] )
+            
+    for _n in range(_n_samples):
+        new_ck[_n] = np.argmin(distance_table[_n])
+            
+    return distance_table, new_ck
 
-def quantum_kmeans_update_centroids(_qdX, _ck, _n_samples, _n_clusters):
+def quantum_kmeans_update_centroids(_qdX, _centroids, _n_samples, _n_clusters):
     
     _centroids = np.zeros( shape=(_n_clusters, _qdX.shape[1]) )
-    
-    for _k in range(_n_clusters):
-        _num_of_ck = number_of_probes_in_cluster(_ck, _k)  
-        _w = np.zeros( shape=(1, _qdX.shape[1]) ) 
-        
-        for _n in range( _n_samples ):
-            if gnk_function(_ck, _n, _k) == True:
-                _w = _w + _qdX[_n] 
             
-        _w = ( 1.0 / (np.sqrt( _num_of_ck )) ) * _w 
-        
-        _centroids[_k] = _w   
-     
+    # centroid update
+    
+    
     return _centroids
 
-
+def quantum_kmeans():
+    pass
+    
 def version():
     pass
 

@@ -90,7 +90,11 @@ centers = [
           ]
 
 d, labels = make_blobs( n_samples=_n_samples, centers=centers, cluster_std=0.5, shuffle=False, random_state=1234 )
+_qdX=d
 # f = qdcl.create_scatter_plot_for_2d_data(d, _limits=[-7.0, 7.0, -7.0, 7.0])
+
+# lab_kmeans, cent_kmeans= qdcl.kmeans_quantum_states( d, _n_clusters, _func_distance=qdcl.MANHATTAN_DISTANCE )
+# lab_kmedoids, cent_kmedoids = qdcl.kmedoids_quantum_states( d, _n_clusters, _func_distance=qdcl.MANHATTAN_DISTANCE )
 
 
 # ck = qdcl.create_ck_table_zero_filled( _n_samples ) 
@@ -101,24 +105,24 @@ ck = qdcl.random_assign_clusters_to_ck(_n_samples, _n_clusters)
 
 # centroids = np.zeros( shape=(_n_clusters, _qdX.shape[1]) )
 
-# for k in range(_n_clusters):
-#     num_of_ck = qdcl.number_of_probes_in_cluster(ck, k)  
-#     w = np.zeros( shape=(1, _qdX.shape[1]) ) 
-    
-#     for n in range( _n_samples ):
-#         if qdcl.gnk_function(ck, n, k) == True:
-#             w = w + _qdX[n] 
-        
-#     w = w / (np.sqrt( num_of_ck )) 
-    
-#     centroids[k] = w
 
-centroids = qdcl.create_initial_centroids(d, _n_samples, _n_samples)
+centroids = qdcl.create_initial_centroids(d, _n_samples, _n_clusters)
 
-centroids = qdcl.quantum_kmeans_update_centroids( d, ck, _n_samples, _n_samples )
-
-ck = qdcl.quantum_kmeans_update_clusters(d,
-                                         ck,
+distance_table, ck = qdcl.quantum_kmeans_clusters_assignment(d,
                                          centroids, 
-                                         _n_samples, _n_clusters, 
-                                         qdcl.euclidean_distance_with_sqrt )
+                                         _n_samples, _n_clusters)
+
+centroids = qdcl.quantum_kmeans_update_centroids_distance( d, ck, _n_samples, _n_clusters )
+
+d_for_k0=np.zeros( shape = _qdX.shape  )
+d_for_k1=np.zeros( shape = _qdX.shape  )
+
+for idx in qdcl.get_indices_for_cluster_k(ck, 0):
+    d_for_k0[idx] = d[ idx ]
+
+for idx in qdcl.get_indices_for_cluster_k(ck, 1):
+    d_for_k1[idx] = d[ idx ]
+    
+
+
+
