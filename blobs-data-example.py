@@ -89,9 +89,13 @@ centers = [
             (-5,  5), (5, -5),
           ]
 
-d, labels = make_blobs( n_samples=_n_samples, centers=centers, cluster_std=0.5, shuffle=False, random_state=1234 )
+d, org_labels = make_blobs( n_samples=_n_samples, centers=centers, cluster_std=0.5, shuffle=False, random_state=1234 )
 _qdX=d
-# f = qdcl.create_scatter_plot_for_2d_data(d, _limits=[-7.0, 7.0, -7.0, 7.0])
+
+dnrm = qdcl.encode_probes_by_normalisation(d)
+
+# f = qdcl.create_scatter_plot_for_2d_data(dnrm, _limits=[-7.0, 7.0, -7.0, 7.0])
+f = qdcl.create_circle_plot_for_2d_data( dnrm )
 
 # lab_kmeans, cent_kmeans= qdcl.kmeans_quantum_states( d, _n_clusters, _func_distance=qdcl.MANHATTAN_DISTANCE )
 # lab_kmedoids, cent_kmedoids = qdcl.kmedoids_quantum_states( d, _n_clusters, _func_distance=qdcl.MANHATTAN_DISTANCE )
@@ -106,13 +110,25 @@ ck = qdcl.random_assign_clusters_to_ck(_n_samples, _n_clusters)
 # centroids = np.zeros( shape=(_n_clusters, _qdX.shape[1]) )
 
 
-centroids = qdcl.create_initial_centroids(d, _n_samples, _n_clusters)
+centroids = qdcl.create_initial_centroids(dnrm, _n_samples, _n_clusters)
 
-distance_table, ck = qdcl.quantum_kmeans_clusters_assignment(d,
+distance_table, ck = qdcl.quantum_kmeans_clusters_assignment(dnrm,
                                          centroids, 
-                                         _n_samples, _n_clusters)
+                                         _n_samples, _n_clusters,
+                                         _func_distance = qdcl.cosine_distance )
 
-centroids = qdcl.quantum_kmeans_update_centroids_distance( d, ck, _n_samples, _n_clusters )
+centroids = qdcl.quantum_kmeans_update_centroids( dnrm, ck, _n_samples, _n_clusters )
+
+labels = qdcl.quantum_kmeans_assign_labels( dnrm, centroids, 
+                                           _n_samples,  _n_clusters, 
+                                           _func_distance = qdcl.cosine_distance)
+
+f = qdcl.create_circle_plot_with_centers_for_2d_data( dnrm, _n_clusters, centroids, labels)
+
+#
+# create centroids for verification
+# order of labels is not preserved
+#
 
 d_for_k0=np.zeros( shape = _qdX.shape  )
 d_for_k1=np.zeros( shape = _qdX.shape  )
@@ -125,5 +141,4 @@ for idx in qdcl.get_indices_for_cluster_k(ck, 1):
     
 center_k0 = np.sum(d[qdcl.get_indices_for_cluster_k(ck, 0)], axis=0) / qdcl.number_of_probes_in_cluster(ck, 0)
 center_k1 = np.sum(d[qdcl.get_indices_for_cluster_k(ck, 1)], axis=0) / qdcl.number_of_probes_in_cluster(ck, 1)
-
 

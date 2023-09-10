@@ -329,6 +329,21 @@ def vector_data_encode_with_inverse_stereographic_projection( _v ):
 
     return rsltvec
 
+def encode_probe_by_normalisation( _qdX ):
+    nrm = np.linalg.norm( _qdX )
+    _n_features = _qdX.shape[0]
+    x = np.zeros( shape=(_n_features,)  )
+    for k in range(_n_features):
+        x[k] = (1.0/nrm) * _qdX[k]
+        
+    return x
+
+def encode_probes_by_normalisation( _qdX ):
+    for idx in range( _qdX.shape[0]):
+        _qdX[idx] = encode_probe_by_normalisation(_qdX[idx])
+    
+    return _qdX
+
 class BlochVisualization:
 
     def __init__( self ):
@@ -727,15 +742,6 @@ def gaussian_kernel( x0, x1, _sigma=0.5):
     v = np.exp( -_sigma * np.linalg.norm(x0 - x1) ** 2.0 )
     
     return v
-
-def encode_probe( _qdX ):
-    nrm = np.linalg.norm( _qdX )
-    _n_features = _qdX.shape[0]
-    x = np.zeros( shape=(_n_features,), dtype=complex )
-    for k in range(_n_features):
-        x[k] = 1.0/nrm * _qdX[k]
-        
-    return x
 
 def create_kernel_matrix_for_training_data( _qdX, _sigma, _n_samples ):
     
@@ -3415,28 +3421,28 @@ def cohens_kappa(TP, TN, FP, FN, STS):
         return (pra-pre)/(1-pre)
 
 
-def difference_matrix(rho1, rho2):
+def difference_matrix( _rho1, _rho2 ):
     
     # dimension check for rho1, rho2
     # rows,cols = rho1.shape
     
-    result_rho = np.zeros(rho1.shape)
+    _result_rho = np.zeros( _rho1.shape )
     
-    result_rho = rho1 - rho2
+    _result_rho = _rho1 - _rho2
     
-    return result_rho
+    return _result_rho
 
-def create_covariance_matrix( _qX ):  
+def create_covariance_matrix( _qdX ):  
     
-    _n_samples = np.shape(_qX)[0]
+    _n_samples = np.shape( _qdX )[0]
     
     scale = (1.0 / (_n_samples - 1.0))
     
-    _qXDiffWithMean = _qX - _qX.mean(axis=0)
+    _qXDiffWithMean = _qdX - _qdX.mean(axis=0)
     
-    covariance_matrix = scale * (( _qXDiffWithMean ).T.dot( _qXDiffWithMean ))
+    _covariance_matrix = scale * (( _qXDiffWithMean ).T.dot( _qXDiffWithMean ))
 
-    return np.array(covariance_matrix, dtype=complex)
+    return np.array( _covariance_matrix, dtype=complex )
 
 def create_adjacency_matrix( _qdX, _threshold, _func_distance = None):
     
@@ -3541,24 +3547,53 @@ def quantum_kmeans_clusters_assignment(_qdX, _centroids, _n_samples, _n_clusters
             if _func_distance==None:
                 distance_table[ _n, _k] = np.linalg.norm( _qdX[_n] - _centroids[_k]) ** 2.0
             else:
-                distance_table[ _n, _k] = _func_distance( _qdX[_n] - _centroids[_k] )
+                distance_table[ _n, _k] = _func_distance( _qdX[_n], _centroids[_k] )
             
     for _n in range(_n_samples):
         new_ck[_n] = np.argmin(distance_table[_n])
             
     return distance_table, new_ck
 
-def quantum_kmeans_update_centroids(_qdX, _centroids, _n_samples, _n_clusters):
+def quantum_kmeans_update_centroids(_qdX, _ck, _n_samples, _n_clusters):
     
     _centroids = np.zeros( shape=(_n_clusters, _qdX.shape[1]) )
             
     # centroid update
-    
-    
+    chi_vector = np.zeros( shape=(_n_samples, 1) )
+    idx=_n_clusters-1
+    for _k in range(_n_clusters):
+        
+        probes_in_cluster = get_indices_for_cluster_k(_ck, _k)[0].shape[0]
+        
+        for _n in range(_n_samples):
+            if belong_n_probe_to_k_cluster(_ck, _n, _k) == True:
+                chi_vector[ _n ] = 1.0  / np.sqrt( probes_in_cluster )
+            else:
+                chi_vector[ _n ] = 0.0
+        
+        _centroids[idx] = ((_qdX.T @ chi_vector).T) 
+        # we rescale _centroids
+        _centroids[idx] = _centroids[idx] / np.linalg.norm(_centroids[idx])
+        idx=idx-1
+        
     return _centroids
 
-def quantum_kmeans():
-    pass
+def quantum_kmeans_assign_labels( _qdX, _centroids, _n_samples, _n_clusters, _func_distance=None ):
+   
+    distance_table = np.zeros( shape=(_n_samples, _n_clusters))
+    _labels = create_ck_table_zero_filled( _n_samples )
+    
+    for _n in range(_n_samples):
+        for _k in range(_n_clusters):
+            if _func_distance==None:
+                distance_table[ _n, _k] = np.linalg.norm( _qdX[_n] - _centroids[_k]) ** 2.0
+            else:
+                distance_table[ _n, _k] = _func_distance( _qdX[_n], _centroids[_k] )
+            
+    for _n in range(_n_samples):
+        _labels[_n] = np.argmin(distance_table[_n])
+    
+    return _labels
     
 def version():
     pass
