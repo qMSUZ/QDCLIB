@@ -133,7 +133,7 @@ def classical_spectral_clustering_example():
     
     f = qdcl.create_scatter_plot_for_2d_data( d, _limits=[-7.0, 7.0, -7.0, 7.0] )
     
-    labels = qdcl.classic_spectral_clustering( d, _n_samples, _n_clusters, _threshold, _func_distance = qdcl.euclidean_distance_with_sqrt )
+    labels, A = qdcl.classic_spectral_clustering( d, _n_samples, _n_clusters, _threshold, _func_distance = qdcl.euclidean_distance_with_sqrt )
 
     adj_matrix = qdcl.create_adjacency_matrix( d, _threshold, _func_distance = qdcl.euclidean_distance_with_sqrt )
     lap_matrix = qdcl.create_laplacian_matrix( adj_matrix )
@@ -145,8 +145,59 @@ def classical_spectral_clustering_example():
     im = ax.imshow( lap_matrix )
 
 
+# simulation of quantum spectral clustering
 def quantum_spectral_clustering_example():
-    pass
+    _n_samples = 10
+    _n_clusters = 2
+    _threshold = 2.0
+    
+    centers = [
+                (-5,  5), (5, -5),
+              ]
+    d, labels = make_blobs( n_samples=_n_samples, centers=centers, cluster_std=0.5, shuffle=False, random_state=1234 )
+    
+    f = qdcl.create_scatter_plot_for_2d_data( d, _limits=[-7.0, 7.0, -7.0, 7.0] )
+    _func_distance = qdcl.euclidean_distance_with_sqrt
+
+    _qdX = d
+    adj_matrix = qdcl.create_adjacency_matrix( _qdX, _threshold, _func_distance )
+   
+    lap_matrix = qdcl.create_laplacian_matrix( adj_matrix )
+   
+    evalues, evectors = np.linalg.eig( lap_matrix )
+    
+    A = np.zeros( shape=(_n_samples, _n_clusters) )
+   
+    indicies = np.argpartition(evalues,_n_clusters)[:_n_clusters]
+    idx=0
+    for i in indicies:
+        A[:, idx] = evectors[:, i]
+        idx = idx + 1
+
+    rho = (1.0/_n_clusters) * (A @ A.T)
+
+    prj_evals, prj_evectors = np.linalg.eig( rho )
+
+    # max eigenvalues
+    ev1=prj_evals[1]
+    ev2=prj_evals[6]
+    
+    evec1=prj_evectors[:, 1].reshape(_n_samples, 1)
+    evec2=prj_evectors[:, 6].reshape(_n_samples, 1)
+    
+    prj_evec1 = evec1 @ evec1.T
+    prj_evec2 = evec2 @ evec2.T
+
+    rho1=(prj_evec1 @ rho @ prj_evec1)/np.trace(rho @ prj_evec2)
+    rho2=(prj_evec2 @ rho @ prj_evec2)/np.trace(rho @ prj_evec2)
+
+    rho1 @ d
+    rho2 @ d
+    
+
+    fig, ax = plt.subplots()
+    im = ax.imshow( rho )
+
 
 # blobs_example()
 classical_spectral_clustering_example()

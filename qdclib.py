@@ -3616,7 +3616,6 @@ def classic_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func
     for i in indicies:
         A[:, idx] = evectors[:, i]
         idx = idx + 1
-
         
     kmeans = KMeans(n_clusters=_n_clusters, random_state=1234, n_init="auto").fit(A)
     _labels = kmeans.labels_
