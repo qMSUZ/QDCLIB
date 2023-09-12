@@ -37,6 +37,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
+
 from sklearn import decomposition
 from sklearn.datasets import make_blobs
 
@@ -120,16 +121,21 @@ def quantum_kmeans_example():
     center_k1 = np.sum(d[qdcl.get_indices_for_cluster_k(ck, 1)], axis=0) / qdcl.number_of_probes_in_cluster(ck, 1)
 
 
-def spectral_clustering():
+def classical_spectral_clustering_example():
+    _n_samples = 10
+    _n_clusters = 2
+    _threshold = 2.0
+    
     centers = [
                 (-5,  5), (5, -5),
               ]
-    d, labels = make_blobs( n_samples=200, centers=centers, cluster_std=0.5, shuffle=False, random_state=1234 )
+    d, labels = make_blobs( n_samples=_n_samples, centers=centers, cluster_std=0.5, shuffle=False, random_state=1234 )
     
     f = qdcl.create_scatter_plot_for_2d_data( d, _limits=[-7.0, 7.0, -7.0, 7.0] )
     
-    adj_matrix = qdcl.create_adjacency_matrix( d, 2.0, qdcl.euclidean_distance_with_sqrt )
+    labels = qdcl.classic_spectral_clustering( d, _n_samples, _n_clusters, _threshold, _func_distance = qdcl.euclidean_distance_with_sqrt )
 
+    adj_matrix = qdcl.create_adjacency_matrix( d, _threshold, _func_distance = qdcl.euclidean_distance_with_sqrt )
     lap_matrix = qdcl.create_laplacian_matrix( adj_matrix )
 
     fig, ax = plt.subplots()
@@ -139,6 +145,9 @@ def spectral_clustering():
     im = ax.imshow( lap_matrix )
 
 
+def quantum_spectral_clustering_example():
+    pass
+
 # blobs_example()
-spectral_clustering()
+classical_spectral_clustering_example()
 # quantum_kmeans_example()

@@ -38,6 +38,8 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D, proj3d
 
 from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans
+
 
 import numpy as np
 import pandas as pd
@@ -1891,6 +1893,9 @@ def cosine_distance( uvector, vvector, r = 0, check=0 ):
         return None
 
 
+def cosine_distance_with_normalisation( uvector, vvector ):
+    return 1.0 - np.vdot(uvector, vvector) / ( np.linalg.norm( uvector ) * np.linalg.norm( vvector ) )
+
 def dot_product_as_distance( uvector, vvector, r=0, check=0 ):
     """
     Calculates a dot product as a distance between two vectors.
@@ -3470,7 +3475,7 @@ def create_laplacian_matrix( _adj_matrix ):
     for x in range(rows):
         for y in range(rows):
             if _adj_matrix[x,y] == 1:
-                lap_matrix[x,y]=-1
+                lap_matrix[x,y] = -1
         lap_matrix[x,x] = np.sum(_adj_matrix[x])
     
     return lap_matrix
@@ -3594,7 +3599,37 @@ def quantum_kmeans_assign_labels( _qdX, _centroids, _n_samples, _n_clusters, _fu
         _labels[_n] = np.argmin(distance_table[_n])
     
     return _labels
+
+
+def classic_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
     
+    adj_matrix = create_adjacency_matrix( _qdX, _threshold, _func_distance )
+
+    lap_matrix = create_laplacian_matrix( adj_matrix )
+
+    evalues, evectors = np.linalg.eig( lap_matrix )
+    
+    A = np.zeros( shape=(_n_samples, _n_clusters) )
+
+    indicies = np.argpartition(evalues,_n_clusters)[:_n_clusters]
+    idx=0
+    for i in indicies:
+        A[:, idx] = evectors[:, i]
+        idx = idx + 1
+
+        
+    kmeans = KMeans(n_clusters=_n_clusters, random_state=1234, n_init="auto").fit(A)
+    _labels = kmeans.labels_
+    # _centers = kmeans.cluster_centers_
+    
+    # rather for normalised data
+    # _labels, _ = kmeans_spherical( A, _n_clusters, _func_distance=_func_distance )
+    
+    return _labels
+
+def quantum_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
+    pass
+
 def version():
     pass
 
