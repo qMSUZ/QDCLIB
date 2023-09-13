@@ -3626,8 +3626,49 @@ def classic_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func
     
     return _labels
 
+def create_rho_state_for_qsc(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
+    
+    adj_matrix = create_adjacency_matrix( _qdX, _threshold, _func_distance )
+   
+    lap_matrix = create_laplacian_matrix( adj_matrix )
+   
+    evalues, evectors = np.linalg.eig( lap_matrix )
+    
+    A = np.zeros( shape=(_n_samples, _n_clusters) )
+   
+    indicies = np.argpartition( evalues, _n_clusters )[ :_n_clusters ]
+    idx = 0
+    for ind in indicies:
+        A[:, idx] = evectors[:, ind]
+        idx = idx + 1
+
+    rho = (1.0/_n_clusters) * (A @ A.T)
+
+    return rho
+
 def quantum_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
-    pass
+    
+    rho = create_rho_state_for_qsc(_qdX, _n_samples, _n_clusters, _threshold, _func_distance)
+
+    prj_evals, prj_evectors = np.linalg.eig( rho )
+
+    eigenvalues_of_rho = np.zeros( shape=(_n_clusters, ) )
+    projectors_of_rho = np.zeros( shape=(_n_samples, _n_clusters) )
+    
+    indicies = np.argpartition( prj_evals, -_n_clusters )[ -_n_clusters: ]
+    idx = 0
+    for i in indicies:
+        eigenvalues_of_rho[idx] = prj_evals[i]
+        projectors_of_rho[:, idx] = prj_evectors[:, i]
+        idx = idx + 1
+    
+    labels=np.zeros( shape=(_n_samples,), dtype=int )
+    for k in range(0,_n_clusters):
+        for n in range(0, _n_samples):
+            if np.abs(projectors_of_rho[n,k])>0.0:
+                labels[n]=int(k)
+
+    return labels
 
 def version():
     pass
