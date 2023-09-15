@@ -396,8 +396,7 @@ class BlochVisualization:
     def reset( self ):
         pass
     
-    def make_figure( self ):
-        
+    def make_figure( self ):        
         self.prepare_mesh()
         f = self.render_bloch_sphere()
         
@@ -2917,7 +2916,7 @@ def slerp(p0, p1, t):
     """
     # p0,p1 to wektory to można sprawdzić
     # czy są tych samych wymiarów,
-    # a jak nie to wyjątkiem ;-) DimensionError, podobnie jak w EntDetectorze
+    # a jak nie, to wyjątkiem ;-) DimensionError, podobnie jak w EntDetectorze
     omega = np.arccos(np.dot(p0/np.linalg.norm(p0), p1/np.linalg.norm(p1)))
     so = np.sin(omega)
     
@@ -3537,7 +3536,7 @@ def belong_n_probe_to_k_cluster( _ck, _n, _k, ):
 
     return val
 
-def number_of_probes_in_cluster(_ck, _k):
+def number_of_probes_in_cluster_k(_ck, _k):
 
     return (_ck == _k).sum()    
 
@@ -3600,6 +3599,8 @@ def quantum_kmeans_assign_labels( _qdX, _centroids, _n_samples, _n_clusters, _fu
     
     return _labels
 
+def quantum_kmeans(_X, _n_clusters, _max_iteration=128, _func_distance=None):
+    pass
 
 def classic_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
     
