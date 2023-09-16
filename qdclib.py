@@ -3258,6 +3258,23 @@ def get_min_label_class(_labels):
 def get_max_label_class(_labels):
     return np.max( _labels )
 
+def get_vectors_for_label(_qdX, l, labels, _n_samples):
+    outlist = []
+    for idx in range(0, _n_samples):
+        if l == labels[idx]:
+            outlist.append( _qdX[idx] )
+    
+    return np.array( outlist )
+
+def get_vector_of_idx_for_label(l, labels, data, _n_samples):
+    out_idx_list = [] 
+
+    for idx in range(0, _n_samples):
+        if l == labels[idx]:
+            out_idx_list.append( idx )
+
+    return np.array( out_idx_list )
+
 def true_positive_rate(TP, FN):
     """
     Calculates True Positive Rate for a classification task (supervised 

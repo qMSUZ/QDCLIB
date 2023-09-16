@@ -93,22 +93,6 @@ def read_data(_fname):
      
     return df, Q, labels_for_Q, Q0, Q1
 
-def get_vectors_for_label(l, labels, data, n_data):
-    outlist = []
-    for idx in range(0, n_data):
-        if l == labels[idx]:
-            outlist.append(data[idx] )
-    
-    return np.array( outlist )
-
-
-def get_vector_of_idx_for_label(l, labels, data, n_data):
-    out_idx_list = [] 
-
-    for idx in range(0, n_data):
-        if l == labels[idx]:
-            out_idx_list.append( idx )
-
 df, Q, labels_for_Q, Q0, Q1 = read_data( r'data/credit-risk-train-data.xlsx' )
 
 

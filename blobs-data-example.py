@@ -182,6 +182,7 @@ def quantum_spectral_clustering_example():
     im = ax.imshow( rho )
 
 
+# create a mesurement operator for qauntum spectral clustering
 def quantum_spectral_clustering_example_measurement_projectors():
     # max eigenvalues
     # ev1=prj_evals[1]
