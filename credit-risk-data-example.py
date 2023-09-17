@@ -153,8 +153,8 @@ plt.ylabel("Values of second feature")
 fig.show()
 
 
-Q0_labels, Q0_centers = qdcl.kmedoids_quantum_states( Q0_r, 8, _func_distance=qdcl.MANHATTAN_DISTANCE )
-Q1_labels, Q1_centers = qdcl.kmedoids_quantum_states( Q1_r, 7, _func_distance=qdcl.MANHATTAN_DISTANCE )
+Q0_labels, Q0_centers = qdcl.kmedoids_quantum_states( Q0_r, 8, _func_distance=qdcl.COSINE_DISTANCE )
+Q1_labels, Q1_centers = qdcl.kmedoids_quantum_states( Q1_r, 8, _func_distance=qdcl.COSINE_DISTANCE )
 
 b = qdcl.BlochVisualization()
 #b.set_view(15, 30)

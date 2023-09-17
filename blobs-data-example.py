@@ -184,6 +184,32 @@ def quantum_spectral_clustering_example():
 
 # create a mesurement operator for qauntum spectral clustering
 def quantum_spectral_clustering_example_measurement_projectors():
+    
+    _n_samples = 10
+    _n_clusters = 2
+    _threshold = 2.0
+    
+    centers = [
+                (-5,  5), (5, -5),
+              ]
+    d, org_labels = datasets.make_blobs( n_samples=_n_samples, 
+                                         centers=centers, 
+                                         cluster_std=0.5, 
+                                         shuffle=False, random_state=1234 )
+    
+    f = qdcl.create_scatter_plot_for_2d_data( d, _limits=[-7.0, 7.0, -7.0, 7.0] )    
+
+    rho = qdcl.create_rho_state_for_qsc(d,
+                                        _n_samples,
+                                        _n_clusters,
+                                        _threshold,
+                                        _func_distance=qdcl.euclidean_distance_with_sqrt)
+
+    fig, ax = plt.subplots()
+    im = ax.imshow( rho )
+
+    # projectors preparing
+    
     # max eigenvalues
     # ev1=prj_evals[1]
     # ev2=prj_evals[6]

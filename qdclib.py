@@ -3258,7 +3258,7 @@ def get_min_label_class(_labels):
 def get_max_label_class(_labels):
     return np.max( _labels )
 
-def get_vectors_for_label(_qdX, l, labels, _n_samples):
+def get_vectors_for_label(l, _qdX, labels, _n_samples):
     outlist = []
     for idx in range(0, _n_samples):
         if l == labels[idx]:
