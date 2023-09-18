@@ -118,8 +118,8 @@ def quantum_kmeans_example():
     for idx in qdcl.get_indices_for_cluster_k(ck, 1):
         d_for_k1[idx] = d[ idx ]
         
-    center_k0 = np.sum(d[qdcl.get_indices_for_cluster_k(ck, 0)], axis=0) / qdcl.number_of_probes_in_cluster(ck, 0)
-    center_k1 = np.sum(d[qdcl.get_indices_for_cluster_k(ck, 1)], axis=0) / qdcl.number_of_probes_in_cluster(ck, 1)
+    center_k0 = np.sum(d[qdcl.get_indices_for_cluster_k(ck, 0)], axis=0) / qdcl.number_of_probes_in_cluster_k(ck, 0)
+    center_k1 = np.sum(d[qdcl.get_indices_for_cluster_k(ck, 1)], axis=0) / qdcl.number_of_probes_in_cluster_k(ck, 1)
 
 
 def classical_spectral_clustering_example():
