@@ -3538,24 +3538,72 @@ def create_initial_centroids(_qdX, _n_samples, _n_clusters):
     
     
 def get_indices_for_cluster_k(_ck, _k):
-    
+    """
+    Calculates the coordinates of points belonging to the class _k.
+
+    Parameters
+    ----------
+    _ck : numpy ndarray
+        The array of elements as ordinal numbers of classes for each observation.
+    _k : interger
+        The number of the class.
+
+    Returns
+    -------
+    tuple
+        The coordinates of points belonging to the class _k.
+
+    """
     return np.where( _ck == _k)
 
 
-def belong_n_probe_to_k_cluster( _ck, _n, _k, ):
-    
+def is_probe_n_in_cluster_k( _ck, _n, _k, ):
+    """
+    Checks if an observation (probe) indexed as n, belongs to the cluster 
+    denoted as _k.
+
+    Parameters
+    ----------
+    _ck : numpy ndarray
+        The array of elements as ordinal numbers of classes for each observation.
+    _n : integer
+        A number of the observation (probe).
+    _k : interger
+        The number of the class.
+
+    Returns
+    -------
+    val: Boolean
+        Returns True if observation n belongs to the cluster denoted as _k and 
+        False otherwise.
+
+    """
     val = None
-    
     if _ck[_n] == _k:
         val = True
     else:
         val = False
-
     return val
 
 def number_of_probes_in_cluster_k(_ck, _k):
+    """
+    Calculates a number of observations (probes) belonging to the cluster 
+    denoted as _k.
 
-    return (_ck == _k).sum()    
+    Parameters
+    ----------
+    _ck : numpy ndarray
+        The array of elements as ordinal numbers of classes for each observation.
+    _k : interger
+        The number of the class.
+
+    Returns
+    -------
+    integer
+        The number of observations (probes) belonging to the pointed cluster.
+
+    """
+    return (_ck == _k).sum() 
 
 def quantum_kmeans_clusters_assignment(_qdX, _centroids, _n_samples, _n_clusters,  _func_distance=None):
     
