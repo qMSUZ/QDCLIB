@@ -3635,7 +3635,7 @@ def quantum_kmeans_update_centroids(_qdX, _ck, _n_samples, _n_clusters):
         probes_in_cluster = get_indices_for_cluster_k(_ck, _k)[0].shape[0]
         
         for _n in range(_n_samples):
-            if belong_n_probe_to_k_cluster(_ck, _n, _k) == True:
+            if is_probe_n_in_cluster_k(_ck, _n, _k) == True:
                 chi_vector[ _n ] = 1.0  / np.sqrt( probes_in_cluster )
             else:
                 chi_vector[ _n ] = 0.0
