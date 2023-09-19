@@ -93,6 +93,18 @@ def read_data(_fname):
      
     return df, Q, labels_for_Q, Q0, Q1
 
+
+def prepare_data():
+    pass
+
+def perfom_kmedoids():
+    pass
+
+def bloch_sphere_representation():
+    pass
+
+
+
 df, Q, labels_for_Q, Q0, Q1 = read_data( r'data/credit-risk-train-data.xlsx' )
 
 
@@ -138,8 +150,8 @@ ax.scatter(Q0_r[:, 0],
 #for idx in range(0,40):
 #    ax.annotate( str(idx), (Q0_r[idx, 0], Q0_r[idx, 1]) )
 ax.scatter(Q1_r[:, 0], 
-            Q1_r[:, 1], 
-            s=10, marker="^", color="red")
+           Q1_r[:, 1], 
+           s=10, marker="^", color="red")
 #ax.scatter(cluster_for_Q1_r.cluster_centers_  [:, 0], 
 #            cluster_for_Q1_r.cluster_centers_  [:, 1], 
 #            s=50, marker="^", alpha=0.5, color="red")

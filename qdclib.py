@@ -3736,6 +3736,9 @@ def quantum_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func
 
     return labels
 
+def hierarchical_clustering_for_quantum_data(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
+    pass
+
 def version():
     pass
 
