@@ -3441,6 +3441,10 @@ def cohens_kappa(TP, TN, FP, FN, STS):
         pre=((TP+FP)*(TP+FN)+(FP+TN)*(TN+FN))/(STS*STS)
         return (pra-pre)/(1-pre)
 
+def is_matrix_symmetric( _matrix, _rtolerance=1e-05, _atolerance=1e-08):
+    return np.allclose( _matrix, _matrix.T, 
+                          rtol=_rtolerance, 
+                          atol=_atolerance)
 
 def difference_matrix( _rho1, _rho2 ):
     
@@ -3495,11 +3499,28 @@ def create_laplacian_matrix( _adj_matrix ):
         lap_matrix[x,x] = np.sum(_adj_matrix[x])
     
     return lap_matrix
-        
+
+# similiar solution with upper traingular matrix
+# can be also found at:
+# https://www.mathworks.com/matlabcentral/fileexchange/24661-graph-adjacency-matrix-to-incidence-matrix        
 def create_incidence_matrix( _adj_matrix ):
-    pass
-
-
+    if is_matrix_symmetric(_adj_matrix) == True:
+        n_vertices = _adj_matrix.shape[0]
+        inds = np.argwhere( np.triu(_adj_matrix) )
+        n_edges = inds[:,0].shape[0]
+        edges_idx =  np.hstack( (np.arange(n_edges), np.arange(n_edges)) )
+        vertices_idx = np.hstack( (inds[:,0], inds[:,1]) )
+        
+        m_incidence = np.zeros( shape=(n_edges, n_vertices) )
+        
+        vidx=0
+        for eidx in edges_idx:
+                m_incidence[eidx, vertices_idx[vidx]] = 1
+                vidx = vidx + 1
+        return m_incidence
+    else:
+        return None    
+        
 def create_float_table_zero_filled( _n_samples ):
     
     ck_tbl = np.zeros( shape = (_n_samples,), dtype=float )
