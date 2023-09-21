@@ -31,6 +31,25 @@
 # *                                                                         *
 # ***************************************************************************/
 
+import numpy as np
 import qdclib as qdcl
 
+adj_matrix = np.array([
+    [0,   1,   1],
+    [1,   0,   1],
+    [1,   1,   0]
+    ])
+
+incidence_matrix = qdcl.create_incidence_matrix( adj_matrix )
+print(incidence_matrix)
+
+adj_matrix=np.array([
+    [0,   1,   1, 0],
+    [1,   1,   1, 0],
+    [1,   1,   0, 0],
+    [0,   0,   0, 0]
+    ])
+
+incidence_matrix = qdcl.create_incidence_matrix( adj_matrix )
+print(incidence_matrix)
 

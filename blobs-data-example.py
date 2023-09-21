@@ -148,7 +148,8 @@ def classical_spectral_clustering_example():
     fig, ax = plt.subplots()
     im = ax.imshow( lap_matrix )
 
-
+       
+        
 # simulation of quantum spectral clustering
 def quantum_spectral_clustering_example():
     
