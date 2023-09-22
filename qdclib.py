@@ -1089,10 +1089,22 @@ class VQEClassification:
 # in preparation
 class DistanceQuantumClassification:
     def __init__( self ):
-        pass
+        self._func_distance = None
+        self.dimension = -1
+        self.data_for_cluster = [ ]
+        
     
     def reset( self ):
         pass
+
+    def set_distance(self, _f_dist):
+        self._func_distance = _f_dist
+            
+    def set_dimension( self, _d ):
+        self.dimension = _d
+    
+    def set_data(self, _qdX):
+        self.data_for_cluster = _qdX
 
 # in preparation
 class QuantumSpectralClustering:
@@ -3756,6 +3768,12 @@ def quantum_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func
                 labels[n]=int(k)
 
     return labels
+
+def hc_complete_linkage_clustering(_qdX, _a, _b):
+    pass
+
+def hc_single_linkage_clustering(_qdX, _a, _b):
+    pass
 
 def hierarchical_clustering_for_quantum_data(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
     pass
