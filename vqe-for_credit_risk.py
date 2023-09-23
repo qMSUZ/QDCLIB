@@ -1275,12 +1275,12 @@ print( "Norm =", np.linalg.norm(Q1_cluster6_mean))
 
        
 
-circuit_type = 4
+circuit_type = 0
 layers=2
 qubits = [0, 1, 2]
 
 if circuit_type == 0:
-    params = [1] * (3*layers) 
+    params = [1] * (9*layers) 
 
 if circuit_type == 1:
         params = [1] * (6*layers) 
@@ -1323,9 +1323,9 @@ target_params = params
 
 backend = Aer.get_backend("aer_simulator")
 
-#start = time.time()
-#train_data_and_save_angles_to_file()
-#elapsed = time.time() - start
+# start = time.time()
+# train_data_and_save_angles_to_file()
+# elapsed = time.time() - start
 
 print("")
 

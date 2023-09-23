@@ -104,6 +104,75 @@ def bloch_sphere_representation():
     pass
 
 
+def perform_variational_circuit(qubits, parameters, formval, layers):
+    
+    offsetidx=0
+    
+    q = qcs.QuantumReg( len(qubits) )
+    q.Reset()
+    
+    
+# ----------------------------------- form 0
+#     
+    if formval == 0:
+        for idx in range (0, len(qubits)):
+            q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
+     
+        offsetidx=offsetidx+len(qubits)
+         
+        q.CZ(0,1)
+        q.CZ(2,0)
+    
+    
+        for idx in range (0, len(qubits)):
+            q.YRotN( qubits[0 + idx], parameters[offsetidx + idx] )
+    
+        offsetidx=offsetidx+len(qubits)
+    
+    
+        q.CZ(1,2)
+        q.CZ(2,0)
+    
+        
+        for idx in range (0, len(qubits)):
+            q.YRotN( qubits[0 + idx], parameters[offsetidx + idx] )
+    
+        offsetidx=offsetidx+len(qubits)
+
+
+# ----------------------------------- form 0
+#     
+    if formval == 4:
+
+        for idx in range (0, len(qubits)):
+            q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
+ 
+        offsetidx=offsetidx+len(qubits)
+
+
+        for _ in range(0, layers):
+
+            for idx in range (0, len(qubits)):
+                 q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
+    
+            offsetidx=offsetidx+len(qubits)
+
+            q.CZ(0, 1)
+                  
+            for idx in range (0, len(qubits)):
+                 q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx])
+
+            offsetidx=offsetidx+len(qubits)
+    
+            q.CZ(1, 2)
+            q.CZ(0, 2)
+    
+        for idx in range (0, len(qubits)):
+            q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx])
+
+        offsetidx=offsetidx+len(qubits)
+
+    return q
 
 df, Q, labels_for_Q, Q0, Q1 = read_data( r'data/credit-risk-train-data.xlsx' )
 
@@ -169,7 +238,8 @@ Q0_labels, Q0_centers = qdcl.kmedoids_quantum_states( Q0_r, 8, _func_distance=qd
 Q1_labels, Q1_centers = qdcl.kmedoids_quantum_states( Q1_r, 8, _func_distance=qdcl.COSINE_DISTANCE )
 
 b = qdcl.BlochVisualization()
-#b.set_view(15, 30)
+b.set_view(15, 30)
+#b.set_view(0, 0)
 
 b.set_title("Bloch Vector Points for first three features")
 

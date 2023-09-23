@@ -1,4 +1,5 @@
 
+*.npy
 *.pyc
 .ipynb_checkpoints/basic-kmeans-1-checkpoint.ipynb
 .ipynb_checkpoints/basic-kmedoids-1-checkpoint.ipynb
