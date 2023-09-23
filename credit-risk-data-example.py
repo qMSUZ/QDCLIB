@@ -104,13 +104,24 @@ def bloch_sphere_representation():
     pass
 
 
+# not ready to use
+def objective_function(parameters):
+    
+    cost_value = 0
+    q = perform_variational_circuit(qubits, parameters, circuit_type, layers)
+    result = q.ToNumpyArray()
+
+    # calculate distribution error
+    cost_value = None
+
+    return cost_value
+
 def perform_variational_circuit(qubits, parameters, formval, layers):
     
     offsetidx=0
     
     q = qcs.QuantumReg( len(qubits) )
     q.Reset()
-    
     
 # ----------------------------------- form 0
 #     
@@ -140,7 +151,7 @@ def perform_variational_circuit(qubits, parameters, formval, layers):
         offsetidx=offsetidx+len(qubits)
 
 
-# ----------------------------------- form 0
+# ----------------------------------- form 4
 #     
     if formval == 4:
 
@@ -176,6 +187,27 @@ def perform_variational_circuit(qubits, parameters, formval, layers):
 
 df, Q, labels_for_Q, Q0, Q1 = read_data( r'data/credit-risk-train-data.xlsx' )
 
+qubits=[0, 1, 2]
+circuit_type=0
+layers = 2
+
+if circuit_type == 0:
+    params = [1] * (9*layers) 
+
+if circuit_type == 1:
+        params = [1] * (6*layers) 
+
+if circuit_type == 2:
+        params = [1] * (6*layers) # for type 2
+ 
+if circuit_type == 3:
+        params = [1] * (9*layers) # for type 3
+
+if circuit_type == 4:
+        params = [1] * ((3 + (6*layers) + 3)) # for type 4
+
+if circuit_type == 5:
+        params = [1] * ((3 + (3*layers) + 3)) # for type 5
 
 # Pearson Correlation Coefficient  (PCC)
 pcc_rho = np.corrcoef( Q[:,0:7].transpose() )
