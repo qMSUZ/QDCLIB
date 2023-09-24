@@ -151,7 +151,7 @@ def classical_spectral_clustering_example():
        
         
 # simulation of quantum spectral clustering
-def quantum_spectral_clustering_example():
+def quantum_spectral_clustering_example_simple_two_blobs():
     
     _n_samples = 10
     _n_clusters = 2
@@ -163,7 +163,7 @@ def quantum_spectral_clustering_example():
     d, org_labels = datasets.make_blobs( n_samples=_n_samples, 
                                          centers=centers, 
                                          cluster_std=0.5, 
-                                         shuffle=False, random_state=1234 )
+                                         shuffle=True, random_state=1234 )
     
     f = qdcl.create_scatter_plot_for_2d_data( d, _limits=[-7.0, 7.0, -7.0, 7.0] )
 
@@ -172,6 +172,8 @@ def quantum_spectral_clustering_example():
                                               _n_clusters, 
                                               _threshold, 
                                               _func_distance=qdcl.euclidean_distance_with_sqrt )
+    # change labels zero to one, one to zero
+    labels=1-labels
     
     rho = qdcl.create_rho_state_for_qsc(d,
                                         _n_samples,
@@ -181,6 +183,45 @@ def quantum_spectral_clustering_example():
 
     fig, ax = plt.subplots()
     im = ax.imshow( rho )
+
+
+def quantum_spectral_clustering_example_simple_two_circles():
+    
+    _n_samples =100
+    _n_clusters = 2
+    _threshold = 0.25
+
+    fnc_dist = qdcl.euclidean_distance_with_sqrt
+
+    
+    d, org_labels = datasets.make_circles( n_samples = _n_samples, shuffle=True, 
+                                       factor=0.25, noise=0.05, random_state=1234)
+    
+    
+    f = qdcl.create_scatter_plot_for_2d_data( d, _limits=[-1.10, 1.10, -1.10, 1.10] )
+
+    labels = qdcl.quantum_spectral_clustering(d, 
+                                              _n_samples, 
+                                              _n_clusters, 
+                                              _threshold, 
+                                              _func_distance=fnc_dist )
+
+    # labels = qdcl.classic_spectral_clustering(d, 
+    #                                           _n_samples, 
+    #                                           _n_clusters, 
+    #                                           _threshold, 
+    #                                           _func_distance=fnc_dist )
+
+
+    rho = qdcl.create_rho_state_for_qsc(d,
+                                        _n_samples,
+                                        _n_clusters,
+                                        _threshold,
+                                        _func_distance=fnc_dist)
+
+    fig, ax = plt.subplots()
+    im = ax.imshow( rho )
+
 
 
 # create a mesurement operator for qauntum spectral clustering
@@ -196,40 +237,49 @@ def quantum_spectral_clustering_example_measurement_projectors():
     d, org_labels = datasets.make_blobs( n_samples=_n_samples, 
                                          centers=centers, 
                                          cluster_std=0.5, 
-                                         shuffle=False, random_state=1234 )
+                                         shuffle=True, random_state=1234 )
     
     f = qdcl.create_scatter_plot_for_2d_data( d, _limits=[-7.0, 7.0, -7.0, 7.0] )    
 
-    rho = qdcl.create_rho_state_for_qsc(d,
-                                        _n_samples,
-                                        _n_clusters,
-                                        _threshold,
+
+    rho = qdcl.create_rho_state_for_qsc(d, 
+                                        _n_samples, 
+                                        _n_clusters, 
+                                        _threshold, 
                                         _func_distance=qdcl.euclidean_distance_with_sqrt)
 
     fig, ax = plt.subplots()
     im = ax.imshow( rho )
-
-    # projectors preparing
+   
+    prj_evals, prj_evectors = np.linalg.eig( rho )
     
-    # max eigenvalues
-    # ev1=prj_evals[1]
-    # ev2=prj_evals[6]
+    eigenvalues_of_rho = np.zeros( shape=(_n_clusters, ) )
+    projectors_of_rho = np.zeros( shape=(_n_samples, _n_clusters) )
     
-    # evec1=prj_evectors[:, 1].reshape(_n_samples, 1)
-    # evec2=prj_evectors[:, 6].reshape(_n_samples, 1)
+    indicies = np.argpartition( prj_evals, -_n_clusters )[ -_n_clusters: ]
+    idx = 0
+    for i in indicies:
+        eigenvalues_of_rho[idx] = prj_evals[i]
+        projectors_of_rho[:, idx] = prj_evectors[:, i]
+        idx = idx + 1    
     
-    # prj_evec1 = evec1 @ evec1.T
-    # prj_evec2 = evec2 @ evec2.T
+    projectors_of_rho_abs = abs(projectors_of_rho)
 
-    # rho1=(prj_evec1 @ rho @ prj_evec1)/np.trace(rho @ prj_evec2)
-    # rho2=(prj_evec2 @ rho @ prj_evec2)/np.trace(rho @ prj_evec2)
+    projectors = np.zeros( shape=(_n_samples, _n_samples, _n_clusters) )
 
-    # rho1 @ d
-    # rho2 @ d
-    pass
+    labels=np.zeros( shape=(_n_samples,), dtype=int )
+    for n in range(0, _n_samples):
+            labels[n]=projectors_of_rho_abs[n].argmax()
+
+    for cidx in range(0, _n_samples):
+        for n in range(0, _n_samples):
+            cind = labels[n]
+            if cidx == cind:
+                projectors[ n, n, cidx ] = 1.0
 
 # blobs_example()
 # classical_spectral_clustering_example()
-quantum_spectral_clustering_example()
+# quantum_spectral_clustering_example_simple_two_blobs()
+quantum_spectral_clustering_example_simple_two_circles()
 # quantum_spectral_clustering_example_measurement_projectors()
 # quantum_kmeans_example()

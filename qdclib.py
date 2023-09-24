@@ -3493,7 +3493,7 @@ def create_adjacency_matrix( _qdX, _threshold, _func_distance = None):
 
     for x in range(rows):
         for y in range(rows):
-            if x!=y and _func_distance(_qdX[x], _qdX[y]) < _threshold:
+            if x != y and _func_distance(_qdX[x], _qdX[y]) < _threshold:
                 adj_matrix[x,y] = 1
             else:
                 adj_matrix[x,y] = 0
@@ -3748,9 +3748,9 @@ def create_rho_state_for_qsc(_qdX, _n_samples, _n_clusters, _threshold, _func_di
 def quantum_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
     
     rho = create_rho_state_for_qsc(_qdX, _n_samples, _n_clusters, _threshold, _func_distance)
-
+    
     prj_evals, prj_evectors = np.linalg.eig( rho )
-
+    
     eigenvalues_of_rho = np.zeros( shape=(_n_clusters, ) )
     projectors_of_rho = np.zeros( shape=(_n_samples, _n_clusters) )
     
@@ -3761,12 +3761,14 @@ def quantum_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func
         projectors_of_rho[:, idx] = prj_evectors[:, i]
         idx = idx + 1
     
+    projectors_of_rho_abs = abs(projectors_of_rho)
     labels=np.zeros( shape=(_n_samples,), dtype=int )
-    for k in range(0,_n_clusters):
-        for n in range(0, _n_samples):
-            if np.abs(projectors_of_rho[n,k])>0.0:
-                labels[n]=int(k)
+    for n in range(0, _n_samples):
+            labels[n]=projectors_of_rho_abs[n].argmax()
 
+    # 
+    # projector creation
+    
     return labels
 
 def hc_complete_linkage_clustering(_qdX, _a, _b):
