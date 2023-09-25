@@ -167,7 +167,7 @@ def quantum_spectral_clustering_example_simple_two_blobs():
     
     f = qdcl.create_scatter_plot_for_2d_data( d, _limits=[-7.0, 7.0, -7.0, 7.0] )
 
-    labels = qdcl.quantum_spectral_clustering(d, 
+    labels, _ = qdcl.quantum_spectral_clustering(d, 
                                               _n_samples, 
                                               _n_clusters, 
                                               _threshold, 
@@ -187,12 +187,11 @@ def quantum_spectral_clustering_example_simple_two_blobs():
 
 def quantum_spectral_clustering_example_simple_two_circles():
     
-    _n_samples =100
+    _n_samples = 100
     _n_clusters = 2
     _threshold = 0.25
 
     fnc_dist = qdcl.euclidean_distance_with_sqrt
-
     
     d, org_labels = datasets.make_circles( n_samples = _n_samples, shuffle=True, 
                                        factor=0.25, noise=0.05, random_state=1234)
@@ -200,11 +199,11 @@ def quantum_spectral_clustering_example_simple_two_circles():
     
     f = qdcl.create_scatter_plot_for_2d_data( d, _limits=[-1.10, 1.10, -1.10, 1.10] )
 
-    labels = qdcl.quantum_spectral_clustering(d, 
-                                              _n_samples, 
-                                              _n_clusters, 
-                                              _threshold, 
-                                              _func_distance=fnc_dist )
+    labels, _ = qdcl.quantum_spectral_clustering( d,
+                                                 _n_samples,
+                                                 _n_clusters, 
+                                                 _threshold, 
+                                                 _func_distance=fnc_dist )
 
     # labels = qdcl.classic_spectral_clustering(d, 
     #                                           _n_samples, 
@@ -212,8 +211,7 @@ def quantum_spectral_clustering_example_simple_two_circles():
     #                                           _threshold, 
     #                                           _func_distance=fnc_dist )
 
-
-    rho = qdcl.create_rho_state_for_qsc(d,
+    rho = qdcl.create_rho_state_for_qsc( d,
                                         _n_samples,
                                         _n_clusters,
                                         _threshold,

@@ -3762,14 +3762,20 @@ def quantum_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func
         idx = idx + 1
     
     projectors_of_rho_abs = abs(projectors_of_rho)
+
+    projectors = np.zeros( shape=(_n_samples, _n_samples, _n_clusters) )
+
     labels=np.zeros( shape=(_n_samples,), dtype=int )
     for n in range(0, _n_samples):
             labels[n]=projectors_of_rho_abs[n].argmax()
 
-    # 
-    # projector creation
+    for cidx in range(0, _n_samples):
+        for n in range(0, _n_samples):
+            cind = labels[n]
+            if cidx == cind:
+                projectors[ n, n, cidx ] = 1.0
     
-    return labels
+    return labels, projectors
 
 def hc_complete_linkage_clustering(_qdX, _a, _b):
     pass
