@@ -1115,6 +1115,7 @@ class QuantumSpectralClustering:
         self._n_features = -1
         
         self._distance_min = 0
+        self._threshold = 0
 
     
     def reset( self ):
@@ -1127,10 +1128,25 @@ class QuantumSpectralClustering:
         self._n_samples = _qdX.shape[0]
         self._n_features = _qdX.shape[1]
     
+    def set_threshold(self, _val_threshold ):
+        self._threshold = _val_threshold
+    
+    def create_data_classic(self):
+        pass
+    
     def create_data_matrix(self):
         pass
     
+    def update_data_for_spectral_clustering(self):
+        pass
+
     def update_data_for_quantum_spectral_clustering(self):
+        pass
+
+    def classic_predit(self):
+        pass
+    
+    def quantum_predit(self):
         pass
 
 # in preparation
