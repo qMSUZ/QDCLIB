@@ -254,7 +254,7 @@ def convert_qubit_pure_state_to_bloch_vector( qstate ):
     ycoord = np.trace( _internal_pauli_y() @ qstateden )
     zcoord = np.trace( _internal_pauli_z() @ qstateden )
     
-    return np.array([xcoord, ycoord, zcoord])
+    return np.array([ np.real(xcoord), np.real(ycoord), np.real(zcoord) ])
 
 def convert_spherical_point_to_bloch_vector( _r, _theta, _phi ):
     
@@ -309,6 +309,7 @@ def convert_bloch_vector_to_pure_state( _x, _y, _z ):
     
     return pure_state_qubit
 
+
 def stereographic_projection_to_two_component_vector( _x, _y, _z ):
     
     two_component_vector = create_zero_vector( 2 )
@@ -332,6 +333,7 @@ def vector_data_encode_with_inverse_stereographic_projection( _v ):
     return rsltvec
 
 def encode_probe_by_normalisation( _qdX ):
+
     nrm = np.linalg.norm( _qdX )
     _n_features = _qdX.shape[0]
     x = np.zeros( shape=(_n_features,)  )
@@ -341,6 +343,7 @@ def encode_probe_by_normalisation( _qdX ):
     return x
 
 def encode_probes_by_normalisation( _qdX ):
+
     for idx in range( _qdX.shape[0]):
         _qdX[idx] = encode_probe_by_normalisation(_qdX[idx])
     
@@ -1109,13 +1112,18 @@ class DistanceQuantumClassification:
 # in preparation
 class QuantumSpectralClustering:
     def __init__( self ):
-        self.input_data_matrix = [ ]
+        self._data_for_cluster = [ ]
 
         self._n_samples = -1
+        self._n_clusters = -1
         self._n_features = -1
         
         self._distance_min = 0
         self._threshold = 0
+        self._func_dist = None
+        
+        self._labels = None
+        self._projectors = None
 
     
     def reset( self ):
@@ -1123,31 +1131,51 @@ class QuantumSpectralClustering:
     
     def set_data(self, _qdX):
         
-        self.input_data_matrix = _qdX
+        self._data_for_cluster = _qdX
         
         self._n_samples = _qdX.shape[0]
         self._n_features = _qdX.shape[1]
     
-    def set_threshold(self, _val_threshold ):
+    def set_function_distance(self, _func):
+        self._func_dist = _func
+       
+    def perform_classic_spectral_clustering(self, _val_n_clusters):
+        self._n_clusters = _val_n_clusters
         self._threshold = _val_threshold
-    
-    def create_data_classic(self):
-        pass
-    
-    def create_data_matrix(self):
-        pass
-    
-    def update_data_for_spectral_clustering(self):
-        pass
+        
+        self._labels = classic_spectral_clustering( self._data_for_cluster,
+                                                    self._n_samples, 
+                                                    self._n_clusters, 
+                                                    self._threshold, 
+                                                    _func_distance = self._func_dist )
 
-    def update_data_for_quantum_spectral_clustering(self):
-        pass
+    def perform_quantum_spectral_clustering(self, _val_n_clusters, _val_threshold):
+        self._n_clusters = _val_n_clusters
+        self._threshold = _val_threshold
 
-    def classic_predit(self):
-        pass
+        self._labels, self._projectors = quantum_spectral_clustering( 
+                                              self._data_for_cluster, 
+                                              self._n_samples, 
+                                              self._n_clusters, 
+                                              self._threshold, 
+                                              _func_distance = self._func_dist )
+    def classic_predicts(self):
+        return self._labels
     
-    def quantum_predit(self):
-        pass
+    def quantum_predicts(self):
+        return self._labels
+    
+    def get_quantum_projectors(self):
+        return self._projectors
+    
+    def quantum_get_rho(self):
+        rho = create_rho_state_for_qsc( self._data_for_cluster,
+                                        self._n_samples,
+                                        self._n_clusters,
+                                        self._threshold,
+                                        _func_distance = self._func_dist )
+        return rho
+    
 
 # in preparation
 class ClusteringByPotentialEnergy:
