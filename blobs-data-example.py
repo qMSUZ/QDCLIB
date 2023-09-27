@@ -172,6 +172,7 @@ def quantum_spectral_clustering_example_simple_two_blobs():
                                               _n_clusters, 
                                               _threshold, 
                                               _func_distance=qdcl.euclidean_distance_with_sqrt )
+
     # change labels zero to one, one to zero
     labels=1-labels
     
@@ -277,7 +278,7 @@ def quantum_spectral_clustering_example_measurement_projectors():
 
 # blobs_example()
 # classical_spectral_clustering_example()
-# quantum_spectral_clustering_example_simple_two_blobs()
-quantum_spectral_clustering_example_simple_two_circles()
+quantum_spectral_clustering_example_simple_two_blobs()
+# quantum_spectral_clustering_example_simple_two_circles()
 # quantum_spectral_clustering_example_measurement_projectors()
 # quantum_kmeans_example()
