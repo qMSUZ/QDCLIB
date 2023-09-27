@@ -164,8 +164,7 @@ def perform_variational_circuit(qubits, parameters, formval, layers):
             q.ZRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
 
         offsetidx=offsetidx+len(qubits)
-
-        
+       
         for idx in range (0, len(qubits)-1):
             q.CNot(idx, idx+1)
 
@@ -182,6 +181,44 @@ def perform_variational_circuit(qubits, parameters, formval, layers):
 
         for idx in range (0, len(qubits)-1):
             q.CNot(idx, idx+1)
+
+# ----------------------------------- form 2
+# full entanglement
+    if formval == 2:
+
+        for idx in range (0, len(qubits)):
+            q.YRotN(qubits[0 + idx], parameters[offsetidx  + idx])
+
+        offsetidx=offsetidx+len(qubits)
+
+        for idx in range (0, len(qubits)):
+            q.ZRotN(qubits[0 + idx], parameters[offsetidx  + idx])
+
+        offsetidx=offsetidx+len(qubits)
+
+
+        for idx in range (0, len(qubits)-1):
+            q.CNot(qubits[idx], qubits[idx+1])
+
+        q.CNot(qubits[0], qubits[len(qubits)-1])
+
+
+        for idx in range (0, len(qubits)):
+            q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx])
+
+        offsetidx=offsetidx+len(qubits)
+
+        for idx in range (0, len(qubits)):
+            q.ZRotN( qubits[0 + idx], parameters[offsetidx  + idx])
+
+        offsetidx=offsetidx+len(qubits)
+
+
+        for idx in range (0, len(qubits)-1):
+            q.CNot(qubits[idx], qubits[idx+1])
+
+        q.CNot(qubits[0], qubits[len(qubits)-1])
+
 
 # ----------------------------------- form 4
 #     
