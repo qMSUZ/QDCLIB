@@ -220,6 +220,30 @@ def perform_variational_circuit(qubits, parameters, formval, layers):
         q.CNot(qubits[0], qubits[len(qubits)-1])
 
 
+# ----------------------------------- form 3
+# 
+    if formval == 3:    
+        for _ in range(0, layers):
+            for idx in range (0, len(qubits)):
+                q.XRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
+    
+            offsetidx=offsetidx+len(qubits)
+    
+            for idx in range (0, len(qubits)):
+                q.ZRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
+    
+            offsetidx=offsetidx+len(qubits)
+    
+            for idx in range (0, len(qubits)):
+                q.XRotN( qubits[0 + idx], parameters[offsetidx  + idx])
+    
+            offsetidx=offsetidx+len(qubits)
+    
+    
+            for idx in range (0, len(qubits)-1):
+                q.CNot(idx, idx+1)
+    
+
 # ----------------------------------- form 4
 #     
     if formval == 4:
@@ -251,6 +275,37 @@ def perform_variational_circuit(qubits, parameters, formval, layers):
             q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx])
 
         offsetidx=offsetidx+len(qubits)
+
+# ----------------------------------- form 5
+#     
+    if formval == 5:
+        for idx in range (0, len(qubits)):
+             q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
+         
+        offsetidx=offsetidx+len(qubits)
+        
+        for _ in range(0, layers):           
+            q.YRotN( qubits[0], parameters[offsetidx] )
+            offsetidx=offsetidx+1
+            
+            q.CNot(qubits[0],qubits[2])
+                       
+            q.YRotN( qubits[0], parameters[offsetidx] )
+            offsetidx=offsetidx+1
+            
+            q.CNot(qubits[0],qubits[1])
+            
+            q.YRotN( qubits[1], parameters[offsetidx] )
+            offsetidx=offsetidx+1
+            
+            q.CNot( qubits[1],qubits[2] )
+            
+        
+        for idx in range (0, len(qubits)):
+             q.YRotN(parameters[offsetidx  + idx], qubits[0 + idx])
+         
+        offsetidx=offsetidx+len(qubits)        
+        
 
     return q
 
