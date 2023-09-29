@@ -158,6 +158,19 @@ def _internal_qdcl_vector_state_to_density_matrix(q):
 def _internal_qdcl_create_density_matrix_from_vector_state(q):
     return _internal_qdcl_vector_state_to_density_matrix(q)
 
+
+# code based on chop
+# discussed at:
+#   https://stackoverflow.com/questions/43751591/does-python-have-a-similar-function-of-chop-in-mathematica
+def _internal_chop(expr, delta=10 ** -10):
+    if isinstance(expr, (int, float, complex)):
+        return 0 if -delta <= expr <= delta else expr
+    else:
+        return [_internal_chop(x) for x in expr]
+
+chop = _internal_chop
+
+
 def vector_state_to_density_matrix(q):
     """
     Calculates density matrix for a given vector state.
@@ -206,17 +219,6 @@ def create_quantum_centroid(_qX, _n_elems_in_class=-1):
         centroid = centroid * (1.0/ float(_n_elems_in_class))
         
     return centroid
-
-# code based on chop
-# discussed at:
-#   https://stackoverflow.com/questions/43751591/does-python-have-a-similar-function-of-chop-in-mathematica
-def _internal_chop(expr, delta=10 ** -10):
-    if isinstance(expr, (int, float, complex)):
-        return 0 if -delta <= expr <= delta else expr
-    else:
-        return [_internal_chop(x) for x in expr]
-
-chop = _internal_chop
 
 def chop_and_round_for_array(expr,  delta=10 ** -10):
 
@@ -1067,12 +1069,27 @@ class VQEClassification:
         
         self.optymizer = None
         self.optimizer_type = OPT_COBYLA
+        self.n_centers = -1
+        self.centers = []
+        self._num_qubits = -1
 
     def reset( self ):
         pass
     
-    def objective_function( self ):
-        pass
+    def create_n_centers( self, _n_centers ):
+        self.n_centers = _n_centers
+        self.centers = np.zeros( shape=(2**self._num_qubits, _n_centers ) )
+        
+    
+    def set_center(self, _idx, _state):
+        self.centers[:, _idx] = _state
+    
+    def objective_function( self, _state, _n_center, _parameters ):
+        
+        cost_value = sum( abs( self.centers[i, _n_center] - _state[i]) 
+                         for i in range(2**self._num_qubits) )
+
+        return cost_value
     
     def create_variational_circuit( self, _n_qubits, _tab_parameters, _circuit_type_form, _n_layers):
         pass    
