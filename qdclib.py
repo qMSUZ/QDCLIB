@@ -47,6 +47,7 @@ import math as math
 import sympy as sympy
 
 import cvxopt
+import scipy
 
 #
 # Quantum Computing Simulator (QCS)
@@ -1069,34 +1070,266 @@ class VQEClassification:
         
         self.optymizer = None
         self.optimizer_type = OPT_COBYLA
-        self.n_centers = -1
+        
+        self._n_centers = -1
         self.centers = []
+        
+        self._n_layers = -1
+        self._circuit_type_form = -1
         self._num_qubits = -1
+        self._qubits = []
+        
 
     def reset( self ):
         pass
     
-    def create_n_centers( self, _n_centers ):
-        self.n_centers = _n_centers
-        self.centers = np.zeros( shape=(2**self._num_qubits, _n_centers ) )
+    def set_qubits_table(self, _val_tab_qubits):
+        self._qubits = _val_tab_qubits
+    
+    def set_number_of_qubits( self, _val_n_qubits):
+        self._num_qubits = _val_n_qubits
+    
+    def create_n_centers( self, _val_n_centers ):
+        if not self._num_qubits >= 1:
+            raise ValueError("VQEClassification the number of qubits must be bigger or equal to one!")
+            
+        self._n_centers = _val_n_centers
+        self.centers = np.zeros( shape=(2**self._num_qubits, self._n_centers ) )
         
     
     def set_center(self, _idx, _state):
         self.centers[:, _idx] = _state
     
-    def objective_function( self, _state, _n_center, _parameters ):
-        
-        cost_value = sum( abs( self.centers[i, _n_center] - _state[i]) 
-                         for i in range(2**self._num_qubits) )
+    def get_center(self, _idx):
+        return self.centers[:, _idx]
 
-        return cost_value
+    def get_centers( self ):
+        return self.centers
     
-    def create_variational_circuit( self, _n_qubits, _tab_parameters, _circuit_type_form, _n_layers):
-        pass    
-    
-    def train_vqe( self, _initial_params, _state_for_train):    
+    def train_vqe_for_all_centers(self):
         pass
     
+    def train_vqe( self, _initial_params, _state_for_train, _n_center):
+        _method_name = None
+        
+        if self.optimizer_type==OPT_COBYLA:
+            _method_name='COBYLA'
+        
+        result = scipy.optimize.minimize(
+            fun=self.objective_function,
+            x0=_initial_params,
+            args=(self._qubits, _n_center, self._circuit_type_form, self._n_layers),
+            method=_method_name )
+        
+        return result.x
+
+   
+    def objective_function( self, _parameters, *args):
+        cost_value = 0.0
+        
+        _qubits, _n_center, _circuit_type, _n_layers, = args 
+        
+        q = self.perform_variational_circuit( _qubits, _parameters, _circuit_type, _n_layers )
+        _state = q.ToNumpyArray()
+        
+        cost_value = sum( abs( self.centers[i, _n_center] - _state[i]) 
+                         for i in range(2 ** self._num_qubits) )
+    
+        return cost_value
+    
+    def perform_variational_circuit( self, _qubits, _parameters, _formval, _layers):
+         
+         offsetidx=0
+         
+         q = qcs.QuantumReg( len( _qubits ) )
+         q.Reset()
+         
+     # ----------------------------------- form 0
+     #     
+         if _formval == 0:
+             for idx in range (0, len(_qubits)):
+                 q.YRotN( _qubits[0 + idx], _parameters[offsetidx  + idx] )
+          
+             offsetidx = offsetidx + len(_qubits)
+              
+             q.CZ(0,1)
+             q.CZ(2,0)
+         
+         
+             for idx in range (0, len(_qubits)):
+                 q.YRotN( _qubits[0 + idx], _parameters[offsetidx + idx] )
+         
+             offsetidx = offsetidx + len(_qubits)
+         
+         
+             q.CZ(1,2)
+             q.CZ(2,0)
+         
+             
+             for idx in range (0, len(_qubits)):
+                 q.YRotN( _qubits[0 + idx], _parameters[offsetidx + idx] )
+         
+             offsetidx=offsetidx+len(_qubits)
+    
+     # ----------------------------------- form 1    
+     # linear entanglement
+    
+         if _formval == 1:
+    
+             for idx in range (0, len(_qubits)):
+                 q.YRotN( _qubits[0 + idx], _parameters[offsetidx  + idx] )
+    
+             offsetidx=offsetidx+len(_qubits)
+    
+             for idx in range (0, len(_qubits)):
+                 q.ZRotN( _qubits[0 + idx], _parameters[offsetidx  + idx] )
+    
+             offsetidx=offsetidx+len(_qubits)
+            
+             for idx in range (0, len(_qubits)-1):
+                 q.CNot(idx, idx+1)
+    
+             for idx in range (0, len(_qubits)):
+                 q.YRotN( _qubits[0 + idx], _parameters[offsetidx  + idx] )
+    
+             offsetidx=offsetidx+len(_qubits)
+    
+             for idx in range (0, len(_qubits)):
+                 q.ZRotN( _qubits[0 + idx], _parameters[offsetidx  + idx])
+    
+             offsetidx=offsetidx+len(_qubits)
+    
+    
+             for idx in range (0, len(_qubits)-1):
+                 q.CNot(idx, idx+1)
+    
+     # ----------------------------------- form 2
+     # full entanglement
+         if _formval == 2:
+    
+             for idx in range (0, len(_qubits)):
+                 q.YRotN(_qubits[0 + idx], _parameters[offsetidx  + idx])
+    
+             offsetidx=offsetidx+len(_qubits)
+    
+             for idx in range (0, len(_qubits)):
+                 q.ZRotN(_qubits[0 + idx], _parameters[offsetidx  + idx])
+    
+             offsetidx=offsetidx+len(_qubits)
+    
+    
+             for idx in range (0, len(_qubits)-1):
+                 q.CNot(_qubits[idx], _qubits[idx+1])
+    
+             q.CNot(_qubits[0], _qubits[len(_qubits)-1])
+    
+    
+             for idx in range (0, len(_qubits)):
+                 q.YRotN( _qubits[0 + idx], _parameters[offsetidx  + idx])
+    
+             offsetidx=offsetidx+len(_qubits)
+    
+             for idx in range (0, len(_qubits)):
+                 q.ZRotN( _qubits[0 + idx], _parameters[offsetidx  + idx])
+    
+             offsetidx=offsetidx+len(_qubits)
+    
+    
+             for idx in range (0, len(_qubits)-1):
+                 q.CNot(_qubits[idx], _qubits[idx+1])
+    
+             q.CNot(_qubits[0], _qubits[len(_qubits)-1])
+    
+    
+     # ----------------------------------- form 3
+     # 
+         if _formval == 3:    
+             for _ in range(0, _layers):
+                 for idx in range (0, len(_qubits)):
+                     q.XRotN( _qubits[0 + idx], _parameters[offsetidx  + idx] )
+         
+                 offsetidx=offsetidx+len(_qubits)
+         
+                 for idx in range (0, len(_qubits)):
+                     q.ZRotN( _qubits[0 + idx], _parameters[offsetidx  + idx] )
+         
+                 offsetidx=offsetidx+len(_qubits)
+         
+                 for idx in range (0, len(_qubits)):
+                     q.XRotN( _qubits[0 + idx], _parameters[offsetidx  + idx])
+         
+                 offsetidx=offsetidx+len(_qubits)
+         
+         
+                 for idx in range (0, len(_qubits)-1):
+                     q.CNot(idx, idx+1)
+         
+    
+     # ----------------------------------- form 4
+     #     
+         if _formval == 4:
+    
+             for idx in range (0, len(_qubits)):
+                 q.YRotN( _qubits[0 + idx], _parameters[offsetidx  + idx] )
+      
+             offsetidx=offsetidx+len(_qubits)
+    
+    
+             for _ in range(0, _layers):
+    
+                 for idx in range (0, len(_qubits)):
+                      q.YRotN( _qubits[0 + idx], _parameters[offsetidx  + idx] )
+         
+                 offsetidx=offsetidx+len(_qubits)
+    
+                 q.CZ(0, 1)
+                       
+                 for idx in range (0, len(_qubits)):
+                      q.YRotN( _qubits[0 + idx], _parameters[offsetidx  + idx])
+    
+                 offsetidx=offsetidx+len(_qubits)
+         
+                 q.CZ(1, 2)
+                 q.CZ(0, 2)
+         
+             for idx in range (0, len(_qubits)):
+                 q.YRotN( _qubits[0 + idx], _parameters[offsetidx  + idx])
+    
+             offsetidx=offsetidx+len(_qubits)
+    
+     # ----------------------------------- form 5
+     #     
+         if _formval == 5:
+             for idx in range (0, len(_qubits)):
+                  q.YRotN( _qubits[0 + idx], _parameters[offsetidx  + idx] )
+              
+             offsetidx=offsetidx+len(_qubits)
+             
+             for _ in range(0, _layers):           
+                 q.YRotN( _qubits[0], _parameters[offsetidx] )
+                 offsetidx=offsetidx+1
+                 
+                 q.CNot(_qubits[0],_qubits[2])
+                            
+                 q.YRotN( _qubits[0], _parameters[offsetidx] )
+                 offsetidx=offsetidx+1
+                 
+                 q.CNot(_qubits[0],_qubits[1])
+                 
+                 q.YRotN( _qubits[1], _parameters[offsetidx] )
+                 offsetidx=offsetidx+1
+                 
+                 q.CNot( _qubits[1], _qubits[2] )
+                 
+             
+             for idx in range (0, len(_qubits)):
+                  q.YRotN(_parameters[offsetidx  + idx], _qubits[0 + idx])
+              
+             offsetidx=offsetidx+len(_qubits)        
+             
+    
+         return q
+       
     def set_angles_file_name( self, _fname ):
         self.params_filename = _fname
     
