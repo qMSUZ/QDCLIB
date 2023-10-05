@@ -2198,8 +2198,66 @@ def cosine_distance( uvector, vvector, r = 0, check=0 ):
         return None
 
 
-def cosine_distance_with_normalisation( uvector, vvector ):
-    return 1.0 - np.vdot(uvector, vvector) / ( np.linalg.norm( uvector ) * np.linalg.norm( vvector ) )
+def cosine_distance_with_normalisation( uvector, vvector, r = 0 ):
+    """
+    Calculates a cosine distance between two vectors. If one or both entered 
+    vectors are not normalized, the result will be returned after the normalisation. 
+
+    Parameters
+    ----------
+    uvector, vvector : numpy array objects
+        Vectors of complex numbers describing quantum states.
+    r : integer
+        The number of decimals to use while rounding the number (default is 0,
+        i.e. the number is not rounded).
+
+    Returns
+    -------
+    distance_value : complex
+        The distance between given quantum states according to the cosine 
+        distance. In case of cosine similarity, its value is 1 for the same 
+        vectors, 0 for ortogonal vectors, and (-1) for opposite vectors.
+        The cosine distance is 0 for the same vectors, 1 for ortogonal vectors, 
+        and 2 for opposite vectors.
+        
+    Examples
+    --------
+    A distance between the same states:
+    >>> v=np.array([1,0])
+    >>> u=np.array([1,0])
+    >>> print(cosine_distance_with_normalisation(u, v))
+        0.0
+    A distance between the opposite states:
+    >>> v=np.array([1,0])
+    >>> u=np.array([-1,0])
+    >>> print(cosine_distance_with_normalisation(u, v))
+        2.0
+    A distance between the orthogonal states:
+    >>> v=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 - 1j/math.sqrt(2)])
+    >>> print(cosine_distance_with_normalisation(u, v))
+        (1+0j)
+    >>> v=np.array([1/math.sqrt(2),1/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),-1/math.sqrt(2)])
+    >>> print(cosine_distance_with_normalisation(u, v))
+        1.0
+    A distance between two examplary states:
+    >>> v=np.array([1/math.sqrt(2),1/math.sqrt(2)])
+    >>> u=np.array([1/math.sqrt(2),0 + 1j/math.sqrt(2)])
+    >>> print(cosine_distance_with_normalisation(u, v, 3))
+        (0.5+0.5j)
+    If entered vector v is not a correct quantum state:
+    >>> v=np.array([1,1])
+    >>> u=np.array([1,0])
+    >>> print(cosine_distance_with_normalisation(u, v, 4))
+        0.2929
+
+    """
+    distance_value = 1.0 - np.vdot(uvector, vvector) / ( np.linalg.norm( uvector ) * np.linalg.norm( vvector ) )
+    if r==0:
+        return distance_value 
+    else:
+        return np.round(distance_value,r)
 
 def dot_product_as_distance( uvector, vvector, r=0, check=0 ):
     """
