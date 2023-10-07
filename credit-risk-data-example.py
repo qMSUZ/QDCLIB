@@ -34,6 +34,9 @@
 import qdclib as qdcl
 import matplotlib.pyplot as plt
 
+import qcs
+import scipy
+
 import pandas as pd
 import numpy as np
 
@@ -94,244 +97,21 @@ def read_data(_fname):
     return df, Q, labels_for_Q, Q0, Q1
 
 
+
 def prepare_data():
     pass
 
-def perfom_kmedoids():
+def perfom_kmedoids( _n_centers):
     pass
 
 def bloch_sphere_representation():
     pass
 
 
-# not ready to use
-def objective_function(parameters):
-    
-    cost_value = 0
-    q = perform_variational_circuit(qubits, parameters, circuit_type, layers)
-    result = q.ToNumpyArray()
-
-    # calculate distribution error
-    cost_value = None
-
-    return cost_value
-
-def perform_variational_circuit(qubits, parameters, formval, layers):
-    
-    offsetidx=0
-    
-    q = qcs.QuantumReg( len(qubits) )
-    q.Reset()
-    
-# ----------------------------------- form 0
-#     
-    if formval == 0:
-        for idx in range (0, len(qubits)):
-            q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
-     
-        offsetidx=offsetidx+len(qubits)
-         
-        q.CZ(0,1)
-        q.CZ(2,0)
-    
-    
-        for idx in range (0, len(qubits)):
-            q.YRotN( qubits[0 + idx], parameters[offsetidx + idx] )
-    
-        offsetidx=offsetidx+len(qubits)
-    
-    
-        q.CZ(1,2)
-        q.CZ(2,0)
-    
-        
-        for idx in range (0, len(qubits)):
-            q.YRotN( qubits[0 + idx], parameters[offsetidx + idx] )
-    
-        offsetidx=offsetidx+len(qubits)
-
-# ----------------------------------- form 1    
-# linear entanglement
-
-    if formval == 1:
-
-        for idx in range (0, len(qubits)):
-            q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
-
-        offsetidx=offsetidx+len(qubits)
-
-        for idx in range (0, len(qubits)):
-            q.ZRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
-
-        offsetidx=offsetidx+len(qubits)
-       
-        for idx in range (0, len(qubits)-1):
-            q.CNot(idx, idx+1)
-
-        for idx in range (0, len(qubits)):
-            q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
-
-        offsetidx=offsetidx+len(qubits)
-
-        for idx in range (0, len(qubits)):
-            q.ZRotN( qubits[0 + idx], parameters[offsetidx  + idx])
-
-        offsetidx=offsetidx+len(qubits)
 
 
-        for idx in range (0, len(qubits)-1):
-            q.CNot(idx, idx+1)
-
-# ----------------------------------- form 2
-# full entanglement
-    if formval == 2:
-
-        for idx in range (0, len(qubits)):
-            q.YRotN(qubits[0 + idx], parameters[offsetidx  + idx])
-
-        offsetidx=offsetidx+len(qubits)
-
-        for idx in range (0, len(qubits)):
-            q.ZRotN(qubits[0 + idx], parameters[offsetidx  + idx])
-
-        offsetidx=offsetidx+len(qubits)
-
-
-        for idx in range (0, len(qubits)-1):
-            q.CNot(qubits[idx], qubits[idx+1])
-
-        q.CNot(qubits[0], qubits[len(qubits)-1])
-
-
-        for idx in range (0, len(qubits)):
-            q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx])
-
-        offsetidx=offsetidx+len(qubits)
-
-        for idx in range (0, len(qubits)):
-            q.ZRotN( qubits[0 + idx], parameters[offsetidx  + idx])
-
-        offsetidx=offsetidx+len(qubits)
-
-
-        for idx in range (0, len(qubits)-1):
-            q.CNot(qubits[idx], qubits[idx+1])
-
-        q.CNot(qubits[0], qubits[len(qubits)-1])
-
-
-# ----------------------------------- form 3
-# 
-    if formval == 3:    
-        for _ in range(0, layers):
-            for idx in range (0, len(qubits)):
-                q.XRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
-    
-            offsetidx=offsetidx+len(qubits)
-    
-            for idx in range (0, len(qubits)):
-                q.ZRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
-    
-            offsetidx=offsetidx+len(qubits)
-    
-            for idx in range (0, len(qubits)):
-                q.XRotN( qubits[0 + idx], parameters[offsetidx  + idx])
-    
-            offsetidx=offsetidx+len(qubits)
-    
-    
-            for idx in range (0, len(qubits)-1):
-                q.CNot(idx, idx+1)
-    
-
-# ----------------------------------- form 4
-#     
-    if formval == 4:
-
-        for idx in range (0, len(qubits)):
-            q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
- 
-        offsetidx=offsetidx+len(qubits)
-
-
-        for _ in range(0, layers):
-
-            for idx in range (0, len(qubits)):
-                 q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
-    
-            offsetidx=offsetidx+len(qubits)
-
-            q.CZ(0, 1)
-                  
-            for idx in range (0, len(qubits)):
-                 q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx])
-
-            offsetidx=offsetidx+len(qubits)
-    
-            q.CZ(1, 2)
-            q.CZ(0, 2)
-    
-        for idx in range (0, len(qubits)):
-            q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx])
-
-        offsetidx=offsetidx+len(qubits)
-
-# ----------------------------------- form 5
-#     
-    if formval == 5:
-        for idx in range (0, len(qubits)):
-             q.YRotN( qubits[0 + idx], parameters[offsetidx  + idx] )
-         
-        offsetidx=offsetidx+len(qubits)
-        
-        for _ in range(0, layers):           
-            q.YRotN( qubits[0], parameters[offsetidx] )
-            offsetidx=offsetidx+1
-            
-            q.CNot(qubits[0],qubits[2])
-                       
-            q.YRotN( qubits[0], parameters[offsetidx] )
-            offsetidx=offsetidx+1
-            
-            q.CNot(qubits[0],qubits[1])
-            
-            q.YRotN( qubits[1], parameters[offsetidx] )
-            offsetidx=offsetidx+1
-            
-            q.CNot( qubits[1],qubits[2] )
-            
-        
-        for idx in range (0, len(qubits)):
-             q.YRotN(parameters[offsetidx  + idx], qubits[0 + idx])
-         
-        offsetidx=offsetidx+len(qubits)        
-        
-
-    return q
 
 df, Q, labels_for_Q, Q0, Q1 = read_data( r'data/credit-risk-train-data.xlsx' )
-
-qubits=[0, 1, 2]
-circuit_type=0
-layers = 2
-
-if circuit_type == 0:
-    params = [1] * (9*layers) 
-
-if circuit_type == 1:
-        params = [1] * (6*layers) 
-
-if circuit_type == 2:
-        params = [1] * (6*layers) # for type 2
- 
-if circuit_type == 3:
-        params = [1] * (9*layers) # for type 3
-
-if circuit_type == 4:
-        params = [1] * ((3 + (6*layers) + 3)) # for type 4
-
-if circuit_type == 5:
-        params = [1] * ((3 + (3*layers) + 3)) # for type 5
 
 # Pearson Correlation Coefficient  (PCC)
 pcc_rho = np.corrcoef( Q[:,0:7].transpose() )
@@ -375,8 +155,8 @@ ax.scatter(Q0_r[:, 0],
 #for idx in range(0,40):
 #    ax.annotate( str(idx), (Q0_r[idx, 0], Q0_r[idx, 1]) )
 ax.scatter(Q1_r[:, 0], 
-           Q1_r[:, 1], 
-           s=10, marker="^", color="red")
+            Q1_r[:, 1], 
+            s=10, marker="^", color="red")
 #ax.scatter(cluster_for_Q1_r.cluster_centers_  [:, 0], 
 #            cluster_for_Q1_r.cluster_centers_  [:, 1], 
 #            s=50, marker="^", alpha=0.5, color="red")
@@ -390,8 +170,8 @@ plt.ylabel("Values of second feature")
 fig.show()
 
 
-Q0_labels, Q0_centers = qdcl.kmedoids_quantum_states( Q0_r, 8, _func_distance=qdcl.COSINE_DISTANCE )
-Q1_labels, Q1_centers = qdcl.kmedoids_quantum_states( Q1_r, 8, _func_distance=qdcl.COSINE_DISTANCE )
+Q0_r_labels, Q0_r_centers = qdcl.kmedoids_quantum_states( Q0_r, 8, _func_distance=qdcl.COSINE_DISTANCE )
+Q1_r_labels, Q1_r_centers = qdcl.kmedoids_quantum_states( Q1_r, 8, _func_distance=qdcl.COSINE_DISTANCE )
 
 b = qdcl.BlochVisualization()
 b.set_view(15, 30)
@@ -403,10 +183,91 @@ b.clear_points()
 b.add_points( Q0_r, "red", "+")
 b.add_points( Q1_r, "blue", ".")
 
-b.add_vectors( Q0_centers, "red")
-b.add_vectors( Q1_centers, "blue" )
+b.add_vectors( Q0_r_centers, "red")
+b.add_vectors( Q1_r_centers, "blue" )
 
 b.enable_multi_batch_draw()
 
 f=b.make_figure()
 f.show()
+
+
+# VQE class test
+
+Q0_labels, Q0_centers = qdcl.kmedoids_quantum_states( Q0, 8, _func_distance=qdcl.COSINE_DISTANCE )
+Q1_labels, Q1_centers = qdcl.kmedoids_quantum_states( Q1, 8, _func_distance=qdcl.COSINE_DISTANCE )
+
+
+_circuit_type = 0
+_n_layers = 2
+_n_qubits = 3
+_qubits = [0, 1, 2]
+_n_centers = 8
+
+
+vqeQ0 = qdcl.VQEClassification()
+vqeQ0.set_qubits_table( _qubits )
+vqeQ0.set_number_of_qubits( _n_qubits )
+vqeQ0.create_n_centers( _n_centers )
+
+for idx in range( 0, _n_centers ):
+    vqeQ0.set_center( idx, Q0_centers[idx] )
+
+
+vqeQ1 = qdcl.VQEClassification()
+vqeQ1.set_qubits_table( _qubits )
+vqeQ1.set_number_of_qubits( _n_qubits )
+vqeQ1.create_n_centers( _n_centers )
+
+
+for idx in range( 0, _n_centers ):
+    vqeQ1.set_center( idx, Q1_centers[idx] )
+
+if _circuit_type == 0:
+    paramsQ0 = [1] * (9*_n_layers) 
+
+if _circuit_type == 1:
+    paramsQ0 = [1] * (6*_n_layers) 
+
+if _circuit_type == 2:
+    paramsQ0 = [1] * (6*_n_layers) # for type 2
+ 
+if _circuit_type == 3:
+    paramsQ0 = [1] * (9*_n_layers) # for type 3
+
+if _circuit_type == 4:
+    paramsQ0 = [1] * ((3 + (6*_n_layers) + 3)) # for type 4
+
+if _circuit_type == 5:
+    paramsQ0 = [1] * ((3 + (3*_n_layers) + 3)) # for type 5
+
+paramsQ1 = paramsQ0
+    
+# 
+# for class 0 and  Q0_centers[0]
+#
+paramsQ0C0 = paramsQ0
+
+_num_qubits=_n_qubits
+centers = vqeQ0.get_centers()
+_n_center=0
+
+def objective_function( _parameters, *args):
+    cost_value = 0.0
+    
+    _qubits, _n_center, _circuit_type, _n_layers = args 
+
+    #q = vqeQ0.perform_variational_circuit( _qubits, _parameters, _circuit_type, _n_layers )
+    #_state = q.ToNumpyArray()
+    _state = Q0_centers[0]
+    
+    cost_value = sum( abs( centers[i, _n_center] - _state[i]) 
+                     for i in range(2 ** _num_qubits) )
+
+    return cost_value
+
+result = scipy.optimize.minimize(
+            fun=objective_function,
+            x0=paramsQ0C0,
+            args=(_qubits, _n_center, _circuit_type, _n_layers),
+            method='COBYLA' )
