@@ -3806,9 +3806,51 @@ def cohens_kappa(TP, TN, FP, FN, STS):
         return (pra-pre)/(1-pre)
 
 def is_matrix_symmetric( _matrix, _rtolerance=1e-05, _atolerance=1e-08):
-    return np.allclose( _matrix, _matrix.T, 
-                          rtol=_rtolerance, 
-                          atol=_atolerance)
+    """
+    Checks if the square matrix is symmetric that is if a given matrix (M) 
+    and its transposition (MT) are equal. The calculation is run including 
+    two parameters of the tolerance: relative (rel) and absolute (ab); 
+    according to the relation: absolute(M - MT) <= (ab + rel * absolute(MT)).
+
+    Parameters
+    ----------
+    _matrix : numpy array object
+        The matrix to be verified.
+    _rtolerance : float
+        The relative tolerance parameter. Default value: 1e-05.
+    _atolerance : float
+        The absolute tolerance parameter. Default value: 1e-08.
+    
+    Returns
+    -------
+    bool
+        Returns True if the matrix is symmetric within the given tolerance; 
+        False otherwise. If analyzed matrix is not square, the value error is
+        raised.
+    
+    Examples
+    --------
+    When the analyzed matrix is symmetric:
+    >>> a=np.array([[1,0],[0,1]])
+    >>> print(is_matrix_symmetric(a))
+        True
+    When the analyzed matrix is not symmetric:
+    >>> a=np.array([[1,1],[0,1]])
+    >>> print(is_matrix_symmetric(a))
+        False
+    When the analyzed matrix is not square:
+    >>> a=np.array([[1,0,1],[0,1,0]])
+    >>> print(is_matrix_symmetric(a))
+        ...
+        ValueError: The given matrix is not square what is the necessary condition to be symmetric!
+
+    """
+    r,c = _matrix.shape
+    if r==c:
+        return np.allclose( _matrix, _matrix.T, rtol=_rtolerance, atol=_atolerance)
+    else:
+        raise ValueError("The given matrix is not square what is the necessary condition to be symmetric!")
+        return None
 
 def difference_matrix( _rho1, _rho2 ):
     
