@@ -3853,15 +3853,54 @@ def is_matrix_symmetric( _matrix, _rtolerance=1e-05, _atolerance=1e-08):
         return None
 
 def difference_matrix( _rho1, _rho2 ):
+    """
+    Calculates the difference between given matrices.
     
+    Parameters
+    ----------
+    _rho1 : numpy array object
+        The minuend matrix.
+    _rho2 : numpy array object
+        The subtrahend matrix.
+    
+    Returns
+    -------
+    _result_rho : numpy array object
+        The difference matrix. If the given matrices (_rho1, _rho2) are not of 
+        the same dimensions, the value error will be raised. 
+    
+    Examples
+    --------
+    For two matrices of real numbers:
+    >>> a=np.array([[1,0],[0,1]])
+    >>> b=np.array([[1,1],[1,1]])
+    >>> print(difference_matrix(a,b))
+        [[ 0 -1]
+         [-1  0]]
+    For two matrices of complex numbers:
+    >>> a=np.array([[1,0,0+1j],[0,0,1]])
+    >>> b=np.array([[0,1,0],[0,0+1j,0]])
+    >>> print(difference_matrix(a,b))
+        [[ 1.+0.j -1.+0.j  0.+1.j]
+         [ 0.+0.j  0.-1.j  1.+0.j]]
+    When matrices are not of the same dimensions:
+    >>> a=np.array([[1,0],[0,1]])
+    >>> b=np.array([[1,1,1],[1,1,1]])
+    >>> print(difference_matrix(a,b))
+        ...
+        ValueError: The matrices are not of the same dimensions!
+
+    """
     # dimension check for rho1, rho2
-    # rows,cols = rho1.shape
-    
-    _result_rho = np.zeros( _rho1.shape )
-    
-    _result_rho = _rho1 - _rho2
-    
-    return _result_rho
+    r1,c1 = _rho1.shape
+    r2,c2 = _rho2.shape
+    if r1==r2 and c1==c2:
+        _result_rho = np.zeros( _rho1.shape )
+        _result_rho = _rho1 - _rho2
+        return _result_rho
+    else:
+        raise ValueError("The matrices are not of the same dimensions!")
+        return None
 
 def create_covariance_matrix( _qdX ):  
     
