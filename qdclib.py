@@ -3903,7 +3903,37 @@ def difference_matrix( _rho1, _rho2 ):
         return None
 
 def create_covariance_matrix( _qdX ):  
+    """
+    Calculates the covariance matrix for the given data table with observations
+    as normalized quantum states.
     
+    Parameters
+    ----------
+    _qdX : numpy array object
+        The data table - each row represents a normalized quantum state.
+    
+    Returns
+    -------
+    _covariance_matrix : numpy array object
+        The covariance matrix of complex numbers.
+    
+    Examples
+    --------
+    The covariance matrix for the exemplary data set CRABS.xlsx limited to 
+    4 variables during the data quantum normalization:
+    >>> df = pd.read_excel(r'CRABS.xlsx')
+    >>> data_tab=convert_data_to_vector_states(df,4)
+    >>> print(create_covariance_matrix(data_tab))
+        [[ 6.68684747e-05+0.j -1.48683687e-05+0.j  2.69459874e-06+0.j
+          -3.73476665e-05+0.j]
+         [-1.48683687e-05+0.j  1.88529350e-04+0.j -6.68424455e-05+0.j
+          -3.84981355e-05+0.j]
+         [ 2.69459874e-06+0.j -6.68424455e-05+0.j  2.89967696e-05+0.j
+           1.03818431e-05+0.j]
+         [-3.73476665e-05+0.j -3.84981355e-05+0.j  1.03818431e-05+0.j
+           3.72404181e-05+0.j]]
+
+    """
     _n_samples = np.shape( _qdX )[0]
     
     scale = (1.0 / (_n_samples - 1.0))
