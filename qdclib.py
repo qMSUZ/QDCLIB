@@ -3945,7 +3945,44 @@ def create_covariance_matrix( _qdX ):
     return np.array( _covariance_matrix, dtype=complex )
 
 def create_adjacency_matrix( _qdX, _threshold, _func_distance = None):
+    """
+    Calculates the adjacency matrix for the given data table with observations
+    as normalized quantum states. User points out the type of a distance function
+    and the distance threshold to asses if two quantum states are/are not adjacent.
     
+    Parameters
+    ----------
+    _qdX : numpy array object
+        The data table - each row represents a normalized quantum state.
+    _threshold : float
+        The critic distance value which groups observations to adjacent and not
+        adjacent.
+    _func_distance : function
+        The given distance function according to which the distance between 
+        quantum states is calculated.
+    
+    Returns
+    -------
+    adj_matrix : numpy array object
+        The adjacency matrix.
+    
+    Examples
+    --------
+    The adjacency matrix for the exemplary data set CRABS.xlsx limited to 
+    4 variables during the data quantum normalization; Manhattan distance used
+    as the distance measure with the closeness treshold as 0.1:
+    >>> df = pd.read_excel(r'CRABS.xlsx')
+    >>> data_tab=convert_data_to_vector_states(df,4)
+    >>> print(create_adjacency_matrix(data_tab, 0.1, manhattan_distance))
+        [[0. 1. 1. ... 1. 1. 1.]
+         [1. 0. 1. ... 1. 1. 1.]
+         [1. 1. 0. ... 1. 1. 1.]
+         ...
+         [1. 1. 1. ... 0. 1. 1.]
+         [1. 1. 1. ... 1. 0. 1.]
+         [1. 1. 1. ... 1. 1. 0.]]
+
+    """
     if _func_distance == None:
         raise ValueError("Distance function has been not assigned!!!") 
     
