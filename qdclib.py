@@ -4049,6 +4049,39 @@ def create_laplacian_matrix( _adj_matrix ):
 # can be also found at:
 # https://www.mathworks.com/matlabcentral/fileexchange/24661-graph-adjacency-matrix-to-incidence-matrix        
 def create_incidence_matrix( _adj_matrix ):
+    """
+    Calculates the incidence matrix based on the adjacency matrix for the 
+    analyzed data.
+    
+    Parameters
+    ----------
+    adj_matrix : numpy array object
+        The adjacency matrix.
+    
+    Returns
+    -------
+    m_incidence : numpy array object
+        The incidence matrix.
+    
+    Examples
+    --------
+    The incidence matrix for the exemplary data set CRABS.xlsx limited to 
+    4 variables during the data quantum normalization; Eucidean distance 
+    (with square root) used as the distance measure with the closeness 
+    treshold as 0.2 to calculate the mincidence matrix:
+    >>> df = pd.read_excel(r'CRABS.xlsx')
+    >>> data_tab=convert_data_to_vector_states(df,4)
+    >>> adjm=create_adjacency_matrix(data_tab, 0.2, euclidean_distance_with_sqrt)
+    >>> print(create_incidence_matrix( adjm ))
+        [[1. 1. 0. ... 0. 0. 0.]
+         [1. 0. 1. ... 0. 0. 0.]
+         [1. 0. 0. ... 0. 0. 0.]
+         ...
+         [0. 0. 0. ... 1. 1. 0.]
+         [0. 0. 0. ... 1. 0. 1.]
+         [0. 0. 0. ... 0. 1. 1.]]
+
+    """
     if is_matrix_symmetric(_adj_matrix) == True:
         n_vertices = _adj_matrix.shape[0]
         inds = np.argwhere( np.triu(_adj_matrix) )
