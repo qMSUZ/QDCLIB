@@ -4001,6 +4001,39 @@ def create_adjacency_matrix( _qdX, _threshold, _func_distance = None):
     return adj_matrix
 
 def create_laplacian_matrix( _adj_matrix ):
+    """
+    Calculates the Laplacian matrix based on the adjacency matrix for the 
+    analyzed data.
+    
+    Parameters
+    ----------
+    adj_matrix : numpy array object
+        The adjacency matrix.
+    
+    Returns
+    -------
+    lap_matrix : numpy array object
+        The Laplacian matrix.
+    
+    Examples
+    --------
+    The Laplacian matrix for the exemplary data set CRABS.xlsx limited to 
+    4 variables during the data quantum normalization; Eucidean distance 
+    (with square root) used as the distance measure with the closeness 
+    treshold as 0.2 to calculate the adjacency matrix:
+    >>> df = pd.read_excel(r'CRABS.xlsx')
+    >>> data_tab=convert_data_to_vector_states(df,4)
+    >>> adjm=create_adjacency_matrix(data_tab, 0.2, euclidean_distance_with_sqrt)
+    >>> print(create_laplacian_matrix( adjm ))
+        [[199.  -1.  -1. ...  -1.  -1.  -1.]
+         [ -1. 199.  -1. ...  -1.  -1.  -1.]
+         [ -1.  -1. 199. ...  -1.  -1.  -1.]
+         ...
+         [ -1.  -1.  -1. ... 199.  -1.  -1.]
+         [ -1.  -1.  -1. ...  -1. 199.  -1.]
+         [ -1.  -1.  -1. ...  -1.  -1. 199.]]
+
+    """
     lap_matrix = np.zeros( shape=(_adj_matrix.shape[0], 
                                   _adj_matrix.shape[1]) ) 
     rows = _adj_matrix.shape[0]
