@@ -228,8 +228,7 @@ def chop_and_round_for_array(expr,  delta=10 ** -10):
             expr[i,j] = round( chop(expr[i,j]), int(-np.log(delta)/np.log(10)) )
             
     return expr
-    
-    
+
 def convert_qubit_pure_state_to_bloch_vector( qstate ):
     """
     
@@ -4247,6 +4246,28 @@ def quantum_kmeans_update_centroids(_qdX, _ck, _n_samples, _n_clusters):
     return _centroids
 
 def quantum_kmeans_assign_labels( _qdX, _centroids, _n_samples, _n_clusters, _func_distance=None ):
+    """
+    
+
+    Parameters
+    ----------
+    _qdX : TYPE
+        DESCRIPTION.
+    _centroids : TYPE
+        DESCRIPTION.
+    _n_samples : TYPE
+        DESCRIPTION.
+    _n_clusters : TYPE
+        DESCRIPTION.
+    _func_distance : TYPE, optional
+        DESCRIPTION. The default is None.
+
+    Returns
+    -------
+    _labels : TYPE
+        DESCRIPTION.
+
+    """
    
     distance_table = np.zeros( shape=(_n_samples, _n_clusters))
     _labels = create_ck_table_zero_filled( _n_samples )
@@ -4267,6 +4288,28 @@ def quantum_kmeans(_X, _n_clusters, _max_iteration=128, _func_distance=None):
     pass
 
 def classic_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
+    """
+    
+
+    Parameters
+    ----------
+    _qdX : TYPE
+        DESCRIPTION.
+    _n_samples : TYPE
+        DESCRIPTION.
+    _n_clusters : TYPE
+        DESCRIPTION.
+    _threshold : TYPE
+        DESCRIPTION.
+    _func_distance : TYPE, optional
+        DESCRIPTION. The default is None.
+
+    Returns
+    -------
+    _labels : TYPE
+        DESCRIPTION.
+
+    """
     
     adj_matrix = create_adjacency_matrix( _qdX, _threshold, _func_distance )
 
@@ -4292,6 +4335,28 @@ def classic_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func
     return _labels
 
 def create_rho_state_for_qsc(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
+    """
+    
+
+    Parameters
+    ----------
+    _qdX : TYPE
+        DESCRIPTION.
+    _n_samples : TYPE
+        DESCRIPTION.
+    _n_clusters : TYPE
+        DESCRIPTION.
+    _threshold : TYPE
+        DESCRIPTION.
+    _func_distance : TYPE, optional
+        DESCRIPTION. The default is None.
+
+    Returns
+    -------
+    rho : TYPE
+        DESCRIPTION.
+
+    """
     
     adj_matrix = create_adjacency_matrix( _qdX, _threshold, _func_distance )
    
@@ -4312,6 +4377,30 @@ def create_rho_state_for_qsc(_qdX, _n_samples, _n_clusters, _threshold, _func_di
     return rho
 
 def quantum_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
+    """
+    
+
+    Parameters
+    ----------
+    _qdX : TYPE
+        DESCRIPTION.
+    _n_samples : TYPE
+        DESCRIPTION.
+    _n_clusters : TYPE
+        DESCRIPTION.
+    _threshold : TYPE
+        DESCRIPTION.
+    _func_distance : TYPE, optional
+        DESCRIPTION. The default is None.
+
+    Returns
+    -------
+    labels : TYPE
+        DESCRIPTION.
+    projectors : TYPE
+        DESCRIPTION.
+
+    """
     
     rho = create_rho_state_for_qsc(_qdX, _n_samples, _n_clusters, _threshold, _func_distance)
     
