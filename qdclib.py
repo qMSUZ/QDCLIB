@@ -207,6 +207,48 @@ def vector_state_to_density_matrix(q):
 
 
 def create_quantum_centroid(_qX, _n_elems_in_class=-1):
+    """
+    Calculates a centroid for the quantum data. The input data table contains
+    normalized quantum states. For each state, a density matrix is calculated and
+    the centroid is calculated as a sum of these matrices. Finally, the centroid
+    values are averaged by the value of the second function's argument.
+
+    Parameters
+    ----------
+    _qX : numpy ndarray
+        Data table containing a normalized quantum state in each row.
+    _n_elems_in_class : integer
+        Number of elements to average the result centroid array. The default 
+        value (-1) means that the averaging is performed for all observations
+        in _qX array.
+
+    Returns
+    -------
+    centroid : numpy ndarray
+        A centroid matrix.
+        
+    Examples
+    --------
+    A centriod matrix for an exemplary data set (four variables utilized to 
+    calculate 2-qubit states) with everaging by the number of all observations:
+    >>> df = pd.read_excel(r'CRABS.xlsx')
+    >>> data_tab=qdcl.convert_data_to_vector_states(df,4)
+    >>> print(qdcl.create_quantum_centroid(data_tab))
+        [[0.16072472 0.14569546 0.23059843 0.24570628]
+         [0.14569546 0.1323407  0.2090742  0.22284072]
+         [0.23059843 0.2090742  0.33100732 0.35273057]
+         [0.24570628 0.22284072 0.35273057 0.37592726]]
+    A centriod matrix for an exemplary data set (four variables utilized to 
+    calculate 2-qubit states) with everaging by 3:
+    >>> df = pd.read_excel(r'CRABS.xlsx')
+    >>> data_tab=qdcl.convert_data_to_vector_states(df,4)
+    >>> print(qdcl.create_quantum_centroid(data_tab,3))
+        [[10.7149813   9.71303089 15.37322885 16.38041858]
+         [ 9.71303089  8.82271323 13.93827986 14.85604802]
+         [15.37322885 13.93827986 22.0671549  23.51537111]
+         [16.38041858 14.85604802 23.51537111 25.06181724]]
+
+    """
     rows, cols = _qX.shape
     
     centroid=np.zeros(shape=(cols,cols))
