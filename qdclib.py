@@ -301,11 +301,15 @@ def convert_qubit_pure_state_to_bloch_vector( qstate ):
     """
     
     # check if qstate is vector state or a density matrix
-    try:
-        a,b=qstate.shape
-    except:
+    _x=qstate.ndim
+    if _x==1:
         b=qstate.shape[0]
         a=1
+    elif _x==2:
+        a,b=qstate.shape
+    else:
+        raise ValueError("Incorrect size of 1-qubit state!")
+        return None
         
     if a==1 and b==2:
         qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
