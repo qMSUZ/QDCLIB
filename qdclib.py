@@ -273,26 +273,47 @@ def chop_and_round_for_array(expr,  delta=10 ** -10):
 
 def convert_qubit_pure_state_to_bloch_vector( qstate ):
     """
-    
-    Convert pure quantum state of qubit to
-    the bloch vector representation 
+    Converts a pure 1-qubit state, given as a vector or a density matrix, 
+    to the Bloch vector representation. 
 
     Parameters
     ----------
-    qstate : TYPE
-        DESCRIPTION.
+    qstate : numpy array
+        A two-element vector or a matrix sized 2x2 representing one qubit state.
 
     Returns
     -------
-    TYPE
-        DESCRIPTION.
-
+    numpy array
+        The Bloch vector representation of a given 1-qubit state.
+    Examples
+    --------
+    >>> print(qdcl.convert_qubit_pure_state_to_bloch_vector( np.array( [1,0] )))
+        [0. 0. 1.]
+    >>> print(qdcl.convert_qubit_pure_state_to_bloch_vector( np.array( [1/np.sqrt(2),-1/np.sqrt(2)] )))
+        [-1.  0.  0.]
+    >>> print(qdcl.convert_qubit_pure_state_to_bloch_vector( np.array [1/np.sqrt(2),0+1j/np.sqrt(2)] )))
+        [0. 1.  0.]
+    >>> print(qdcl.convert_qubit_pure_state_to_bloch_vector( np.array( [[1,0],[0,0]] )))
+        [0. 0. 1.]
+    >>> print(qdcl.convert_qubit_pure_state_to_bloch_vector( np.array( [1,0,0] )))
+        ...
+        ValueError: Incorrect size of 1-qubit state!
     """
     
-    # to check qstate is vector state
-    # or matrix
-    
-    qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
+    # check if qstate is vector state or a density matrix
+    try:
+        a,b=qstate.shape
+    except:
+        b=qstate.shape[0]
+        a=1
+        
+    if a==1 and b==2:
+        qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
+    elif a==2 and b==2:
+        qstateden = qstate 
+    else:
+        raise ValueError("Incorrect size of 1-qubit state!")
+        return None
     
     xcoord = np.trace( _internal_pauli_x() @ qstateden )
     ycoord = np.trace( _internal_pauli_y() @ qstateden )
