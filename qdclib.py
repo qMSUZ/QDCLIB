@@ -263,11 +263,13 @@ def create_quantum_centroid(_qX, _n_elems_in_class=-1):
         
     return centroid
 
-def chop_and_round_for_array(expr,  delta=10 ** -10):
-
+def chop_and_round_for_array(_expr, _delta=10 ** -10):
+    
+    expr=_expr.copy()
+    
     for i in range( expr.shape[0] ):
         for j in range( expr.shape[1] ):
-            expr[i,j] = round( chop(expr[i,j]), int(-np.log(delta)/np.log(10)) )
+            expr[i,j] = round( chop(expr[i,j]), int(-np.log(_delta)/np.log(10)) )
             
     return expr
 
