@@ -264,7 +264,36 @@ def create_quantum_centroid(_qX, _n_elems_in_class=-1):
     return centroid
 
 def chop_and_round_for_array(_expr, _delta=10 ** -10):
-    
+    """
+    Rounds the numbers in the array and also values convergent to zero converts 
+    to zero. 
+
+    Parameters
+    ----------
+    _expr : numpy array
+        A two-dimensional array.
+    _delta : float
+        The scale of rounding and chopping. The default value is 10 ** -10.
+
+    Returns
+    -------
+    expr : numpy array
+        A two-dimensional array.
+        
+    Examples
+    --------
+    >>> x=np.array([[1.9876,0.0000001],[100.725,0]] )
+    >>> print(qdcl.chop_and_round_for_array(x))
+        [[1.98760e+00 1.00000e-07]
+         [1.00725e+02 0.00000e+00]]
+    >>> print(qdcl.chop_and_round_for_array(x,0.1))
+        [[  2.   0.]
+         [101.   0.]]
+    >>> print(qdcl.chop_and_round_for_array(x,0.01))
+        [[  2.    0. ]
+         [100.7   0. ]]
+        
+    """
     expr=_expr.copy()
     
     for i in range( expr.shape[0] ):
