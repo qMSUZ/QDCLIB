@@ -1441,11 +1441,24 @@ class DistanceQuantumClassification:
     def __init__( self ):
         self._func_distance = None
         self.dimension = -1
+        self.num_of_classes = -1
+        self.centroids=None
         self.data_for_cluster = [ ]
-        
-    
+            
     def reset( self ):
         pass
+
+    def create_centroids_for_n_classes(self, _n):
+        self.num_of_classes = _n
+        self.centroids = np.zeros(shape=( self.num_of_classes, 
+                                          self.dimension, self.dimension),
+                                          dtype=complex)
+
+    def set_centroid(self, _idx, _centroid):
+        self.centroids[_idx] = _centroid
+
+    def get_centroid(self, _idx):
+        return self.centroids[ _idx ]
 
     def set_distance(self, _f_dist):
         self._func_distance = _f_dist
