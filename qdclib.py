@@ -373,32 +373,48 @@ def convert_bloch_vector_to_spherical_point( _x, _y, _z ):
     
     return np.array([r, theta, phi ])
 
-def convert_spherical_point_to_pure_state( _theta, _phi):
+def convert_spherical_point_to_pure_state( _theta, _phi, _round=0):
     """
-    Convert spherical point theta and phi angles to
-    the pure quantum state
+    Converts spherical point of theta and phi angles to
+    a pure quantum state.
 
     Parameters
     ----------
-    _theta : TYPE
-        DESCRIPTION.
-        
-        0 <= _theta <= 2.0 * np.pi 
-        0 <= _phi <= np.pi 
-        
-    _phi : TYPE
-        DESCRIPTION.
+    _theta : float
+        An angle in radians describing the tilt with respect to the z-axis 
+        on the Bloch sphere (0 <= _theta <= np.pi).
+    _phi : float
+        An angle in radians describing the tilt with respect to the x-axis 
+        on the Bloch sphere (0 <= _phi <= 2.0 * np.pi).
+    _round : integer
+        The number of decimals to use while rounding the number (default is 0,
+        i.e. the number is not rounded).
 
     Returns
     -------
-    pure_state_qubit : TYPE
-        DESCRIPTION.
+    pure_state_qubit : numpy vector
+        The 1-qubit pure state vector.
+        
+    Examples
+    --------
+    >>> print(qdcl.convert_spherical_point_to_pure_state( 0, 0))
+        [1.+0.j 0.+0.j]
+    >>> print(qdcl.convert_spherical_point_to_pure_state( np.pi, 0, 7))
+        [0.+0.j 1.+0.j]
+    >>> print(qdcl.convert_spherical_point_to_pure_state( np.pi/2, 0))
+        [0.70710678+0.j 0.70710678+0.j]
+    >>> print(qdcl.convert_spherical_point_to_pure_state( np.pi/2, np.pi/2, 4))
+        [0.7071+0.j     0.    +0.7071j]
 
     """
     pure_state_qubit = create_zero_vector( 2 )
     
-    pure_state_qubit[0] = np.cos( _theta / 2.0 )
-    pure_state_qubit[1] = np.exp(1.0J * _phi) * np.sin( _theta / 2.0 )
+    if _round==0:
+        pure_state_qubit[0] = np.cos( _theta / 2.0 )
+        pure_state_qubit[1] = np.exp(1.0J * _phi) * np.sin( _theta / 2.0 )
+    else:
+        pure_state_qubit[0] = np.round(np.cos( _theta / 2.0 ), _round)
+        pure_state_qubit[1] = np.round(np.exp(1.0J * _phi) * np.sin( _theta / 2.0 ), _round)
     
     return pure_state_qubit
 
