@@ -356,14 +356,46 @@ def convert_qubit_pure_state_to_bloch_vector( qstate ):
     
     return np.array([ np.real(xcoord), np.real(ycoord), np.real(zcoord) ])
 
-def convert_spherical_point_to_bloch_vector( _r, _theta, _phi ):
-    
-    
+def convert_spherical_point_to_bloch_vector( _r, _theta, _phi, _round=0 ):
+    """
+    Converts spherical point of r radius, theta, and phi angles to
+    a Bloch vector (only if r==1, we refer to normalized quantum state).
+
+    Parameters
+    ----------
+    _r : float
+        The distance between the point and the sphere center (radius).
+    _theta : float
+        An angle in radians describing the tilt with respect to the z-axis 
+        on the Bloch sphere (0 <= _theta <= np.pi).
+    _phi : float
+        An angle in radians describing the tilt with respect to the x-axis 
+        on the Bloch sphere (0 <= _phi <= 2.0 * np.pi).
+    _round : integer
+        The number of decimals to use while rounding the number (default is 0,
+        i.e. the number is not rounded).
+
+    Returns
+    -------
+    numpy ndarray
+        A Bloch vector for a given spherical point.
+        
+    Examples
+    --------
+    >>> print(qdcl.convert_spherical_point_to_bloch_vector( 1, np.pi/2, np.pi, 2 ))
+        [-0. -1.  0.]
+    >>> print(qdcl.convert_spherical_point_to_bloch_vector( 1, np.pi/2, np.pi/2, 4 ))
+        [0. 0. 1.]
+
+    """
     xcoord = _r * np.cos( _phi ) * np.cos( _theta )
     ycoord = _r * np.cos( _phi ) * np.sin( _theta )
     zcoord = _r * np.sin( _phi )
-
-    return np.array([xcoord, ycoord, zcoord])
+    
+    if _round==0:
+        return np.array([xcoord, ycoord, zcoord])
+    else:
+        return np.array([np.round(xcoord, _round), np.round(ycoord, _round), np.round(zcoord, _round)])
 
 def convert_bloch_vector_to_spherical_point( _x, _y, _z ):
     
