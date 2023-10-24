@@ -1508,6 +1508,9 @@ class DistanceQuantumClassification:
     def get_centroid(self, _idx):
         return self.centroids[ _idx ]
 
+    def update_centroid(self, _idx, _n, _data):
+        pass
+
     def set_distance(self, _f_dist):
         self._func_distance = _f_dist
             
