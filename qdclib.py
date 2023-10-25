@@ -1517,8 +1517,15 @@ class DistanceQuantumClassification:
     def set_dimension( self, _d ):
         self.dimension = _d
     
-    def set_data(self, _qdX):
+    def set_probes_data(self, _qdX):
         self.data_for_cluster = _qdX
+        
+    def classify_all_probes( self, _qdX ):
+        pass
+    
+    def classify_probe( self, _qdX ):
+        pass
+
 
 # in preparation
 class QuantumSpectralClustering:

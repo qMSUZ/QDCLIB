@@ -43,8 +43,28 @@ from sklearn import decomposition
 
 banana_dataset = np.loadtxt('data/banana_data.txt')
 
+# _ratio = 0.30
+# idx_for_cutoff = int( banana_dataset.shape[0] * _ratio )
+    
+
 banana_dataset_CM1 = banana_dataset[banana_dataset[:,2]==-1][:,0:2]
 banana_dataset_CP1 = banana_dataset[banana_dataset[:,2]== 1][:,0:2]
 
+banana_dataset_CM1_q = banana_dataset_CM1
+banana_dataset_CP1_q = banana_dataset_CP1
 
+idx=0
+for r in banana_dataset_CM1:
+    banana_dataset_CM1_q[idx] = r / np.linalg.norm( r ) 
+    idx=idx+1
+
+idx=0
+for r in banana_dataset_CP1:
+    banana_dataset_CP1_q[idx] = r / np.linalg.norm( r ) 
+    idx=idx+1
+    
+dm_for_CM1 = qdcl.create_quantum_centroid( banana_dataset_CM1_q )
+dm_for_CP1 = qdcl.create_quantum_centroid( banana_dataset_CP1_q )
+
+# qdcl.vector_state_to_density_matrix( )
         
