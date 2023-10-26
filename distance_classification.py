@@ -40,12 +40,7 @@ from scipy import stats
 
 from sklearn import decomposition
 
-
 banana_dataset = np.loadtxt('data/banana_data.txt')
-
-# _ratio = 0.30
-# idx_for_cutoff = int( banana_dataset.shape[0] * _ratio )
-    
 
 banana_dataset_CM1 = banana_dataset[banana_dataset[:,2]==-1][:,0:2]
 banana_dataset_CP1 = banana_dataset[banana_dataset[:,2]== 1][:,0:2]
@@ -66,5 +61,38 @@ for r in banana_dataset_CP1:
 dm_for_CM1 = qdcl.create_quantum_centroid( banana_dataset_CM1_q )
 dm_for_CP1 = qdcl.create_quantum_centroid( banana_dataset_CP1_q )
 
-# qdcl.vector_state_to_density_matrix( )
+
+cnt_cm1=0
+cnt_cp1=0
+print("Banana for class Minus One")
+for r in banana_dataset_CM1:
+    dm_t1 = qdcl.vector_state_to_density_matrix( r )
+    d1 = qdcl.trace_distance_density_matrix(dm_for_CM1, dm_t1)
+    d2 = qdcl.trace_distance_density_matrix(dm_for_CP1, dm_t1)
+    if d1 < d2:
+        cnt_cm1 += 1 
+    else:
+        cnt_cp1 += 1
+        
+print("\ttrue for class cm1:", cnt_cm1)
+print("\tfalse for class cp1:", cnt_cp1)
+print("\ttrue positive", (cnt_cm1)/(cnt_cm1+cnt_cp1) * 100,'%')
+
+
+cnt_cm1=0
+cnt_cp1=0
+print("Banana for class Plus One")
+for r in banana_dataset_CP1:
+    dm_t1 = qdcl.vector_state_to_density_matrix( r )
+    d1 = qdcl.trace_distance_density_matrix(dm_for_CP1, dm_t1)
+    d2 = qdcl.trace_distance_density_matrix(dm_for_CM1, dm_t1)
+    if d1 < d2:
+        cnt_cp1 += 1 
+    else:
+        cnt_cm1 += 1
+        
+print("\ttrue for class cp1:", cnt_cm1)
+print("\tfalse for class cm1:", cnt_cp1)
+print("\ttrue positive", (cnt_cp1)/(cnt_cm1+cnt_cp1) * 100,'%')
+
         
