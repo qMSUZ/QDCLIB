@@ -1488,43 +1488,46 @@ class VQEClassification:
 class DistanceQuantumClassification:
     def __init__( self ):
         self._func_distance = None
-        self.dimension = -1
-        self.num_of_classes = -1
+        self._dimension = -1
+        self._num_of_classes = -1
         self.centroids=None
-        self.data_for_cluster = [ ]
             
     def reset( self ):
         pass
 
-    def create_centroids_for_n_classes(self, _n):
-        self.num_of_classes = _n
-        self.centroids = np.zeros(shape=( self.num_of_classes, 
-                                          self.dimension, self.dimension),
+    def create_empty_centroids_for_n_classes(self, _n):
+        self._num_of_classes = _n
+        self.centroids = np.zeros(shape=( self._num_of_classes, 
+                                          self._dimension, self._dimension),
                                           dtype=complex)
 
+    def create_centroid_for_class(self, _idx, _data_for_centroid):
+        dm_for_centroid = create_quantum_centroid( _data_for_centroid )
+        self.centroids[_idx] = dm_for_centroid
+    
     def set_centroid(self, _idx, _centroid):
         self.centroids[_idx] = _centroid
 
     def get_centroid(self, _idx):
         return self.centroids[ _idx ]
 
-    def update_centroid(self, _idx, _n, _data):
-        pass
-
     def set_distance(self, _f_dist):
         self._func_distance = _f_dist
             
     def set_dimension( self, _d ):
-        self.dimension = _d
-    
-    def set_probes_data(self, _qdX):
-        self.data_for_cluster = _qdX
-        
-    def classify_all_probes( self, _qdX ):
+        self._dimension = _d
+           
+    def classify_all_probes( self, _dm_qdX ):
         pass
     
     def classify_probe( self, _qdX ):
-        pass
+        _dm_qdX = vector_state_to_density_matrix( _qdX )
+        val_for_class = np.zeros( shape=(self._num_of_classes) )
+        for iclass in range(0, self._num_of_classes):
+            val_for_class[iclass] = self._func_distance( self.centroids[iclass], _dm_qdX )
+        
+        return np.argmin( val_for_class )
+        
 
 
 # in preparation
