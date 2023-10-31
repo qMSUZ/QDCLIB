@@ -91,10 +91,28 @@ def basic_example_banana_set():
     dqc.create_centroid_for_class( 0, banana_dataset_CM1_q )
     dqc.create_centroid_for_class( 1, banana_dataset_CP1_q )
     
+    print("Centroid for class Minus One")
     print( dqc.get_centroid(0) )
+    print("Centroid for class Plus One")
     print( dqc.get_centroid(1) )
     
     # case for minus one
+
+    cnt_cm1=0
+    cnt_cp1=0    
+    print("Banana for class Minus One")
+    for r in banana_dataset_CM1:
+        iclass = dqc.classify_probe( r )
+        if iclass == 0:
+            cnt_cm1 += 1 
+        if iclass == 1:
+            cnt_cp1 += 1  
+    print("\ttrue for class cp1:", cnt_cm1)
+    print("\tfalse for class cm1:", cnt_cp1)
+    print("\ttrue positive", (cnt_cm1)/(cnt_cm1+cnt_cp1) * 100,'%')    
+
+
+    # case for plus one
     
     cnt_cm1=0
     cnt_cp1=0    
