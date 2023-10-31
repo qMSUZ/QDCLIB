@@ -33,8 +33,14 @@
 
 import numpy as np
 
+original_data=None
+
 def info():
     pass
 
 def load_data():
     pass
+
+def get_data_for_class( _idx ):
+    pass
+

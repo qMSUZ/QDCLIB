@@ -129,7 +129,7 @@ def basic_example_banana_set():
     print("\ttrue positive", (cnt_cp1)/(cnt_cm1+cnt_cp1) * 100,'%')    
 
 
-banana_dataset = np.loadtxt('data/banana_data.txt')
+banana_dataset = np.loadtxt('datasets/banana_data.txt')
 
 banana_dataset_CM1 = banana_dataset[banana_dataset[:,2]==-1][:,0:2]
 banana_dataset_CP1 = banana_dataset[banana_dataset[:,2]== 1][:,0:2]

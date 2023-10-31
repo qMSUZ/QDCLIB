@@ -40,7 +40,7 @@ import numpy as np
 from sklearn import decomposition
 
 
-org_crabs=pd.read_excel(r'data/CRABS.xlsx')
+org_crabs=pd.read_excel(r'datasets/CRABS.xlsx')
 org_crabs_data=org_crabs.values
 
 fig = plt.figure( figsize = (12,12) )
