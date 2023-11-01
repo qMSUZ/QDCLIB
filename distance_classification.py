@@ -40,7 +40,27 @@ from scipy import stats
 
 from sklearn import decomposition
 
-def basic_example_banana_set_direct_api():        
+def basic_example_banana_set_direct_api():
+
+    banana_dataset = np.loadtxt('datasets/banana_data.txt')
+    
+    banana_dataset_CM1 = banana_dataset[banana_dataset[:,2]==-1][:,0:2]
+    banana_dataset_CP1 = banana_dataset[banana_dataset[:,2]== 1][:,0:2]
+    
+    banana_dataset_CM1_q = banana_dataset_CM1
+    banana_dataset_CP1_q = banana_dataset_CP1
+    
+    idx=0
+    for r in banana_dataset_CM1:
+        banana_dataset_CM1_q[idx] = r / np.linalg.norm( r ) 
+        idx=idx+1
+    
+    idx=0
+    for r in banana_dataset_CP1:
+        banana_dataset_CP1_q[idx] = r / np.linalg.norm( r ) 
+        idx=idx+1
+
+    
     dm_for_CM1 = qdcl.create_quantum_centroid( banana_dataset_CM1_q )
     dm_for_CP1 = qdcl.create_quantum_centroid( banana_dataset_CP1_q )
     
@@ -79,6 +99,15 @@ def basic_example_banana_set_direct_api():
     print("\ttrue positive", (cnt_cp1)/(cnt_cm1+cnt_cp1) * 100,'%')
 
 def basic_example_banana_set():
+    
+    qdcl.datasets.banana.load_data()
+    
+    banana_dataset_CM1 = qdcl.datasets.banana.get_original_data_for_class( 0 )
+    banana_dataset_CP1 = qdcl.datasets.banana.get_original_data_for_class( 1 )
+    
+    banana_dataset_CM1_q = qdcl.datasets.banana.get_quantum_data_for_class( 0 )
+    banana_dataset_CP1_q = qdcl.datasets.banana.get_quantum_data_for_class( 1 )
+    
     dqc = qdcl.DistanceQuantumClassification()
     
     d = 2
@@ -129,24 +158,6 @@ def basic_example_banana_set():
     print("\ttrue positive", (cnt_cp1)/(cnt_cm1+cnt_cp1) * 100,'%')    
 
 
-banana_dataset = np.loadtxt('datasets/banana_data.txt')
-
-banana_dataset_CM1 = banana_dataset[banana_dataset[:,2]==-1][:,0:2]
-banana_dataset_CP1 = banana_dataset[banana_dataset[:,2]== 1][:,0:2]
-
-banana_dataset_CM1_q = banana_dataset_CM1
-banana_dataset_CP1_q = banana_dataset_CP1
-
-idx=0
-for r in banana_dataset_CM1:
-    banana_dataset_CM1_q[idx] = r / np.linalg.norm( r ) 
-    idx=idx+1
-
-idx=0
-for r in banana_dataset_CP1:
-    banana_dataset_CP1_q[idx] = r / np.linalg.norm( r ) 
-    idx=idx+1
-
-
 # basic_example_banana_set_direct_api()
-basic_example_banana_set()        
+basic_example_banana_set()
+

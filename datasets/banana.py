@@ -33,14 +33,70 @@
 
 import numpy as np
 
-original_data=None
+
+banana_dataset = None
+original_data  = None
+
+banana_dataset_CM1 = None
+banana_dataset_CP1 = None
+
+banana_dataset_CM1_q = None
+banana_dataset_CP1_q = None
+
 
 def info():
     pass
 
 def load_data():
-    pass
+    
+    global banana_dataset
+    global original_data
+    
+    global banana_dataset_CM1
+    global banana_dataset_CP1
+    
+    global banana_dataset_CM1_q
+    global banana_dataset_CP1_q
 
-def get_data_for_class( _idx ):
-    pass
+    banana_dataset = np.loadtxt('datasets/banana_data.txt')
+    original_data  = banana_dataset
+
+    banana_dataset_CM1 = banana_dataset[banana_dataset[:,2]==-1][:,0:2]
+    banana_dataset_CP1 = banana_dataset[banana_dataset[:,2]== 1][:,0:2]
+    
+    banana_dataset_CM1_q = banana_dataset_CM1
+    banana_dataset_CP1_q = banana_dataset_CP1
+
+    idx=0
+    for r in banana_dataset_CM1:
+        banana_dataset_CM1_q[idx] = r / np.linalg.norm( r ) 
+        idx=idx+1
+    
+    idx=0
+    for r in banana_dataset_CP1:
+        banana_dataset_CP1_q[idx] = r / np.linalg.norm( r ) 
+        idx=idx+1
+
+def get_original_data_for_class( _idx ):
+    
+    if _idx==0:
+        return banana_dataset_CM1
+    
+    if _idx==1:
+        return banana_dataset_CP1
+    
+    return None
+
+def get_quantum_data_for_class( _idx ):
+    
+    if _idx==0:
+        return banana_dataset_CM1_q
+    
+    if _idx==1:
+        return banana_dataset_CP1_q
+    
+    return None
+
+
+
 
