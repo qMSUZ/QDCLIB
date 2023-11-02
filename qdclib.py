@@ -503,7 +503,27 @@ def convert_bloch_vector_to_pure_state( _x, _y, _z ):
 
 
 def stereographic_projection_to_two_component_vector( _x, _y, _z ):
-    
+    """
+    The stereographic projection of a Bloch vector to two-element vector.
+
+    Parameters
+    ----------
+    _x : float
+        The coordinate of the Bloch vector with respect to the x-axis.
+    _y : float
+        The coordinate of the Bloch vector with respect to the y-axis.
+    _z : float
+        The coordinate of the Bloch vector with respect to the z-axis.
+
+    Returns
+    -------
+    two_component_vector : numpy vector
+        The 1-qubit pure state vector.
+        
+    Examples
+    --------
+    >>> ...
+    """
     two_component_vector = create_zero_vector( 2 )
     
     two_component_vector[0] = _x / (1.0 - _z)
