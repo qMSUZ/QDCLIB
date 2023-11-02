@@ -101,7 +101,7 @@ def read_iris_data( fname ):
     return df.values, Q, QPrime, Y,  Q0, Q1, Q2
 
 
-org_iris_data, d,  dprime, Y, d0, d1, d2 = read_iris_data( 'data/iris_data.txt')
+org_iris_data, d,  dprime, Y, d0, d1, d2 = read_iris_data( 'datasets/iris_data.txt')
 
 n_components = 2
 
@@ -176,6 +176,7 @@ ax.scatter( ddata[0:49, 0],    ddata[0:49, 1],    color="red")
 ax.scatter( ddata[50:99, 0],   ddata[50:99, 1],   color="green")
 ax.scatter( ddata[100:149, 0], ddata[100:149, 1], color="blue")
 ax.contour(X, Y, Z)
+ax.set_title("Schrodinger potential for Iris data expresed as qubit states after two components PCA")
 (e0,e1,e2,e3) =  ax.get_images()[0].get_extent()
 ax.set_aspect( np.abs( (e1-e0)/(e3-e2) ) )
 plt.show()

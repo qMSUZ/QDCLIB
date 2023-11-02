@@ -40,7 +40,7 @@ import numpy as np
 from sklearn import decomposition
 
 
-org_iris=pd.read_excel(r'data/IRIS.xlsx')
+org_iris=pd.read_excel(r'datasets/IRIS.xlsx')
 org_iris_data=org_iris.values
 
 fig = plt.figure( figsize = (12,12) )
