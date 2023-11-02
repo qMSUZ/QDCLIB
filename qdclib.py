@@ -402,7 +402,27 @@ def convert_spherical_point_to_bloch_vector( _r, _theta, _phi, _round=0 ):
         return np.array([np.round(xcoord, _round), np.round(ycoord, _round), np.round(zcoord, _round)])
 
 def convert_bloch_vector_to_spherical_point( _x, _y, _z ):
-    
+    """
+    Converts a Bloch vector to a spherical point.
+
+    Parameters
+    ----------
+    _x : float
+        The coordinate of the Bloch vector with respect to the x-axis.
+    _y : float
+        The coordinate of the Bloch vector with respect to the y-axis.
+    _z : float
+        The coordinate of the Bloch vector with respect to the z-axis.
+
+    Returns
+    -------
+    numpy ndarray
+        A data of the spherical point: radius, theta phi, and phi angle.
+        
+    Examples
+    --------
+    >>> ...
+    """
     r = np.sqrt( _x * _x + _y * _y + _z * _z )
     theta = np.arccos( _z / r )
     phi = np.sign(_y) *  np.arccos( _x / np.sqrt(_x*_x + _y*_y) ) 
