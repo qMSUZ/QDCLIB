@@ -475,7 +475,27 @@ def convert_spherical_point_to_pure_state( _theta, _phi, _round=0):
     return pure_state_qubit
 
 def convert_bloch_vector_to_pure_state( _x, _y, _z ):
-    
+    """
+    Converts a Bloch vector to a pure vector.
+
+    Parameters
+    ----------
+    _x : float
+        The coordinate of the Bloch vector with respect to the x-axis.
+    _y : float
+        The coordinate of the Bloch vector with respect to the y-axis.
+    _z : float
+        The coordinate of the Bloch vector with respect to the z-axis.
+
+    Returns
+    -------
+    pure_state_qubit : numpy vector
+        The 1-qubit pure state vector.
+        
+    Examples
+    --------
+    >>> ...
+    """
     r,theta,phi = convert_bloch_vector_to_spherical_point( _x, _y, _z)
     pure_state_qubit = convert_spherical_point_to_pure_state( theta, phi  )
     
