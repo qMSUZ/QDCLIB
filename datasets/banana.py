@@ -32,7 +32,7 @@
 # ***************************************************************************/
 
 import numpy as np
-
+import pandas as pd
 
 banana_dataset = None
 original_data  = None
@@ -58,7 +58,8 @@ def load_data():
     global banana_dataset_CM1_q
     global banana_dataset_CP1_q
 
-    banana_dataset = np.loadtxt('datasets/banana_data.txt')
+    bd_from_pd = pd.read_excel(r'datasets/banana_data.xlsx')
+    banana_dataset = bd_from_pd.values
     original_data  = banana_dataset
 
     banana_dataset_CM1 = banana_dataset[banana_dataset[:,2]==-1][:,0:2]

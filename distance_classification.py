@@ -32,13 +32,8 @@
 # ***************************************************************************/
 
 import qdclib as qdcl
-import matplotlib.pyplot as plt
-
-import pandas as pd
 import numpy as np
-from scipy import stats
 
-from sklearn import decomposition
 
 def basic_example_banana_set_direct_api():
 
