@@ -39,9 +39,8 @@ original_data  = None
 original_labels = None
 
 
-d = None
-dprime = None
-Y = None
+nrm_and_std_d = None
+nrm_d = None
 
 org_d0 = None
 org_d1 = None
@@ -137,9 +136,8 @@ def load_data():
     global iris_dataset
     global original_data
     global original_labels
-    global d
-    global dprime
-    global Y
+    global nrm_and_std_d
+    global nrm_d
     global d0
     global d1
     global d2
@@ -150,8 +148,7 @@ def load_data():
     global nrm_d1
     global nrm_d2
 
-
-    iris_dataset, d,  dprime, Y, d0, d1, d2, org_d0, org_d1, org_d2, nrm_d0, nrm_d1, nrm_d2 = _read_iris_data( 'datasets/iris_data.txt')
+    iris_dataset, nrm_and_std_d,  nrm_d, Y, d0, d1, d2, org_d0, org_d1, org_d2, nrm_d0, nrm_d1, nrm_d2 = _read_iris_data( 'datasets/iris_data.txt')
     
     original_data = iris_dataset
     original_labels = Y
@@ -161,6 +158,12 @@ def get_original_data():
 
 def get_original_labels():
     return original_labels
+
+def get_normalised_data():
+    return nrm_d
+
+def get_normalised_and_standarised_data():
+    return nrm_and_std_d
 
 def get_original_data_for_class( _idx ):
     
