@@ -544,8 +544,30 @@ def vector_data_encode_with_inverse_stereographic_projection( _v ):
 
     return rsltvec
 
-def encode_probe_by_normalisation( _qdX ):
+def encode_probe_by_normalization( _qdX ):
+    """
+    The simple normalization of a given vector.
 
+    Parameters
+    ----------
+    _qdX : numpy ndarray
+        The data vector with an arbitrary number of elements.
+    
+    Returns
+    -------
+    x : numpy ndarray
+        A normalized vector.
+        
+    Examples
+    --------
+    >>> print(qdcl.encode_probe_by_normalization( np.array([1/2,0] ) ))
+        [1. 0.]
+    >>> print(qdcl.encode_probe_by_normalization( np.array([1/2,1/3,1/4] ) ))
+        [0.76822128 0.51214752 0.38411064]
+    >>> print(qdcl.encode_probe_by_normalization( np.array([1/2,1/2,0,1/2] ) ))
+        [0.57735027 0.57735027 0.         0.57735027]
+        
+    """
     nrm = np.linalg.norm( _qdX )
     _n_features = _qdX.shape[0]
     x = np.zeros( shape=(_n_features,)  )
