@@ -576,10 +576,32 @@ def encode_probe_by_normalization( _qdX ):
         
     return x
 
-def encode_probes_by_normalisation( _qdX ):
+def encode_probes_by_normalization( _qdX ):
+    """
+    The simple normalization in each row of the given array.
 
+    Parameters
+    ----------
+    _qdX : numpy ndarray
+        The data table with an arbitrary number of rows (the number of probes) 
+        and columns (the number of variables).
+    
+    Returns
+    -------
+    _qdX : numpy ndarray
+        An array of normalized row vectors.
+        
+    Examples
+    --------
+    >>> print(qdcl.encode_probes_by_normalization( np.array([[1/2,0], [1/4,1/3], [4,3], [1,8]]) ) )
+        [[1.         0.        ]
+         [0.6        0.8       ]
+         [0.8        0.6       ]
+         [0.12403473 0.99227788]]
+        
+    """
     for idx in range( _qdX.shape[0]):
-        _qdX[idx] = encode_probe_by_normalisation(_qdX[idx])
+        _qdX[idx] = encode_probe_by_normalization(_qdX[idx])
     
     return _qdX
 
