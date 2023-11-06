@@ -125,7 +125,7 @@ def basic_example_banana_set():
     cnt_cm1=0
     cnt_cp1=0    
     print("Banana for class Minus One")
-    for r in banana_dataset_CM1:
+    for r in banana_dataset_CM1_q:
         iclass = dqc.classify_probe( r )
         if iclass == 0:
             cnt_cm1 += 1 
@@ -141,7 +141,7 @@ def basic_example_banana_set():
     cnt_cm1=0
     cnt_cp1=0    
     print("Banana for class Plus One")
-    for r in banana_dataset_CP1:
+    for r in banana_dataset_CP1_q:
         iclass = dqc.classify_probe( r )
         if iclass == 0:
             cnt_cm1 += 1 

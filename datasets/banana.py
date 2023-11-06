@@ -65,8 +65,8 @@ def load_data():
     banana_dataset_CM1 = banana_dataset[banana_dataset[:,2]==-1][:,0:2]
     banana_dataset_CP1 = banana_dataset[banana_dataset[:,2]== 1][:,0:2]
     
-    banana_dataset_CM1_q = banana_dataset_CM1
-    banana_dataset_CP1_q = banana_dataset_CP1
+    banana_dataset_CM1_q = banana_dataset_CM1.copy()
+    banana_dataset_CP1_q = banana_dataset_CP1.copy()
 
     idx=0
     for r in banana_dataset_CM1:
