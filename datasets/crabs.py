@@ -32,15 +32,68 @@
 # ***************************************************************************/
 
 import numpy as np
+import pandas as pd
 
+crabs_dataset = None
 original_data=None
+
+crabs_dataset_CM1 = None
+crabs_dataset_CP1 = None
+
+crabs_dataset_CM1_q = None
+crabs_dataset_CP1_q = None
 
 def info():
     pass
 
 def load_data():
-    pass
+    global crabs_dataset
+    global original_data
+    
+    global crabs_dataset_CM1
+    global crabs_dataset_CP1
+    
+    global crabs_dataset_CM1_q
+    global crabs_dataset_CP1_q
 
-def get_data_for_class( _idx ):
-    pass
+    bd_from_pd = pd.read_excel(r'datasets/crabs_dataset.xlsx')
+    crabs_dataset = bd_from_pd.values
+    original_data  = crabs_dataset
+
+    crabs_dataset_CM1 = crabs_dataset[crabs_dataset[:,6]== 0][:,0:6]
+    crabs_dataset_CP1 = crabs_dataset[crabs_dataset[:,6]== 1][:,0:6]
+    
+    crabs_dataset_CM1_q = crabs_dataset_CM1
+    crabs_dataset_CP1_q = crabs_dataset_CP1
+
+    idx=0
+    for r in crabs_dataset_CM1:
+        crabs_dataset_CM1_q[idx] = r / np.linalg.norm( r ) 
+        idx=idx+1
+    
+    idx=0
+    for r in crabs_dataset_CP1:
+        crabs_dataset_CP1_q[idx] = r / np.linalg.norm( r ) 
+        idx=idx+1
+
+
+def get_original_data_for_class( _idx ):
+    
+    if _idx==0:
+        return crabs_dataset_CM1
+    
+    if _idx==1:
+        return crabs_dataset_CP1
+    
+    return None
+
+def get_quantum_data_for_class( _idx ):
+    
+    if _idx==0:
+        return crabs_dataset_CM1_q
+    
+    if _idx==1:
+        return crabs_dataset_CP1_q
+    
+    return None
 
