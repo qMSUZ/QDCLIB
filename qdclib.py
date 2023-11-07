@@ -168,10 +168,18 @@ def _internal_qdcl_create_density_matrix_from_vector_state(q):
 # discussed at:
 #   https://stackoverflow.com/questions/43751591/does-python-have-a-similar-function-of-chop-in-mathematica
 def _internal_chop(expr, delta=10 ** -10):
-    if isinstance(expr, (int, float, complex)):
+    if isinstance(expr, (int, float)):
         return 0 if -delta <= expr <= delta else expr
-    else:
-        return [_internal_chop(x) for x in expr]
+    
+    if isinstance(expr, complex):
+        realpart  = expr.real
+        impart = expr.imag
+        realpart  = 0 if -delta <= realpart <= delta else realpart
+        impart =  0 if -delta <= impart <= delta else impart
+               
+        return complex(realpart, impart)
+        
+    return [_internal_chop(x) for x in expr]
 
 chop = _internal_chop
 
@@ -417,15 +425,24 @@ def convert_bloch_vector_to_spherical_point( _x, _y, _z ):
     Returns
     -------
     numpy ndarray
-        A data of the spherical point: radius, theta phi, and phi angle.
+        A data of the spherical point: radius, theta, and phi angles.
         
     Examples
     --------
     >>> ...
     """
-    r = np.sqrt( _x * _x + _y * _y + _z * _z )
-    theta = np.arccos( _z / r )
-    phi = np.sign(_y) *  np.arccos( _x / np.sqrt(_x*_x + _y*_y) ) 
+    
+    if _x==0.0 and _y==0.0 and _z==0.0:
+        raise ArgumentValueError("Zero values for _x, _y, _z arguments are not allowed!")
+    
+    if _x==0.0 and _y==0.0:
+        r=np.sqrt( _z * _z )
+        theta = np.arccos( _z / r )
+        phi = np.arccos( 0.0 ) 
+    else:
+        r = np.sqrt( _x * _x + _y * _y + _z * _z )
+        theta = np.arccos( _z / r )
+        phi = np.sign(_y) *  np.arccos( _x / np.sqrt(_x*_x + _y*_y) ) 
     
     return np.array([r, theta, phi ])
 
