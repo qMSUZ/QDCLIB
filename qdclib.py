@@ -1597,6 +1597,7 @@ class DistanceQuantumClassification:
     def __init__( self ):
         self._func_distance = None
         self._dimension = -1
+        self._labels = None
         self._num_of_classes = -1
         self._centroids=None
             

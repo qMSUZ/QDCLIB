@@ -35,7 +35,7 @@ import qdclib as qdcl
 import numpy as np
 
 
-def basic_example_banana_set_direct_api():
+def basic_example_banana_set_direct_api_ex1():
 
     banana_dataset = np.loadtxt('datasets/banana_data.txt')
     
@@ -93,7 +93,7 @@ def basic_example_banana_set_direct_api():
     print("\tfalse for class cm1:", cnt_cp1)
     print("\ttrue positive", (cnt_cp1)/(cnt_cm1+cnt_cp1) * 100,'%')
 
-def basic_example_banana_set():
+def basic_example_banana_set_ex2():
     
     qdcl.datasets.banana.load_data()
     
@@ -153,6 +153,9 @@ def basic_example_banana_set():
     print("\ttrue positive", (cnt_cp1)/(cnt_cm1+cnt_cp1) * 100,'%')    
 
 
-# basic_example_banana_set_direct_api()
-basic_example_banana_set()
+def basic_example_banana_set_ex3():
+    pass
+
+# basic_example_banana_set_direct_api_ex1()
+basic_example_banana_set_ex2()
 
