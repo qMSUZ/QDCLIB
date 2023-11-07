@@ -72,12 +72,12 @@ def quantum_svm_direct_api():
     
     q_train_d = np.empty((0,2), dtype=complex)
     for d in train_d:
-        q=qdcl.encode_probe(d)
+        q=qdcl.encode_probe_by_normalization( d )
         q_train_d = np.append(q_train_d, [[ q[0], q[1] ]], axis=0)
     
     q_test_d = np.empty((0,2), dtype=complex)
     for d in test_d:
-        q=qdcl.encode_probe(d)
+        q=qdcl.encode_probe_by_normalization( d )
         q_test_d = np.append(q_test_d, [[ q[0], q[1] ]], axis=0)
 
     objqsvm=qdcl.QuantumSVM()    

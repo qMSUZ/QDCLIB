@@ -46,7 +46,9 @@ import qdclib as qdcl
 
 def example1():
 
-    print("\n\nexample 1\n\n")
+    print("\n\nExample No. 1\n\n")
+
+    np.random.set_state( 1234 )
 
     d = qdcl.create_spherical_probes(10, 2)
     
@@ -64,10 +66,11 @@ def example1():
     fig.show()
     
     n_clusters = 4
-    labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
-    #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.DOT_DISTANCE )
-    #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.FIDELITY_DISTANCE )
-    #labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.TRACE_DISTANCE )
+    # labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
+    labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.MANHATTAN_DISTANCE )
+    # labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.DOT_DISTANCE )
+    # labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.FIDELITY_DISTANCE )
+    # labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.TRACE_DISTANCE )
     
     print("Norms of each point in centers:")
     print(" " * 4,np.linalg.norm(centers, axis=1))
@@ -115,7 +118,7 @@ def example3():
     
 
     
-#example1()
-#example2()
-example3()
+example1()
+# example2()
+# example3()
                                 

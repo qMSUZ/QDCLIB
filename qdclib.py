@@ -1136,7 +1136,7 @@ class QuantumSVM:
             q_train_d = np.empty((0, self._n_features), dtype=complex)
 
             for d in _qdX:
-                q=encode_probe(d)
+                q=encode_probe_by_normalization( d )
                 q_train_d = np.append(q_train_d, [[ q[0], q[1] ]], axis=0)
 
             self.q_data_for_classification = q_train_d
@@ -1317,7 +1317,7 @@ class QuantumSVM:
 
         q_test_d = np.empty((0,2), dtype=complex)
         for d in _qdX:
-            q = encode_probe(d)
+            q = encode_probe_by_normalization( d )
             q_test_d = np.append(q_test_d, [[ q[0], q[1] ]], axis=0)
         
 
