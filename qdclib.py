@@ -59,6 +59,8 @@ import datasets
 
 # import qcs
 
+
+
 CUSTOM_DISTANCE    =  999
 COSINE_DISTANCE    = 1000
 DOT_DISTANCE       = 1001
@@ -1689,7 +1691,6 @@ class QuantumSpectralClustering:
        
     def perform_classic_spectral_clustering(self, _val_n_clusters):
         self._n_clusters = _val_n_clusters
-        self._threshold = _val_threshold
         
         self._labels = classic_spectral_clustering( self._data_for_cluster,
                                                     self._n_samples, 
@@ -4739,6 +4740,8 @@ def hc_single_linkage_clustering(_qdX, _a, _b):
 
 def hierarchical_clustering_for_quantum_data(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
     pass
+
+
 
 def version():
     pass

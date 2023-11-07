@@ -35,13 +35,15 @@ import qdclib as qdcl
 import numpy as np
 
 
-qin = np.array( [1.0/np.sqrt(2), 1.0/np.sqrt(2)] )
-# qin = np.array( [1/np.sqrt(2),-1/np.sqrt(2)] )
+qs1 = np.array( [1.0/np.sqrt(2), 1.0/np.sqrt(2)] )
+# qs1 = np.array( [1/np.sqrt(2),-1/np.sqrt(2)] )
 
-bv1 = qdcl.convert_qubit_pure_state_to_bloch_vector( qin )
+bv1 = qdcl.convert_qubit_pure_state_to_bloch_vector( qs1 )
+qs2 = qdcl.convert_bloch_vector_to_pure_state( bv1[0], bv1[1], bv1[2] )
 
-sp  = qdcl.convert_bloch_vector_to_spherical_point( bv1[0], bv1[1], bv1[2] )
-bv2  = qdcl.convert_spherical_point_to_bloch_vector(sp[0], sp[1], sp[2])
 
-qout2 = qdcl.convert_bloch_vector_to_pure_state( bv1[0], bv1[1], bv1[2] )
+sp1  = qdcl.convert_bloch_vector_to_spherical_point( bv1[0], bv1[1], bv1[2] )
+bv2  = qdcl.convert_spherical_point_to_bloch_vector(sp1[0], sp1[1], sp1[2])
+
+
 
