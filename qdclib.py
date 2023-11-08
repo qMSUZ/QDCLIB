@@ -370,9 +370,9 @@ def convert_qubit_pure_state_to_bloch_vector( qstate ):
     
     return np.array([ np.real(xcoord), np.real(ycoord), np.real(zcoord) ])
 
-def convert_spherical_point_to_bloch_vector( _r, _theta, _phi, _round=0 ):
+def convert_spherical_coordinates_to_bloch_vector( _r, _theta, _phi, _round=0 ):
     """
-    Converts spherical point of r radius, theta, and phi angles to
+    Converts spherical coordinates of r radius, theta, and phi angles to
     a Bloch vector (only if r==1, we refer to normalized quantum state).
 
     Parameters
@@ -392,28 +392,28 @@ def convert_spherical_point_to_bloch_vector( _r, _theta, _phi, _round=0 ):
     Returns
     -------
     numpy ndarray
-        A Bloch vector for a given spherical point.
+        A Bloch vector for a given spherical coordinates.
         
     Examples
     --------
-    >>> print(qdcl.convert_spherical_point_to_bloch_vector( 1, np.pi/2, np.pi, 2 ))
-        [-0. -1.  0.]
-    >>> print(qdcl.convert_spherical_point_to_bloch_vector( 1, np.pi/2, np.pi/2, 4 ))
-        [0. 0. 1.]
+    >>> print(qdcl.convert_spherical_coordinates_to_bloch_vector( 1, np.pi/2, np.pi, 2 ))
+        [-1. 0.  0.]
+    >>> print(qdcl.convert_spherical_coordinates_to_bloch_vector( 1, np.pi/2, np.pi/2, 4 ))
+        [0. 1. 0.]
 
     """
-    xcoord = _r * np.cos( _phi ) * np.cos( _theta )
-    ycoord = _r * np.cos( _phi ) * np.sin( _theta )
-    zcoord = _r * np.sin( _phi )
+    xcoord = _r * np.sin( _theta ) * np.cos( _phi )
+    ycoord = _r * np.sin( _theta ) * np.sin( _phi )
+    zcoord = _r * np.cos( _theta )
     
     if _round==0:
         return np.array([xcoord, ycoord, zcoord])
     else:
         return np.array([np.round(xcoord, _round), np.round(ycoord, _round), np.round(zcoord, _round)])
 
-def convert_bloch_vector_to_spherical_point( _x, _y, _z ):
+def convert_bloch_vector_to_spherical_coordinates( _x, _y, _z ):
     """
-    Converts a Bloch vector to a spherical point.
+    Converts a Bloch vector to a spherical coordinates.
 
     Parameters
     ----------
@@ -448,9 +448,9 @@ def convert_bloch_vector_to_spherical_point( _x, _y, _z ):
     
     return np.array([r, theta, phi ])
 
-def convert_spherical_point_to_pure_state( _theta, _phi, _round=0):
+def convert_spherical_coordinates_to_pure_state( _theta, _phi, _round=0):
     """
-    Converts spherical point of theta and phi angles to
+    Converts spherical coordinates of theta and phi angles to
     a pure quantum state.
 
     Parameters
@@ -472,13 +472,13 @@ def convert_spherical_point_to_pure_state( _theta, _phi, _round=0):
         
     Examples
     --------
-    >>> print(qdcl.convert_spherical_point_to_pure_state( 0, 0))
+    >>> print( qdcl.convert_spherical_coordinates_to_pure_state( 0, 0) )
         [1.+0.j 0.+0.j]
-    >>> print(qdcl.convert_spherical_point_to_pure_state( np.pi, 0, 7))
+    >>> print(qdcl.convert_spherical_coordinates_to_pure_state( np.pi, 0, 7))
         [0.+0.j 1.+0.j]
-    >>> print(qdcl.convert_spherical_point_to_pure_state( np.pi/2, 0))
+    >>> print(qdcl.convert_spherical_coordinates_to_pure_state( np.pi/2, 0))
         [0.70710678+0.j 0.70710678+0.j]
-    >>> print(qdcl.convert_spherical_point_to_pure_state( np.pi/2, np.pi/2, 4))
+    >>> print(qdcl.convert_spherical_coordinates_to_pure_state( np.pi/2, np.pi/2, 4))
         [0.7071+0.j     0.    +0.7071j]
 
     """
@@ -515,8 +515,8 @@ def convert_bloch_vector_to_pure_state( _x, _y, _z ):
     --------
     >>> ...
     """
-    r,theta,phi = convert_bloch_vector_to_spherical_point( _x, _y, _z)
-    pure_state_qubit = convert_spherical_point_to_pure_state( theta, phi  )
+    r, theta, phi = convert_bloch_vector_to_spherical_coordinates(_x, _y, _z)
+    pure_state_qubit = convert_spherical_coordinates_to_pure_state( theta, phi  )
     
     return pure_state_qubit
 
@@ -3913,7 +3913,7 @@ def get_distances_for_cluster( _data, _n_cluster ):
     return _data[ _data[:, 1] == _n_cluster ]
 
 def get_data_for_class(_data, _labels, _class):
-    return _data[ _labels==_class ]
+    return _data[ _labels == _class ]
 
 def get_min_label_class(_labels):
     return np.min( _labels )
