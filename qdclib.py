@@ -1646,7 +1646,14 @@ class DistanceQuantumClassification:
         self._dimension = _d
            
     def classify_all_probes( self, _qdX ):
-        pass
+        _labels = np.zeros( shape=( _qdX.shape[0]) ) 
+        idx=0
+        for r in _qdX:
+            iclass = self.classify_probe( r )
+            _labels[idx] = iclass
+            idx = idx + 1
+        
+        return _labels
     
     def classify_probe( self, _qdX ):
         _dm_qdX = vector_state_to_density_matrix( _qdX )
@@ -3513,6 +3520,7 @@ def create_focused_circle_probes_with_uniform_placed_centers( _n_points, _n_focu
     
     return d
 
+# to check
 def create_focused_qubits_probes( _n_points, _n_focus_points, _width_of_cluster=0.25 ):
     
     d, _ = make_blobs( n_samples=_n_points,
@@ -3525,6 +3533,7 @@ def create_focused_qubits_probes( _n_points, _n_focus_points, _width_of_cluster=
     
     return d
 
+# to check
 def create_focused_qubits_probes_with_uniform_placed_centers( _n_points, _n_theta, _n_psi, _width_of_cluster=0.1, _return_labels = False, _return_centers = False ):
     
     centers_on_sphere = [ ]
@@ -3535,12 +3544,11 @@ def create_focused_qubits_probes_with_uniform_placed_centers( _n_points, _n_thet
     _psi_delta= (np.pi) / _n_psi
     for i in range( _n_theta ):
         for j in range( _n_psi ):
-            sp = convert_spherical_point_to_bloch_vector(1.0, _theta, _psi)
+            sp = convert_spherical_coordinates_to_bloch_vector(1.0, _theta, _psi)
             centers_on_sphere.append( ( sp[0], sp[1], sp[2]) ) 
             _theta = _theta +_theta_delta
             _psi = _psi + _psi_delta
 
-    convert_spherical_point_to_bloch_vector
 
     d, labels = make_blobs( n_samples=_n_points,
                        n_features=3,
@@ -4502,6 +4510,10 @@ def number_of_probes_in_cluster_k(_ck, _k):
 
     """
     return (_ck == _k).sum() 
+
+def number_of_probes_for_class(_labels, _class):
+    return number_of_probes_in_cluster_k( _labels, _class)
+
 
 def quantum_kmeans_clusters_assignment(_qdX, _centroids, _n_samples, _n_clusters,  _func_distance=None):
     
