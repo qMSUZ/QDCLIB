@@ -4491,7 +4491,7 @@ def is_probe_n_in_cluster_k( _ck, _n, _k, ):
         val = False
     return val
 
-def number_of_probes_in_cluster_k(_ck, _k):
+def number_of_probes_in_cluster_k( _ck, _k ):
     """
     Calculates a number of observations (probes) belonging to the cluster 
     denoted as _k.
@@ -4511,7 +4511,25 @@ def number_of_probes_in_cluster_k(_ck, _k):
     """
     return (_ck == _k).sum() 
 
-def number_of_probes_for_class(_labels, _class):
+def number_of_probes_for_class( _labels, _class ):
+    """
+    Variant of function number_of_probes_in_cluster_k, we calcualte a number
+    of observations (probes) belonging to the class denoted as parameter _class.
+
+    Parameters
+    ----------
+    _labels : numpy ndarray
+        The array of elements as ordinal numbers of classes for each observation.
+    _class : integer
+        The number of the class.
+
+    Returns
+    -------
+    integer
+        The number of observations (probes) belonging to the pointed class.
+
+
+    """
     return number_of_probes_in_cluster_k( _labels, _class)
 
 
