@@ -180,7 +180,7 @@ def example_simple_2d_blob( _verbose = 0 ):
     blob_data = qdcl.create_blob_2d( _n_samples = 500 )
     
     limits_blob_data = [ np.min(blob_data[:,0]), np.max(blob_data[:,0]), np.min(blob_data[:,1]), np.max(blob_data[:,1]) ]   
-    limits_blob_data = output_list = [v * 1.25 for v in limits_blob_data]
+    limits_blob_data = [v * 1.25 for v in limits_blob_data]
     
     f = qdcl.create_scatter_plot_for_2d_data( blob_data, _limits=limits_blob_data )
     
@@ -206,7 +206,7 @@ def example_non_linearly_separable_data_2d(  _verbose = 0 ):
    
     line_data = qdcl.create_data_non_line_separated( 100 )
     limits_line_data = [ np.min(line_data[:,0]), np.max(line_data[:,0]), np.min(line_data[:,1]), np.max(line_data[:,1]) ]
-    limits_line_data = output_list = [v * 1.25 for v in limits_line_data]
+    limits_line_data = [v * 1.25 for v in limits_line_data]
     
     f = qdcl.create_scatter_plot_for_2d_data( line_data, _limits=limits_line_data )
             
