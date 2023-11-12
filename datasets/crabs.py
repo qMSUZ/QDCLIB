@@ -37,7 +37,7 @@ import qdclib as qdcl
 
 crabs_dataset = None
 original_data  = None
-original_labels = None
+original_class_labels = None
 
 
 nrm_and_std_d = None
@@ -95,7 +95,7 @@ def info():
 def load_data():
     global crabs_dataset
     global original_data
-    global original_labels
+    global original_class_labels
     global nrm_and_std_d
     global nrm_d
     global d0
@@ -108,13 +108,13 @@ def load_data():
     crabs_dataset, nrm_and_std_d, nrm_d, Y, d0, d1, org_d0, org_d1, nrm_d0, nrm_d1 = _read_crabs_data()
     
     original_data = crabs_dataset
-    original_labels = Y
+    original_class_labels = Y
 
 def get_original_data():
     return crabs_dataset
 
-def get_original_labels():
-    return original_labels
+def get_original_class_labels():
+    return original_class_labels
 
 def get_normalized_data():
     return nrm_d
