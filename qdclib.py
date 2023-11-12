@@ -4513,8 +4513,8 @@ def number_of_probes_in_cluster_k( _ck, _k ):
 
 def number_of_probes_for_class( _labels, _class ):
     """
-    Variant of function number_of_probes_in_cluster_k, we calcualte a number
-    of observations (probes) belonging to the class denoted as parameter _class.
+    A variant of the function number_of_probes_in_cluster_k. We calculate a number
+    of observations (probes) belonging to the class denoted as the parameter _class.
 
     Parameters
     ----------
