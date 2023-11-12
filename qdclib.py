@@ -4542,7 +4542,7 @@ def quantum_kmeans_clusters_assignment(_qdX, _centroids, _n_samples, _n_clusters
     for _n in range(_n_samples):
         for _k in range(_n_clusters):
             if _func_distance==None:
-                distance_table[ _n, _k] = np.linalg.norm( _qdX[_n] - _centroids[_k]) ** 2.0
+                distance_table[ _n, _k] = np.linalg.norm( _qdX[_n] - _centroids[_k] ) ** 2.0
             else:
                 distance_table[ _n, _k] = _func_distance( _qdX[_n], _centroids[_k] )
             
@@ -4569,48 +4569,17 @@ def quantum_kmeans_update_centroids(_qdX, _ck, _n_samples, _n_clusters):
                 chi_vector[ _n ] = 0.0
         
         _centroids[idx] = ((_qdX.T @ chi_vector).T) 
+        
         # we rescale _centroids
         _centroids[idx] = _centroids[idx] / np.linalg.norm(_centroids[idx])
+        
         idx=idx-1
         
     return _centroids
 
 def quantum_kmeans_assign_labels( _qdX, _centroids, _n_samples, _n_clusters, _func_distance=None ):
-    """
     
-
-    Parameters
-    ----------
-    _qdX : TYPE
-        DESCRIPTION.
-    _centroids : TYPE
-        DESCRIPTION.
-    _n_samples : TYPE
-        DESCRIPTION.
-    _n_clusters : TYPE
-        DESCRIPTION.
-    _func_distance : TYPE, optional
-        DESCRIPTION. The default is None.
-
-    Returns
-    -------
-    _labels : TYPE
-        DESCRIPTION.
-
-    """
-   
-    distance_table = np.zeros( shape=(_n_samples, _n_clusters))
-    _labels = create_ck_table_zero_filled( _n_samples )
-    
-    for _n in range(_n_samples):
-        for _k in range(_n_clusters):
-            if _func_distance==None:
-                distance_table[ _n, _k] = np.linalg.norm( _qdX[_n] - _centroids[_k]) ** 2.0
-            else:
-                distance_table[ _n, _k] = _func_distance( _qdX[_n], _centroids[_k] )
-            
-    for _n in range(_n_samples):
-        _labels[_n] = np.argmin(distance_table[_n])
+    _, _labels = quantum_kmeans_clusters_assignment( _qdX,_centroids, _n_samples, _n_clusters, _func_distance)
     
     return _labels
 
