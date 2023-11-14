@@ -59,11 +59,11 @@ def blobs_example():
     # f=qdcl.create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
     # f.show()
     
-def quantum_kmeans_example():
+def quantum_kmeans_example_direct_api():
 
     _n_samples = 20
     _n_clusters = 2
-    
+       
     centers = [
                 (-5,  5), (5, -5),
               ]
@@ -71,42 +71,47 @@ def quantum_kmeans_example():
     d, org_labels = datasets.make_blobs( n_samples=_n_samples, centers=centers, cluster_std=0.5, shuffle=False, random_state=1234 )
     _qdX=d
     
-    dnrm = qdcl.encode_probes_by_normalisation(d)
+    dnrm = qdcl.encode_probes_by_normalization(d)
     
     # f = qdcl.create_scatter_plot_for_2d_data(dnrm, _limits=[-7.0, 7.0, -7.0, 7.0])
     f = qdcl.create_circle_plot_for_2d_data( dnrm )
     
-    # lab_kmeans, cent_kmeans= qdcl.kmeans_quantum_states( d, _n_clusters, _func_distance=qdcl.MANHATTAN_DISTANCE )
-    # lab_kmedoids, cent_kmedoids = qdcl.kmedoids_quantum_states( d, _n_clusters, _func_distance=qdcl.MANHATTAN_DISTANCE )
+    # 
+    # KMeans iterations
+    # 
     
-    
-    # ck = qdcl.create_ck_table_zero_filled( _n_samples ) 
-    # ck[:10]=0
-    # ck[10:]=1
     
     ck = qdcl.random_assign_clusters_to_ck(_n_samples, _n_clusters)
-    
-    # centroids = np.zeros( shape=(_n_clusters, _qdX.shape[1]) )
-    
-    
+   
     centroids = qdcl.create_initial_centroids(dnrm, _n_samples, _n_clusters)
+
+    _iteration=0
+    _max_iteration = 128
+
     
-    distance_table, ck = qdcl.quantum_kmeans_clusters_assignment(dnrm,
-                                             centroids, 
-                                             _n_samples, _n_clusters,
-                                             _func_distance = qdcl.cosine_distance )
-    
-    centroids = qdcl.quantum_kmeans_update_centroids( dnrm, ck, _n_samples, _n_clusters )
-    
-    labels = qdcl.quantum_kmeans_assign_labels( dnrm, centroids, 
-                                               _n_samples,  _n_clusters, 
-                                               _func_distance = qdcl.cosine_distance)
-    
-    f = qdcl.create_circle_plot_with_centers_for_2d_data( dnrm, _n_clusters, centroids, labels)
+    while _iteration < _max_iteration:    
+        old_ck = ck.copy()        
+        
+        distance_table, ck = qdcl.quantum_kmeans_clusters_assignment(dnrm,
+                                                 centroids, 
+                                                 _n_samples, _n_clusters,
+                                                 _func_distance = qdcl.cosine_distance )
+
+        centroids = qdcl.quantum_kmeans_update_centroids( dnrm, ck, _n_samples, _n_clusters )
+
+        if all(old_ck == ck):
+            break
+  
+        _iteration = _iteration + 1
+
+    _labels = ck;
+        
+    print("_iteration = ", _iteration)
+    f = qdcl.create_circle_plot_with_centers_for_2d_data( dnrm, _n_clusters, centroids, _labels)
     
     #
-    # create centroids for verification
-    # order of labels is not preserved
+    # create classical mean centroids for verification
+    # but the order of labels may by not preserved
     #
     
     d_for_k0=np.zeros( shape = _qdX.shape  )
@@ -121,8 +126,57 @@ def quantum_kmeans_example():
     center_k0 = np.sum(d[qdcl.get_indices_for_cluster_k(ck, 0)], axis=0) / qdcl.number_of_probes_in_cluster_k(ck, 0)
     center_k1 = np.sum(d[qdcl.get_indices_for_cluster_k(ck, 1)], axis=0) / qdcl.number_of_probes_in_cluster_k(ck, 1)
 
+    print(center_k0)
+    print(center_k1)
+
+
+def quantum_kmeans_example():
+
+    n_samples = 20
+    n_clusters = 2
+       
+    centers = [
+                (-5,  5), (5, -5),
+              ]
+    
+    d, org_labels = datasets.make_blobs( n_samples=n_samples, 
+                                         centers=centers, 
+                                         cluster_std=0.5, 
+                                         shuffle=False, 
+                                         random_state=1234 )
+    
+    dnrm = qdcl.encode_probes_by_normalization(d)
+    
+    f = qdcl.create_circle_plot_for_2d_data( dnrm )
+    
+    labels, centroids = qdcl.quantum_kmeans( dnrm, n_samples, n_clusters, 128, qdcl.cosine_distance )
+
+    f = qdcl.create_circle_plot_with_centers_for_2d_data( dnrm, n_clusters, centroids, labels)
+    
+    #
+    # create classical mean centroids for verification
+    # but the order of labels may by not preserved
+    #
+    
+    d_for_k0=np.zeros( shape = dnrm.shape  )
+    d_for_k1=np.zeros( shape = dnrm.shape  )
+    
+    for idx in qdcl.get_indices_for_cluster_k(labels, 0):
+        d_for_k0[idx] = d[ idx ]
+    
+    for idx in qdcl.get_indices_for_cluster_k(labels, 1):
+        d_for_k1[idx] = d[ idx ]
+        
+    center_k0 = np.sum(d[qdcl.get_indices_for_cluster_k(labels, 0)], axis=0) / qdcl.number_of_probes_in_cluster_k(labels, 0)
+    center_k1 = np.sum(d[qdcl.get_indices_for_cluster_k(labels, 1)], axis=0) / qdcl.number_of_probes_in_cluster_k(labels, 1)
+
+    print(centroids)
+    
+    print(center_k0)
+    print(center_k1)
 
 def classical_spectral_clustering_example():
+    
     _n_samples = 10
     _n_clusters = 2
     _threshold = 2.0
@@ -278,7 +332,8 @@ def quantum_spectral_clustering_example_measurement_projectors():
 
 # blobs_example()
 # classical_spectral_clustering_example()
-quantum_spectral_clustering_example_simple_two_blobs()
+# quantum_spectral_clustering_example_simple_two_blobs()
 # quantum_spectral_clustering_example_simple_two_circles()
 # quantum_spectral_clustering_example_measurement_projectors()
-# quantum_kmeans_example()
+# quantum_kmeans_example_direct_api()
+quantum_kmeans_example()

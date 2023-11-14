@@ -4557,7 +4557,8 @@ def quantum_kmeans_update_centroids(_qdX, _ck, _n_samples, _n_clusters):
             
     # centroid update
     chi_vector = np.zeros( shape=(_n_samples, 1) )
-    idx=_n_clusters-1
+    
+    idx=0
     for _k in range(_n_clusters):
         
         probes_in_cluster = get_indices_for_cluster_k(_ck, _k)[0].shape[0]
@@ -4573,18 +4574,44 @@ def quantum_kmeans_update_centroids(_qdX, _ck, _n_samples, _n_clusters):
         # we rescale _centroids
         _centroids[idx] = _centroids[idx] / np.linalg.norm(_centroids[idx])
         
-        idx=idx-1
+        idx = idx+1
         
     return _centroids
 
 def quantum_kmeans_assign_labels( _qdX, _centroids, _n_samples, _n_clusters, _func_distance=None ):
     
-    _, _labels = quantum_kmeans_clusters_assignment( _qdX,_centroids, _n_samples, _n_clusters, _func_distance)
+    _, _labels = quantum_kmeans_clusters_assignment( _qdX,_centroids, 
+                                                     _n_samples, 
+                                                     _n_clusters, 
+                                                     _func_distance)
     
     return _labels
 
-def quantum_kmeans(_X, _n_clusters, _max_iteration=128, _func_distance=None):
-    pass
+def quantum_kmeans( _qdX, _n_samples, _n_clusters, _max_iteration=128, _func_distance=None):
+    
+    _ck = random_assign_clusters_to_ck( _n_samples, _n_clusters )
+   
+    _centroids = create_initial_centroids( _qdX, _n_samples, _n_clusters)
+
+    _iteration=0
+    
+    while _iteration < _max_iteration:    
+        _old_ck = _ck.copy()        
+        
+        _, _ck = quantum_kmeans_clusters_assignment(_qdX,
+                                                 _centroids, 
+                                                 _n_samples, 
+                                                 _n_clusters,
+                                                 _func_distance )
+
+        _centroids = quantum_kmeans_update_centroids( _qdX, _ck, _n_samples, _n_clusters )
+
+        if all(_old_ck == _ck):
+            break
+  
+        _iteration = _iteration + 1
+    
+    return _ck, _centroids
 
 def classic_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
     """
