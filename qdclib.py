@@ -3840,21 +3840,31 @@ def kmedoids_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _m
 
 def calculate_distance(_data, _vector, _func_distance):
     """
-    
+    Calculates distances, according to a given function, between a vector state 
+    and vectors in a data table.
 
     Parameters
     ----------
-    _data : TYPE
-        DESCRIPTION.
-    _vector : TYPE
-        DESCRIPTION.
-    _func_distance : TYPE
-        DESCRIPTION.
+    _data : numpy ndarray
+        A data array which contains vector states in each row.
+    _vector : numpy ndarray
+        A vector state.
+    _func_distance : function
+        The paramter pointing chosen distance function.
 
     Returns
     -------
-    distance_table : TYPE
-        DESCRIPTION.
+    distance_table : numpy ndarray
+        An array with distance values between _vector and subsequent rows of 
+        _data array.
+    
+    Example
+    -------
+    Let data_tab be an array of three vectors. Function calculates distances,
+    according to the swap_test_value, between these vectors and vector [1,0]:
+    >>> data_tab=np.array( [[1,0], [0,1], [1/np.sqrt(2),1/np.sqrt(2)]] )
+    >>> qdcl.calculate_distance(data_tab, np.array([1,0]), qdcl.swap_test_value)
+        [1.   0.5  0.75]
 
     """
     distance_table=np.zeros( shape=(_data.shape[0] ) )
