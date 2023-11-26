@@ -50,6 +50,6 @@ cm = qdcl.create_covariance_matrix(d)
 print("Covariance matrix")
 print(cm)
 
-for idx_class in range( 0, qdcl.get_max_label_class( labels )+1 ):
+for idx_class in range( 0, qdcl.get_max_label_class( labels ) + 1 ):
     print("Data for class ", idx_class)
     f=qdcl.create_scatter_plot_for_2d_data( qdcl.get_data_for_class(d,labels, idx_class) )
