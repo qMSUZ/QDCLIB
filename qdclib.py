@@ -4789,6 +4789,9 @@ def quantum_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func
     
     return labels, projectors
 
+def hc_create_distance_matrix( _qdX, _n_samples, _func_distance=None ):
+    pass
+
 def hc_complete_linkage_clustering(_qdX, _a, _b):
     pass
 
@@ -4797,6 +4800,7 @@ def hc_single_linkage_clustering(_qdX, _a, _b):
 
 def hierarchical_clustering_for_quantum_data(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
     pass
+
 
 
 
