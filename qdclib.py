@@ -3982,9 +3982,67 @@ def get_data_for_class(_data, _labels, _class):
     return _data[ _labels == _class ]
 
 def get_min_label_class(_labels):
+    """
+    Calculates the minimal label value.    
+
+    Parameters
+    ----------
+    _labels : numpy ndarray
+        An array of class labels.
+
+    Returns
+    -------
+    integer
+        A value of the minimal label. 
+
+    Example
+    -------
+    Let data_tab be a two-column array taken from the file CRABS.xlsx. Function 
+    kmedoids_quantum_states returns clusters' labels and centers. The array of
+    labels is a parameter for get_min_label_class - function returns 0 because
+    it is the minimal value from the set of all labels (0, 1, 2):
+    >>> df = pd.read_excel(r'CRABS.xlsx')
+    >>> data_tab=qdcl.convert_data_to_vector_states(df,2)
+    >>> probes_no=data_tab.shape[0]
+    >>> clusters_no=3
+    >>> d = qdcl.create_focused_circle_probes_with_uniform_placed_centers(probes_no, clusters_no, _width_of_cluster=0.15)
+    >>> labels, centers = qdcl.kmedoids_quantum_states( d, clusters_no, _func_distance=qdcl.COSINE_DISTANCE )
+    >>> print(qdcl.get_min_label_class( labels ))
+        0
+        
+    """
     return np.min( _labels )
 
 def get_max_label_class(_labels):
+    """
+    Calculates the maximal label value.    
+
+    Parameters
+    ----------
+    _labels : numpy ndarray
+        An array of class labels.
+
+    Returns
+    -------
+    integer
+        A value of the maximal label. 
+
+    Example
+    -------
+    Let data_tab be a two-column array taken from the file CRABS.xlsx. Function 
+    kmedoids_quantum_states returns clusters' labels and centers. The array of
+    labels is a parameter for get_max_label_class - function returns 2 because
+    it is the maximal value from the set of all labels (0, 1, 2):
+    >>> df = pd.read_excel(r'CRABS.xlsx')
+    >>> data_tab=qdcl.convert_data_to_vector_states(df,2)
+    >>> probes_no=data_tab.shape[0]
+    >>> clusters_no=3
+    >>> d = qdcl.create_focused_circle_probes_with_uniform_placed_centers(probes_no, clusters_no, _width_of_cluster=0.15)
+    >>> labels, centers = qdcl.kmedoids_quantum_states( d, clusters_no, _func_distance=qdcl.COSINE_DISTANCE )
+    >>> print(qdcl.get_max_label_class( labels ))
+        2
+        
+    """
     return np.max( _labels )
 
 def get_vectors_for_label(l, _qdX, labels, _n_samples):
