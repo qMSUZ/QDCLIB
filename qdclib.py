@@ -3978,8 +3978,52 @@ def get_distances_for_cluster( _dist_tab, _n_cluster ):
     """
     return _dist_tab[ _dist_tab[:, 1] == _n_cluster ]
 
-def get_data_for_class(_data, _labels, _class):
-    return _data[ _labels == _class ]
+def get_data_for_class(_qdX, _labels, _class):
+    """
+    Displays data from a required class/cluster.
+
+    Parameters
+    ----------
+    _qdX : numpy ndarray
+        A data array which contains vector states in each row.
+    _labels : numpy ndarray
+        An array of class labels.
+    _class : int
+        A value pointing out the class/cluster of data which will be returned 
+        by this function.
+
+    Returns
+    -------
+    numpy ndarray
+        An array of probes for a class/cluster given in _class.
+
+    Example
+    -------
+    Let data_tab be a two-column array taken from the file CRABS.xlsx. Function 
+    kmedoids_quantum_states returns clusters' labels and centers. The function
+    get_data_for_class uses data array and label array to return probes for 
+    class/cluster pointed out by the parameter _class:
+    >>> df = pd.read_excel(r'CRABS.xlsx')
+    >>> data_tab=qdcl.convert_data_to_vector_states(df,2)
+    >>> probes_no=data_tab.shape[0]
+    >>> clusters_no=3
+    >>> d = qdcl.create_focused_circle_probes_with_uniform_placed_centers(probes_no, clusters_no, _width_of_cluster=0.15)
+    >>> labels, centers = qdcl.kmedoids_quantum_states( d, clusters_no, _func_distance=qdcl.COSINE_DISTANCE )
+    >>> print(qdcl.get_data_for_class( data_tab, labels, 0 ))
+        [[0.74256439 0.66977469]
+         [0.72742559 0.68618658]
+         [0.74346662 0.66877304]...
+    >>> print(qdcl.get_data_for_class( data_tab, labels, 1 ))
+        [[0.73979544 0.67283185]
+         [0.73029674 0.68313005]
+         [0.74199852 0.67040152]...
+    >>> print(qdcl.get_data_for_class( data_tab, labels, 2 ))
+        [[0.73979544 0.67283185]
+         [0.74199852 0.67040152]
+         [0.73854895 0.67419986]...
+    
+    """
+    return _qdX[ _labels == _class ]
 
 def get_min_label_class(_labels):
     """
