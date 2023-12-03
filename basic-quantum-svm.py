@@ -97,13 +97,13 @@ def quantum_svm_direct_api():
     print("Training data")
     for idx in range(n_samples):
         P = 0.5 * ( 1.0 - qdcl.create_dot_ux_for_classification( Nu, Nx, b, alphas, q_train_d, q_train_d[idx], n_samples))
-        print("P=",P," Label = ", 1 if P <= 0.5 else -1, "org label", train_labels[idx])
+        print("P=",P," Label = ", 1.0 if P <= 0.5 else -1.0, "org label", train_labels[idx])
         #print("P < 1/2 we classify probe as +1, otherwise −1")
     
     print("Test data")
     for idx in range(n_samples_test):
         P = 0.5 * ( 1.0 - qdcl.create_dot_ux_for_classification( Nu, Nx, b, alphas, q_train_d, q_test_d[idx], n_samples))
-        print("P=",P," Label = ", 1 if P <= 0.5 else -1, "org label", test_labels[idx])
+        print("P=",P," Label = ", 1.0 if P <= 0.5 else -1.0, "org label", test_labels[idx])
         #print("P < 1/2 we classify probe as +1, otherwise −1")
     
 def quantum_svm():
