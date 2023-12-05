@@ -4090,6 +4090,52 @@ def get_max_label_class(_labels):
     return np.max( _labels )
 
 def get_vectors_for_label(l, _qdX, labels, _n_samples):
+    """
+    Returns vectors associated with a given label.    
+
+    Parameters
+    ----------
+    l : integer
+        A number of cluster.
+    _qdX : numpy ndarray
+        A data array.
+    _labels : numpy ndarray
+        An array of class labels.
+    _n_samples : integer
+        A number of samples to be taken into account from _qdX.
+
+    Returns
+    -------
+    numpy ndarray
+        Vectors associated with a given label. 
+    
+    Example
+    -------
+    Let data_tab be a two-column array taken from the file CRABS.xlsx. Function 
+    kmedoids_quantum_states returns clusters' labels and centers. The function
+    get_vectors_for_label returns probes for a given class/cluster:
+    >>> df = pd.read_excel(r'CRABS.xlsx')
+    >>> data_tab=qdcl.convert_data_to_vector_states(df,2)
+    >>> probes_no=data_tab.shape[0]
+    >>> clusters_no=3
+    >>> d = qdcl.create_focused_circle_probes_with_uniform_placed_centers(probes_no, clusters_no, _width_of_cluster=0.15)
+    >>> labels, centers = qdcl.kmedoids_quantum_states( d, clusters_no, _func_distance=qdcl.COSINE_DISTANCE )
+    >>> print(qdcl.get_vectors_for_label( 0, data_tab, labels, probes_no ))
+        [[0.72702918 0.68660656]
+         [0.74667404 0.66519011]
+         [0.74600385 0.66594163]...
+    >>> print(qdcl.get_vectors_for_label( 1, data_tab, labels, probes_no ))
+        [[0.73029674 0.68313005]
+         [0.74667404 0.66519011]
+         [0.74600385 0.66594163]...
+    >>> print(qdcl.get_vectors_for_label( 2, data_tab, labels, probes_no ))
+        [[0.73564697 0.67736514]
+         [0.73854895 0.67419986]
+         [0.72742559 0.68618658]...
+
+    More sophisticated examples of use in a file vqe-for_credit_risk.py
+        
+    """
     outlist = []
     for idx in range(0, _n_samples):
         if l == labels[idx]:
