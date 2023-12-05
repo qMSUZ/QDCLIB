@@ -36,21 +36,22 @@ import numpy as np
 
 import qdclib as qdcl
 
-#
-# Create 10 normalised point
-# on an unit circle
-# data can be regared as
-# qubits where both probability amplitueds
-# are real
-#
-
 def example1():
+
+    _n_samples = 10    
 
     print("\n\nExample No. 1\n\n")
 
+    print(f"Create {_n_samples} normalised point on an unit circle.")
+    print("Data can be regared as qubits where both probability")
+    print("amplitudes are real.")
+    print("To create clusters we use modified spherical variant of");
+    print("the kmeans algorithm.")
+    
+    
     np.random.seed( 1234 )
 
-    d = qdcl.create_spherical_probes(10, 2)
+    d = qdcl.create_spherical_probes(_n_samples, 2)
     
     print("Norms of each point in d:")
     print(" " * 4,np.linalg.norm(d, axis=1))
@@ -91,38 +92,53 @@ def example1():
 
 def example2():
 
-    print("\n\nexample 2\n\n")
+    _n_samples = 30
+    _n_clusters = 5
+    
+    print("\n\nExample 2\n\n")
+    
+    print(f"Similiar to the Example 1, but we create {_n_samples}")
+    print(f"with {_n_clusters} clusters. The used API is also more easier to use.")
+    print("To create clusters we use modified spherical variant of");
+    print("the kmeans algorithm.")
 
     np.random.seed( 1234 )
 
-    n_clusters = 5
-    d = qdcl.create_focused_circle_probes(30, n_clusters, _width_of_cluster=0.15)
-    labels, centers = qdcl.kmeans_quantum_states( d, n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
     
-    f=qdcl.create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
+    d = qdcl.create_focused_circle_probes(_n_samples, _n_clusters, _width_of_cluster=0.15)
+    labels, centers = qdcl.kmeans_quantum_states( d, _n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
+    
+    f=qdcl.create_circle_plot_with_centers_for_2d_data( d, _n_clusters, centers, labels )
     f.show()
 
 def example3():
 
-    print("\n\nexample 3\n\n")
+    _n_samples = 40
+    _n_clusters = 5    
+
+    print("\n\nExample 3\n\n")
+
+    print(f"Similiar to the Examples 1 and 2, but we create {_n_samples}")
+    print(f"with {_n_clusters} clusters. The used API is also more easier to use.")
+    print("To create clusters we the kmedoids algorithm.")
 
     np.random.seed( 1234 )
 
-    n_clusters = 5
-    d = qdcl.create_focused_circle_probes(40, n_clusters, _width_of_cluster=0.175)
-    labels, centers = qdcl.kmedoids( d, n_clusters, _max_iterations=128, _func_distance=qdcl.cosine_distance )
     
-    f=qdcl.create_circle_plot_with_centers_for_2d_data( d, n_clusters, centers, labels )
+    d = qdcl.create_focused_circle_probes(_n_samples, _n_clusters, _width_of_cluster=0.175)
+    labels, centers = qdcl.kmedoids( d, _n_clusters, _max_iterations=128, _func_distance=qdcl.cosine_distance )
+    
+    f=qdcl.create_circle_plot_with_centers_for_2d_data( d, _n_clusters, centers, labels )
     f.show()
 
-    dt = qdcl.create_distance_table(d, centers, labels, n_clusters, _func_distance=qdcl.fidelity_as_distance)
-    for i in range(n_clusters):
-        print("distance for cluster", i)
-        print( qdcl.get_distances_for_cluster(dt, i) )
+    dt = qdcl.create_distance_table(d, centers, labels, _n_clusters, _func_distance=qdcl.fidelity_as_distance)
+    for i in range( _n_clusters ):
+        print( "distance for cluster", i )
+        print( qdcl.get_distances_for_cluster( dt, i ) )
     
 
     
-# example1()
-# example2()
+example1()
+example2()
 example3()
                                 
