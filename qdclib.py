@@ -4143,7 +4143,47 @@ def get_vectors_for_label(l, _qdX, labels, _n_samples):
     
     return np.array( outlist )
 
-def get_vector_of_idx_for_label(l, labels, data, _n_samples):
+def get_vector_of_idx_for_label(l, labels, _qdX, _n_samples):
+    """
+    Returns indexes of vectors associated with a given label.    
+
+    Parameters
+    ----------
+    l : integer
+        A number of cluster.
+    _labels : numpy ndarray
+        An array of class labels.
+    _qdX : numpy ndarray
+        A data array.   
+    _n_samples : integer
+        A number of samples to be taken into account from _qdX.
+
+    Returns
+    -------
+    numpy ndarray
+        Indexes of vectors associated with a given label from data table. 
+    
+    Example
+    -------
+    Let data_tab be a two-column array taken from the file CRABS.xlsx. Function 
+    kmedoids_quantum_states returns clusters' labels and centers. The function
+    get_vector_of_idx_for_label returns indexes of probes for a given class/cluster:
+    >>> df = pd.read_excel(r'CRABS.xlsx')
+    >>> data_tab=qdcl.convert_data_to_vector_states(df,2)
+    >>> probes_no=data_tab.shape[0]
+    >>> clusters_no=3
+    >>> d = qdcl.create_focused_circle_probes_with_uniform_placed_centers(probes_no, clusters_no, _width_of_cluster=0.15)
+    >>> labels, centers = qdcl.kmedoids_quantum_states( d, clusters_no, _func_distance=qdcl.COSINE_DISTANCE )
+    >>> print(qdcl.get_vector_of_idx_for_label(0, labels, data_tab, probes_no ))
+        [  3   7   8  12  14  16  21  23  24  25 ...
+    >>> print(qdcl.get_vector_of_idx_for_label(1, labels, data_tab, probes_no ))
+        [  1   5   9  11  28  39  40  42  44  49 ...
+    >>> print(qdcl.get_vector_of_idx_for_label(2, labels, data_tab, probes_no ))
+        [  0   2   4   6  10  13  15  17  18  19 ...
+
+    More sophisticated examples of use in a file vqe-for_credit_risk.py
+        
+    """
     out_idx_list = [] 
 
     for idx in range(0, _n_samples):
