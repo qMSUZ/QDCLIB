@@ -1,6 +1,5 @@
-#!/usr/bin/env python3
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
-
 
 #/***************************************************************************
 # *   Copyright (C) 2020 -- 2022 by Marek Sawerwain                         *
@@ -43,6 +42,7 @@ First version created on Sat Nov 21 18:33:49 2020
 """
 
 import numpy as np
+import sympy
 import scipy
 import cvxpy
 
@@ -55,6 +55,10 @@ from ExceptionsClasses import *
 
 # smallest value for entropy calculations
 precision_for_entrpy_calc = 0.00001
+
+ENTDETECTOR_version_major       = 0
+ENTDETECTOR_version_minor       = 5
+ENTDETECTOR_version_patch_level = 0
 
 # code based on chop
 # discussed at:
@@ -386,6 +390,26 @@ def create_qubit_bell_state(minus=0):
         v[(d ** n) - 1] =  1.0 / np.sqrt(2)
     return v
 
+#
+# TO DOC GEN
+#
+def create_two_qubit_bell_state_non_maximal( ratio = 0.5, minus=0 ):
+    
+    #  0.0 <= ratio <= 1.0
+    
+    d = 2
+    n = 2
+
+    last_idx = (d ** n) - 1
+    q = create_qubit_bell_state( minus )
+
+    q[ 0 ] = ratio * q[ 0 ]
+    q[ last_idx ] = (1.0-ratio) * q[ last_idx ]
+    
+    q=q/np.linalg.norm(q)
+    
+    return q
+
 def create_mixed_state(d,n):
     """
         Create a mixed state
@@ -639,13 +663,13 @@ def create_generalized_n_qutrit_ghz_state(N, alpha):
     q[0]=np.sin( alpha )
     
     val=''
-    for i in [1]*N:
-        val=val+str(i)   
+    for i in [1] * N:
+        val = val + str(i)   
     q[ int(val, 3) ] = 1.0/np.sqrt(2) * np.cos(alpha)
     
     val=''
-    for i in [2]*N:
-        val=val+str(i)   
+    for i in [2] * N:
+        val = val + str(i)   
     q[ int(val, 3) ] = 1.0/np.sqrt(2) * np.cos(alpha)
     
     return q
@@ -949,6 +973,98 @@ def create_x_two_qubit_random_state():
 
 
 
+# (1) new function to create quantum states
+def create_random_pure_state( _d, _n ):
+    """
+        Creates a random pure quantum state.
+
+        Parameters
+        ----------
+        _d : int
+            Freedom level of generated state.
+        _n : int
+            The number of qudits.
+
+        Returns
+        -------
+        _tab : numpy array
+            A normalized quantum state.
+
+        Examples
+        --------
+        ...
+        
+    """
+    _x = _d ** _n
+    _tab = np.ndarray(shape=(_x))
+    
+    for i in range(_x):
+        _tab[i] = rd.random()
+        
+    sum_all=0
+    
+    for i in range(_x):
+        sum_all+=_tab[i]
+        
+    for i in range(_x):
+        _tab[i]=sympy.sqrt(_tab[i]/sum_all)
+    
+    return _tab
+
+# (2) new function to create quantum states
+def create_random_1qubit_pure_state():
+    _tab=np.ndarray(shape=(2),dtype=complex)
+    for i in range(2):
+        _tab[i]=rd.uniform(0,1)
+    sum_all=0
+    for i in range(2):
+        sum_all+=_tab[i]
+    for i in range(2):
+        _tab[i]=sympy.sqrt(_tab[i]/sum_all)
+    _list1 = [0, 1]
+    sign=rd.choice(_list1)
+    compl=rd.choice(_list1)
+    if sign==1:
+        _tab[1]*=-1
+    if compl==1:
+        pom=_tab[1]*sympy.I
+        _tab[1]=pom
+    return _tab
+
+#
+# TO DOC GEN
+#
+# (3) new function to create quantum states
+def create_random_2qubit_pure_state():
+    list1 = [0, 1]
+    ent = rd.choice(list1)
+    if ent==1:
+        _tab=np.zeros(shape=(4),dtype=complex)
+        list2 = [0, 1, 2, 3]
+        r=rd.choice(list2)
+        if r==0:
+            _tab[0]=1
+            _tab[3]=1
+        elif r==1:
+            _tab[0]=1
+            _tab[3]=-1
+        elif r==2:
+            _tab[1]=1
+            _tab[2]=1
+        elif r==3:
+            _tab[1]=1
+            _tab[2]=-1
+        _tab = _tab * 1.0/np.sqrt(2.0)
+    else:
+        _tab=np.ndarray(shape=(4),dtype=complex)
+        s1=create_random_1qubit_pure_state()
+        s2=create_random_1qubit_pure_state()
+        _tab[0]=s1[0]*s2[0]
+        _tab[1]=s1[0]*s2[1]
+        _tab[2]=s1[1]*s2[0]
+        _tab[3]=s1[1]*s2[1]
+    return _tab
+
 
 #
 #
@@ -1214,6 +1330,20 @@ def reconstruct_state_after_schmidt_decomposition(s, e, f):
         v = v + np.kron(sv * e[idx], f[idx])
         idx = idx + 1
     return v
+
+#
+# TO DOC GEN
+#
+def is_entangled_vector_2q_state( q ):
+    rslt = False
+    
+    decomposition_shape = (2, 2)
+    sr = schmidt_rank_for_vector_pure_state(q, decomposition_shape)
+    
+    if sr>1:
+        rslt = True
+        
+    return rslt
 
 #
 # Creation of spectral table of given quantum state
