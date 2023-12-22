@@ -1013,6 +1013,24 @@ def create_random_pure_state( _d, _n ):
 
 # (2) new function to create quantum states
 def create_random_1qubit_pure_state():
+    """
+        Creates a random 1-qubit (d=2) pure state.
+
+        Returns
+        -------
+        _tab : numpy array
+            A normalized quantum state with amplitudes as complex numbers.
+
+        Examples
+        --------
+        >>> ent.create_random_1qubit_pure_state()
+        [0.33570732+0.j         0.        -0.94196635j]
+        >>> ent.create_random_1qubit_pure_state()
+        [0.93620949+0.j 0.35144243+0.j]
+        >>> ent.create_random_1qubit_pure_state()
+        [ 0.75643296+0.j -0.65407123+0.j]
+        
+    """
     _tab=np.ndarray(shape=(2),dtype=complex)
     for i in range(2):
         _tab[i]=rd.uniform(0,1)
