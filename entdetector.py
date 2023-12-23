@@ -1054,6 +1054,27 @@ def create_random_1qubit_pure_state():
 #
 # (3) new function to create quantum states
 def create_random_2qubit_pure_state():
+    """
+        Creates a random 2-qubit (d=2) pure state. The probability of 
+        entanglement occurence is 1/2.
+
+        Returns
+        -------
+        _tab : numpy array
+            A normalized quantum state with amplitudes as complex numbers.
+
+        Examples
+        --------
+        >>> ent.create_random_2qubit_pure_state()
+        [ 0.35399885+0.j          0.        -0.06455057j -0.91788041+0.j
+          0.        +0.1673726j ]
+        >>> ent.create_random_2qubit_pure_state()
+        [ 0.42914302+0.j          0.        +0.71644913j -0.28263805+0.j
+         -0.        -0.47186083j]
+        >>> ent.create_random_2qubit_pure_state()
+        [0.70710678+0.j 0.        +0.j 0.        +0.j 0.70710678+0.j]
+        
+    """
     list1 = [0, 1]
     ent = rd.choice(list1)
     if ent==1:
