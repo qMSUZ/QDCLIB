@@ -974,7 +974,7 @@ def create_x_two_qubit_random_state():
 
 
 # (1) new function to create quantum states
-def create_random_pure_state( _d, _n ):
+def create_random_pure_state( _d, _n, complex_no=False ):
     """
         Creates a random pure quantum state.
 
@@ -984,6 +984,12 @@ def create_random_pure_state( _d, _n ):
             Freedom level of generated state.
         _n : int
             The number of qudits.
+        complex_no : Boolean
+            Default as False, what means that amplitudes are complex number 
+            with imaginary part always equal to zero. If this parameter is
+            True, then aplitudes may have non-zero imaginary part (the 
+            probability that pointed out amplitude has non-zero imaginary part
+            is 0.5).
 
         Returns
         -------
@@ -992,24 +998,71 @@ def create_random_pure_state( _d, _n ):
 
         Examples
         --------
-        ...
+        Generation of 1-qubit states with probable non-zero imaginary parts in
+        amplitudes' values:
+        >>> ent.create_random_pure_state(2, 1, True)
+        [0.-0.53545756j 0.+0.84456214j]
+        >>> ent.create_random_pure_state(2, 1, True)
+        [-0.87414796+0.j  0.4856597 +0.j]
+        >>> ent.create_random_pure_state(2, 1, True)
+        [0.        +0.92040475j 0.39096686+0.j        ]
+        Generation of 1-qubit states only with imaginary parts equal to zero:
+        >>> ent.create_random_pure_state(2, 1)
+        [0.77860131+0.j 0.62751893+0.j]
+        Generation of 1-qutrit states only with imaginary parts equal to zero:
+        >>> ent.create_random_pure_state(3, 1)
+        [-0.46514564+0.j  0.63426271+0.j -0.61753571+0.j]
+        Generation of 1-qutrit states with probable non-zero imaginary parts:
+        >>> ent.create_random_pure_state(3, 1, True)
+        [0.65804958+0.j         0.24362108+0.j         0.        -0.71247422j]
         
     """
     _x = _d ** _n
-    _tab = np.ndarray(shape=(_x))
+    _tab = np.ndarray(shape=(_x),dtype=complex)
+    _tab_final = np.ndarray(shape=(_x),dtype=complex)
+    _list1 = [0, 1]
     
-    for i in range(_x):
-        _tab[i] = rd.random()
+    if complex_no==False:
+        for i in range(_x):
+            _tab[i] = rd.uniform(-1,1) + 0j
+        print(_tab)
+    elif complex_no==True:
+        for i in range(_x):
+            _compl=rd.choice(_list1)
+            if _compl==0:
+                _tab[i] = rd.uniform(-1,1) + 0j
+            else:
+                _tab[i] = 0 + rd.uniform(-1,1)*1j
+        print(_tab)
+    else:
+        raise ValueError("The parameter's _complex value has to be True or False!")
+        return None
         
     sum_all=0
-    
     for i in range(_x):
-        sum_all+=_tab[i]
-        
+        sum_all += abs(sympy.re(_tab[i])) + abs(sympy.im(_tab[i]))
+    print(sum_all)  
     for i in range(_x):
-        _tab[i]=sympy.sqrt(_tab[i]/sum_all)
+        if sympy.re(_tab[i]) >= 0 and sympy.im(_tab[i]) == 0:
+            re_pos=sympy.re(_tab[i])
+            re_pos=sympy.sqrt(re_pos/sum_all)
+            _tab_final[i]=re_pos
+        elif sympy.re(_tab[i]) < 0 and sympy.im(_tab[i]) == 0:
+            re_neg=abs(sympy.re(_tab[i]))
+            re_neg=sympy.sqrt(re_neg/sum_all)
+            _tab_final[i]=re_neg*(-1)
+        elif sympy.re(_tab[i]) == 0 and sympy.im(_tab[i]) > 0:
+            im_pos=sympy.im(_tab[i])
+            im_pos=sympy.sqrt(im_pos/sum_all)
+            _tab_final[i]=im_pos*1j
+        elif sympy.re(_tab[i]) == 0 and sympy.im(_tab[i]) < 0:
+            im_neg=abs(sympy.im(_tab[i]))
+            im_neg=sympy.sqrt(im_neg/sum_all)
+            _tab_final[i]=im_neg*(-1j)
+        else:
+            print('Should never happen')
     
-    return _tab
+    return _tab_final
 
 # (2) new function to create quantum states
 def create_random_1qubit_pure_state():
