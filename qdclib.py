@@ -3462,18 +3462,36 @@ def split_data_and_labels( _qdX1, _labels1,  _qdX2, _labels2, _ratio ):
 
 def create_spherical_probes( _n_points, _n_dim=2):
     """
+    Creates normalized points on a unit circle.
+    This data can be regared as qubits where probability amplitudes are 
+    real numbers.
     
     Parameters
     ----------
-    _n_points : TYPE
-        DESCRIPTION.
-    _n_dim : TYPE, optional
-        DESCRIPTION. The default is 3.
+    _n_points : integer
+        The number of probes to generate.
+    _n_dim : integer, optional
+        The number of probe's dimensions. The default value is 2.
 
     Returns
     -------
-    TYPE
-        DESCRIPTION.
+    numpy array
+        The array containing probes.
+    
+    Example
+    -------
+    Creation of ten 2-dimensional probes.
+    >>> qdcl.qdcl.create_spherical_probes(10)
+    [[ 0.83199628 -0.5547812 ]
+     [-0.69520821  0.71880842]
+     [-0.83934711 -0.54359583]
+     [ 0.95564325 -0.29452671]
+     [ 0.50293973 -0.86432149]
+     [ 0.14637115  0.98922974]
+     [ 0.96195755  0.27319897]
+     [ 0.26458467 -0.96436246]
+     [-0.9540489  -0.29965096]
+     [-0.31569086  0.9488621 ]]
 
     """
     
