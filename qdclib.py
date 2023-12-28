@@ -3542,6 +3542,7 @@ def create_focused_qubits_probes_with_uniform_placed_centers( _n_points, _n_thet
     _psi = 0.0
     _theta_delta= (2.0*np.pi) / _n_theta
     _psi_delta= (np.pi) / _n_psi
+    
     for i in range( _n_theta ):
         for j in range( _n_psi ):
             sp = convert_spherical_coordinates_to_bloch_vector(1.0, _theta, _psi)
