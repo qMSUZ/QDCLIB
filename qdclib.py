@@ -3393,6 +3393,36 @@ def create_one_vector( _axis=0, _n_dim=3 ):
 # TO DESC
 #
 def data_vertical_stack(d1, d2):
+    """
+    Uses numpy.vstack function. Combines the rows of arrays given as parameters
+    to one output array.
+
+    Parameters
+    ----------
+    d1, d2 : numpy arrays
+        Two arrays with the same number of columns.
+
+    Returns
+    -------
+    numpy array
+        An array gathering the rows of arrays given as this function's 
+        parameters.
+        
+    Examples
+    --------
+    >>> a = np.array([1/np.sqrt(2),1/np.sqrt(2)])
+    >>> b = np.array([1/np.sqrt(2),0+1j/np.sqrt(2)])
+    >>> qdcl.data_vertical_stack(a,b)
+    [[0.70710678+0.j         0.70710678+0.j        ]
+     [0.70710678+0.j         0.        +0.70710678j]]
+    >>> a = np.array([[1,0,0],[0,0,1]])
+    >>> b = np.array([0, 1, 0])
+    >>> qdcl.data_vertical_stack(a,b)
+    [[1 0 0]
+     [0 0 1]
+     [0 1 0]]
+
+    """
     return np.vstack( (d1,d2) )
 
 #
@@ -3533,7 +3563,41 @@ def create_spherical_probes( _n_points, _n_dim=2):
 # TO DESC
 #
 def create_focused_circle_probes( _n_points, _n_focus_points, _width_of_cluster=0.25 ):
+    """
+    Generates observations/probes as normalized 1-qubit states using function
+    sklearn.datasets.make_blobs.
     
+    Parameters
+    ----------
+    _n_points : integer
+        The number of probes to generate.
+    _n_focus_points : integer
+        The number of centers (sklearn.datasets.make_blobs generates blobs 
+        for clustering).
+    _width_of_cluster : float, optional
+        The standard deviation of the clusters. The default value is 0.25.
+
+    Returns
+    -------
+    d : numpy array
+        The array containing normalized probes.
+    
+    Example
+    -------
+    Creation of ten 2-dimensional probes using three cluster centers.
+    >>> qdcl.create_focused_circle_probes( 10, 3 )
+    [[ 0.44510238 -0.89547969]
+     [-0.4555554   0.89020743]
+     [ 0.52455015 -0.85137955]
+     [ 0.43051802 -0.90258198]
+     [-0.85803463 -0.51359184]
+     [-0.87752778 -0.4795258 ]
+     [-0.43812699  0.89891309]
+     [-0.8647385  -0.50222239]
+     [ 0.50517566 -0.86301654]
+     [-0.44428403  0.89588599]]
+
+    """
     d, _ = make_blobs( n_samples=_n_points,
                        n_features=2,
                        centers = _n_focus_points,
