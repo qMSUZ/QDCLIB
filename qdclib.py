@@ -3381,6 +3381,36 @@ def create_one_vector( _axis=0, _n_dim=3 ):
     return _vector_one
 
 def data_vertical_stack(d1, d2):
+    """
+    Uses numpy.vstack function. Combines the rows of arrays given as parameters
+    to one output array.
+
+    Parameters
+    ----------
+    d1, d2 : numpy arrays
+        Two arrays with the same number of columns.
+
+    Returns
+    -------
+    numpy array
+        An array gathering the rows of arrays given as this function's 
+        parameters.
+        
+    Examples
+    --------
+    >>> a = np.array([1/np.sqrt(2),1/np.sqrt(2)])
+    >>> b = np.array([1/np.sqrt(2),0+1j/np.sqrt(2)])
+    >>> qdcl.data_vertical_stack(a,b)
+    [[0.70710678+0.j         0.70710678+0.j        ]
+     [0.70710678+0.j         0.        +0.70710678j]]
+    >>> a = np.array([[1,0,0],[0,0,1]])
+    >>> b = np.array([0, 1, 0])
+    >>> qdcl.data_vertical_stack(a,b)
+    [[1 0 0]
+     [0 0 1]
+     [0 1 0]]
+
+    """
     return np.vstack( (d1,d2) )
 
 
