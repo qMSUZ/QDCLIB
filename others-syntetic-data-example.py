@@ -178,6 +178,7 @@ def moon_example( _verbose = 0 ):
 def example_simple_2d_blob( _verbose = 0 ):
     
     blob_data = qdcl.create_blob_2d( _n_samples = 500 )
+    # blob_data = qdcl.create_blob_2d( _n_samples = 500, _center = np.array([2, 2]) )
     
     limits_blob_data = [ np.min(blob_data[:,0]), np.max(blob_data[:,0]), np.min(blob_data[:,1]), np.max(blob_data[:,1]) ]   
     limits_blob_data = [v * 1.25 for v in limits_blob_data]
@@ -210,8 +211,8 @@ def example_non_linearly_separable_data_2d(  _verbose = 0 ):
     
     f = qdcl.create_scatter_plot_for_2d_data( line_data, _limits=limits_line_data )
             
-circles_example( 1 )
+# circles_example( 1 )
 # moon_example()
-# example_simple_2d_blob()
+example_simple_2d_blob()
 # example_linearly_separable_data_2d()
 # example_non_linearly_separable_data_2d()

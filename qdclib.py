@@ -550,6 +550,9 @@ def stereographic_projection_to_two_component_vector( _x, _y, _z ):
     
     return two_component_vector
     
+#
+# TO DESC
+#
 def vector_data_encode_with_inverse_stereographic_projection( _v ):
     d = _v.shape[0]
     
@@ -2988,9 +2991,15 @@ def probability_as_distance(uvector, vvector, amp_no, r=0, check=0 ):
         else:
             return None
 
+#
+# TO DESC
+#
 def probability_as_distance_case_qubit_alpha(uvector, vvector, r=0, check=0):
     return probability_as_distance(uvector, vvector, 0, r, check)
 
+#
+# TO DESC
+#
 def probability_as_distance_case_qubit_beta(uvector, vvector, r=0, check=0):
     return probability_as_distance(uvector, vvector, 1, r, check)
 
@@ -3380,14 +3389,21 @@ def create_one_vector( _axis=0, _n_dim=3 ):
     
     return _vector_one
 
+#
+# TO DESC
+#
 def data_vertical_stack(d1, d2):
     return np.vstack( (d1,d2) )
 
-
+#
+# TO DESC
+#
 def create_blob_2d( _n_samples = 100, _center=None):   
 
-    if _center == None:
+    if _center is None:
         mean_for_d1 = np.array([0, 0])
+    else:
+        mean_for_d1 = _center
 
     cov = np.array([[1.0, 0.0], 
                     [0.0, 1.0]])
@@ -3398,6 +3414,9 @@ def create_blob_2d( _n_samples = 100, _center=None):
 
 
 # add labels 
+#
+# TO DESC
+#
 def create_data_non_line_separated( _n_samples = 50, _centers=None ):        
    
     mean1 = [-2,  2]
@@ -3417,6 +3436,9 @@ def create_data_non_line_separated( _n_samples = 50, _centers=None ):
 
     return line_data
 
+#
+# TO DESC
+#
 def create_data_separated_by_line( _n_samples = 100, _centers=None ):        
     
     if _centers == None:
@@ -3437,6 +3459,9 @@ def create_data_separated_by_line( _n_samples = 100, _centers=None ):
     
     return d1, d2, labels_d1, labels_d2
 
+#
+# TO DESC
+#
 def split_data_and_labels( _qdX1, _labels1,  _qdX2, _labels2, _ratio ):
     
     idx_for_cutoff = int( _qdX1.shape[0] * _ratio )
@@ -3504,6 +3529,9 @@ def create_spherical_probes( _n_points, _n_dim=2):
     
     return _unit_vectors.T
 
+#
+# TO DESC
+#
 def create_focused_circle_probes( _n_points, _n_focus_points, _width_of_cluster=0.25 ):
     
     d, _ = make_blobs( n_samples=_n_points,
@@ -3516,6 +3544,9 @@ def create_focused_circle_probes( _n_points, _n_focus_points, _width_of_cluster=
     
     return d
 
+#
+# TO DESC
+#
 def create_focused_circle_probes_with_uniform_placed_centers( _n_points, _n_focus_points, _width_of_cluster=0.1 ):
     
     theta=0.0
@@ -3539,6 +3570,9 @@ def create_focused_circle_probes_with_uniform_placed_centers( _n_points, _n_focu
     return d
 
 # to check
+#
+# TO DESC
+#
 def create_focused_qubits_probes( _n_points, _n_focus_points, _width_of_cluster=0.25 ):
     
     d, _ = make_blobs( n_samples=_n_points,
@@ -3552,6 +3586,9 @@ def create_focused_qubits_probes( _n_points, _n_focus_points, _width_of_cluster=
     return d
 
 # to check
+#
+# TO DESC
+#
 def create_focused_qubits_probes_with_uniform_placed_centers( _n_points, _n_theta, _n_psi, _width_of_cluster=0.1, _return_labels = False, _return_centers = False ):
     
     centers_on_sphere = [ ]
