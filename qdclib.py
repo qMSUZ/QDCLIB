@@ -4982,18 +4982,18 @@ def create_float_table_zero_filled( _n_samples ):
 #
 def create_ck_table_zero_filled( _n_samples ):
     
-    ck_tbl = np.zeros( shape = (_n_samples,) )
+    _ck_tbl = np.zeros( shape = (_n_samples,), dtype=np.int64 )
     
-    return ck_tbl
+    return _ck_tbl
 
 #
 # TO DESC
 #
 def random_assign_clusters_to_ck(_n_samples, _n_clusters):
     
-    rng = np.random.default_rng()
+    _rng = np.random.default_rng()
     
-    _ck = rng.integers(_n_clusters, size=_n_samples)
+    _ck = _rng.integers(_n_clusters, size=_n_samples, dtype=np.int64)
     
     return _ck
  
