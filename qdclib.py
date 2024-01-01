@@ -627,6 +627,9 @@ def encode_probes_by_normalization( _qdX ):
     
     return _qdX
 
+#
+# TO DESC
+#
 class BlochVisualization:
 
     def __init__( self ):
@@ -1010,21 +1013,33 @@ class BlochVisualization:
         pass
 
 
+#
+# TO DESC
+#
 def linear_kernel(x0, x1):
     v = np.dot(x0, x1)
     
     return v
 
+#
+# TO DESC
+#
 def polynomial_kernel( x0, x1, _const_val=1.0, _poly_degree=3):
     v = (np.dot(x0, x1) + _const_val) ** _poly_degree
     
     return v
 
+#
+# TO DESC
+#
 def gaussian_kernel( x0, x1, _sigma=0.5):
     v = np.exp( -_sigma * np.linalg.norm(x0 - x1) ** 2.0 )
     
     return v
 
+#
+# TO DESC
+#
 def create_kernel_matrix_for_training_data( _qdX, _sigma, _n_samples ):
     
     K = np.zeros( (_n_samples + 1, _n_samples + 1), dtype=complex )
@@ -1042,6 +1057,9 @@ def create_kernel_matrix_for_training_data( _qdX, _sigma, _n_samples ):
     
     return K
 
+#
+# TO DESC
+#
 def create_right_b_alpha_vector( _kernel_matrix, _labels, _n_samples ):
     
     tmpvec = np.zeros( (_n_samples + 1,), dtype=complex )
@@ -1049,6 +1067,9 @@ def create_right_b_alpha_vector( _kernel_matrix, _labels, _n_samples ):
     
     return np.linalg.inv(_kernel_matrix) @ tmpvec
 
+#
+# TO DESC
+#
 def create_b_c_and_alphas(_b_alpha_vector, _n_samples ):
     
     b = _b_alpha_vector[0]
@@ -1057,6 +1078,9 @@ def create_b_c_and_alphas(_b_alpha_vector, _n_samples ):
     
     return b, C, alphas
 
+#
+# TO DESC
+#
 def create_nu_coefficent(_qdX, _b, _alphas, _n_samples):
     vsum=0
     for idx in range(_n_samples):
@@ -1066,9 +1090,15 @@ def create_nu_coefficent(_qdX, _b, _alphas, _n_samples):
     
     return (_b ** 2.0) + vsum
 
+#
+# TO DESC
+#
 def create_nx_coefficent( _probe_x, _n_samples):
     return _n_samples * (np.linalg.norm( _probe_x ) ** 2.0) + 1
 
+#
+# TO DESC
+#
 def create_dot_ux_for_classification(_nu, _nx, _b, _alphas, _qdX, _probe_x, _n_samples):
     vsum=0
     norm_of_probe_x = np.linalg.norm( _probe_x )
@@ -1088,6 +1118,9 @@ def create_dot_ux_for_classification(_nu, _nx, _b, _alphas, _qdX, _probe_x, _n_s
 #   https://github.com/DrIanGregory/MachineLearning-SupportVectorMachines/
 #
 
+#
+# TO DESC
+#
 class QuantumSVM:
     
     def __init__( self ):
@@ -1337,6 +1370,9 @@ class QuantumSVM:
         return labels
         
 # in preparation    
+#
+# TO DESC
+#
 class VQEClassification:
     
     def __init__( self ):
@@ -1615,6 +1651,9 @@ class VQEClassification:
         pass
 
 # in preparation
+#
+# TO DESC
+#
 class DistanceQuantumClassification:
     def __init__( self ):
         self._func_distance = None
@@ -1670,6 +1709,9 @@ class DistanceQuantumClassification:
 
 
 # in preparation
+#
+# TO DESC
+#
 class QuantumSpectralClustering:
     def __init__( self ):
         self._data_for_cluster = [ ]
@@ -1737,6 +1779,9 @@ class QuantumSpectralClustering:
     
 
 # in preparation
+#
+# TO DESC
+#
 class ClusteringByPotentialEnergy:
     def __init__( self ):
         self.dimension = -1
@@ -2908,6 +2953,9 @@ def trace_distance_vector( _uvector, _vvector, _r=0, _check=0 ):
     else:
         return None
 
+#
+# TO DESC
+#
 def trace_distance_density_matrix( _rho, _sigma):
    
     _val = 0.0
@@ -3346,6 +3394,9 @@ def euclidean_distance_with_sqrt(uvector, vvector, r=0, check=0):
         return round(np.sqrt(rslt), r)
     
 
+#
+# TO DESC
+#
 def create_zero_vector( _n_dim=3 ):
     """
     
@@ -3367,6 +3418,9 @@ def create_zero_vector( _n_dim=3 ):
     
     return _vector_zero
 
+#
+# TO DESC
+#
 def create_one_vector( _axis=0, _n_dim=3 ):
     """
 
@@ -3456,6 +3510,7 @@ def create_data_non_line_separated( _n_samples = 50, _centers=None ):
 
     cov = [[1.0, 0.9], 
            [0.9, 1.0]]
+    
     d1 = np.random.multivariate_normal( mean1, cov, _n_samples )
     d1 = np.vstack( (d1, np.random.multivariate_normal(mean3, cov, _n_samples)) )
     d2 = np.random.multivariate_normal( mean2, cov, _n_samples )
@@ -3466,6 +3521,7 @@ def create_data_non_line_separated( _n_samples = 50, _centers=None ):
 
     return line_data
 
+# add labels 
 #
 # TO DESC
 #
@@ -3687,6 +3743,9 @@ def create_focused_qubits_probes_with_uniform_placed_centers( _n_points, _n_thet
     
     return d
 
+#
+# TO DESC
+#
 def slerp(p0, p1, t):
     """
 
@@ -3713,6 +3772,9 @@ def slerp(p0, p1, t):
     
     return np.sin((1.0-t)*omega) / so * p0 + np.sin(t*omega)/so * p1
 
+#
+# TO DESC
+#
 def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _func_distance=None):
     """
     
@@ -3766,6 +3828,9 @@ def kmeans_spherical(_X, _n_clusters, _max_iteration=128, _func_distance=None):
         _iteration = _iteration + 1
     return closest, centers 
 
+#
+# TO DESC
+#
 def kmeans_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _max_iterations=128, _verification=0):
     """
     
@@ -3823,6 +3888,9 @@ def kmeans_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _max
         
     return closest, centers 
 
+#
+# TO DESC
+#
 def kmedoids_calculate_costs(_qX, _medoids, _func_distance = None):
     """
     
@@ -3855,9 +3923,13 @@ def kmedoids_calculate_costs(_qX, _medoids, _func_distance = None):
         total_cost_for_clusters = total_cost_for_clusters + distances.min()
  
     clusters = {k:np.array(v) for k,v in clusters.items()}
+ 
     return clusters, total_cost_for_clusters
 
 
+#
+# TO DESC
+#
 def kmedoids(_qX, _n_clusters, _max_iterations=128, _func_distance = None):
     """
     
@@ -3919,6 +3991,9 @@ def kmedoids(_qX, _n_clusters, _max_iterations=128, _func_distance = None):
 
     return labels, medoids
 
+#
+# TO DESC
+#
 def kmedoids_quantum_states(_qX, _n_clusters, _func_distance=COSINE_DISTANCE, _max_iterations=128, _verification=0):
     # vectors qX should be treated as quantum pure states
     # but verification in performed when 
@@ -4771,19 +4846,28 @@ def create_incidence_matrix( _adj_matrix ):
         return m_incidence
     else:
         return None    
-        
+ 
+#
+# TO DESC
+#       
 def create_float_table_zero_filled( _n_samples ):
     
     ck_tbl = np.zeros( shape = (_n_samples,), dtype=float )
     
     return ck_tbl
 
+#
+# TO DESC
+#
 def create_ck_table_zero_filled( _n_samples ):
     
     ck_tbl = np.zeros( shape = (_n_samples,) )
     
     return ck_tbl
 
+#
+# TO DESC
+#
 def random_assign_clusters_to_ck(_n_samples, _n_clusters):
     
     rng = np.random.default_rng()
@@ -4792,6 +4876,9 @@ def random_assign_clusters_to_ck(_n_samples, _n_clusters):
     
     return _ck
  
+#
+# TO DESC
+#
 def create_initial_centroids(_qdX, _n_samples, _n_clusters):
     
     rng = np.random.default_rng()
@@ -4898,7 +4985,9 @@ def number_of_probes_for_class( _labels, _class ):
     """
     return number_of_probes_in_cluster_k( _labels, _class)
 
-
+#
+# TO DESC
+#
 def quantum_kmeans_clusters_assignment(_qdX, _centroids, _n_samples, _n_clusters,  _func_distance=None):
     
     new_ck = create_ck_table_zero_filled( _n_samples )
@@ -4916,7 +5005,9 @@ def quantum_kmeans_clusters_assignment(_qdX, _centroids, _n_samples, _n_clusters
         new_ck[_n] = np.argmin(distance_table[_n])
             
     return distance_table, new_ck
-
+#
+# TO DESC
+#
 def quantum_kmeans_update_centroids(_qdX, _ck, _n_samples, _n_clusters):
     
     _centroids = np.zeros( shape=(_n_clusters, _qdX.shape[1]) )
@@ -4944,6 +5035,9 @@ def quantum_kmeans_update_centroids(_qdX, _ck, _n_samples, _n_clusters):
         
     return _centroids
 
+#
+# TO DESC
+#
 def quantum_kmeans_assign_labels( _qdX, _centroids, _n_samples, _n_clusters, _func_distance=None ):
     
     _, _labels = quantum_kmeans_clusters_assignment( _qdX,_centroids, 
@@ -4953,6 +5047,9 @@ def quantum_kmeans_assign_labels( _qdX, _centroids, _n_samples, _n_clusters, _fu
     
     return _labels
 
+#
+# TO DESC
+#
 def quantum_kmeans( _qdX, _n_samples, _n_clusters, _max_iteration=128, _func_distance=None):
     
     _ck = random_assign_clusters_to_ck( _n_samples, _n_clusters )
@@ -4979,6 +5076,9 @@ def quantum_kmeans( _qdX, _n_samples, _n_clusters, _max_iteration=128, _func_dis
     
     return _ck, _centroids
 
+#
+# TO DESC
+#
 def classic_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
     """
     
@@ -5026,6 +5126,9 @@ def classic_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func
     
     return _labels
 
+#
+# TO DESC
+#
 def create_rho_state_for_qsc(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
     """
     
@@ -5068,6 +5171,9 @@ def create_rho_state_for_qsc(_qdX, _n_samples, _n_clusters, _threshold, _func_di
 
     return rho
 
+#
+# TO DESC
+#
 def quantum_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
     """
     
@@ -5124,26 +5230,46 @@ def quantum_spectral_clustering(_qdX, _n_samples, _n_clusters, _threshold, _func
     
     return labels, projectors
 
+#
+# TO DESC
+#
 def hc_create_distance_matrix( _qdX, _n_samples, _func_distance=None ):
     pass
 
+#
+# TO DESC
+#
 def hc_complete_linkage_clustering(_qdX, _a, _b):
     pass
 
+#
+# TO DESC
+#
 def hc_single_linkage_clustering(_qdX, _a, _b):
     pass
 
+#
+# TO DESC
+#
 def hierarchical_clustering_for_quantum_data(_qdX, _n_samples, _n_clusters, _threshold, _func_distance=None ):
     pass
 
 
 
-
+#
+# TO DESC
+#
 def version():
     pass
 
+#
+# TO DESC
+#
 def about():
     pass
 
+#
+# TO DESC
+#
 def how_to_cite():
     pass
