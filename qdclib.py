@@ -3443,9 +3443,6 @@ def create_one_vector( _axis=0, _n_dim=3 ):
     
     return _vector_one
 
-#
-# TO DESC
-#
 def data_vertical_stack(d1, d2):
     """
     Uses numpy.vstack function. Combines the rows of arrays given as parameters
@@ -3479,9 +3476,6 @@ def data_vertical_stack(d1, d2):
     """
     return np.vstack( (d1,d2) )
 
-#
-# TO DESC
-#
 def create_blob_2d( _n_samples = 100, _center=None):
     """
     Uses numpy.random.multivariate_normal function with the unit matrix as 
