@@ -3482,7 +3482,35 @@ def data_vertical_stack(d1, d2):
 #
 # TO DESC
 #
-def create_blob_2d( _n_samples = 100, _center=None):   
+def create_blob_2d( _n_samples = 100, _center=None):
+    """
+    Uses numpy.random.multivariate_normal function with the unit matrix as 
+    a covariance matrix. Generates samples as two-dimensional blobs.
+
+    Parameters
+    ----------
+    _n_samples : integer, optional
+        The number of samples. The default value is 100.
+    _center : numpy array, optional
+        An array pointing out the center around which blobs will be generated. 
+        The default value is np.array([0, 0]).
+
+    Returns
+    -------
+    d1 : numpy array
+        Contains generated samples' coordinates.
+        
+    Example
+    -------
+    Creation of five samples:
+    >>> qdcl.create_blob_2d(5)
+    [[ 0.59011169 -1.59784931]
+     [-1.52844339  0.19637419]
+     [-1.32380436 -0.18730801]
+     [ 1.20515547 -0.69428618]
+     [ 0.70639911  2.31603014]]
+    
+    """   
 
     if _center is None:
         mean_for_d1 = np.array([0, 0])
