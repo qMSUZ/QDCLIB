@@ -4869,11 +4869,27 @@ def create_incidence_matrix( _adj_matrix ):
     else:
         return None    
  
-#
-# TO DESC
-#       
 def create_float_table_zero_filled( _n_samples ):
+    """
+    Generates _n_samples-element array of zeros as float numbers.
     
+    Parameters
+    ----------
+    _n_samples : integer
+        The number of elements in the array.
+    
+    Returns
+    -------
+    ck_tbl : numpy array
+        The array of floats, filled with zeros.
+    
+    Example
+    -------
+    The generation of a 10-element array:
+    >>> qdcl.create_float_table_zero_filled( 10 )
+    [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+
+    """
     ck_tbl = np.zeros( shape = (_n_samples,), dtype=float )
     
     return ck_tbl
