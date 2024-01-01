@@ -3476,6 +3476,13 @@ def data_vertical_stack(d1, d2):
     """
     return np.vstack( (d1,d2) )
 
+#
+# TO DESC
+#
+def data_horizontal_stack(d1, d2):
+    return np.hstack( (d1,d2) )
+
+
 def create_blob_2d( _n_samples = 100, _center=None):
     """
     Uses numpy.random.multivariate_normal function with the unit matrix as 
@@ -3518,6 +3525,42 @@ def create_blob_2d( _n_samples = 100, _center=None):
 
     return d1
 
+
+#
+# TO DESC
+#
+def create_circles_data_set( _n_samples = 100, _factor = 0.75, _noise = None, _random_state = 1234):
+    
+    rslt_data = None
+    rslt_labels = None
+    
+    np.random.seed( _random_state )
+    
+    data_for_circle_out = np.linspace(0.0, 2.0 * np.pi, _n_samples, endpoint=False)
+    data_for_circle_in  = np.linspace(0.0, 2.0 * np.pi, _n_samples, endpoint=False)
+  
+    circ_coords_x_out = np.cos(data_for_circle_out)
+    circ_coords_y_out = np.sin(data_for_circle_out)
+    
+    circ_coords_x_in = np.cos(data_for_circle_in) * _factor
+    circ_coords_y_in = np.sin(data_for_circle_in) * _factor  
+  
+     
+    rslt_data = np.transpose( data_vertical_stack( 
+                                np.append(circ_coords_x_out, circ_coords_x_in),
+                                np.append(circ_coords_y_out, circ_coords_y_in)
+                              )
+    )
+    
+    rslt_labels = data_horizontal_stack(
+        np.zeros(_n_samples, dtype=np.int64), 
+        np.ones(_n_samples, dtype=np.int64)
+    )
+    
+    if _noise is not None:
+        rslt_data += np.random.normal(scale=_noise, size=rslt_data.shape)
+    
+    return rslt_data, rslt_labels
 
 # add labels 
 #
