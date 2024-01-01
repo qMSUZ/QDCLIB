@@ -1929,7 +1929,7 @@ def create_circle_plot_for_2d_data(_qX, _first_col=0, _second_col=1, _limits=Non
 
     fig, ax = plt.subplots()
     ax.set_aspect('equal')
-    
+    circle = None
     if _limits == None:
         ax.set_xlim( [-1.0, 1.0] )
         ax.set_ylim( [-1.0, 1.0] )
@@ -1937,10 +1937,13 @@ def create_circle_plot_for_2d_data(_qX, _first_col=0, _second_col=1, _limits=Non
     else:
         ax.set_xlim( _limits[0], _limits[1] )
         ax.set_ylim( _limits[2], _limits[3] )
-        circle = plt.Circle( (0,0), _limits[4],  color='r', fill=False)
+        if len(_limits) > 4:
+            circle = plt.Circle( (0,0), _limits[4],  color='r', fill=False)
 
     ax.scatter( _qX[ :, _first_col ], _qX[ :, _second_col ])
-    ax.add_patch(circle)
+    
+    if circle is not None:
+        ax.add_patch(circle)
     
     ax.set_xlabel('Feature 1 (X axis)')
     ax.set_ylabel('Feature 2 (Y axis)')
@@ -3559,6 +3562,43 @@ def create_circles_data_set( _n_samples = 100, _factor = 0.75, _noise = None, _r
     
     if _noise is not None:
         rslt_data += np.random.normal(scale=_noise, size=rslt_data.shape)
+    
+    return rslt_data, rslt_labels
+
+#
+# TO DESC
+#
+def create_moon_data_set( _n_samples = 100, _shuffle = True, _noise = None, _random_state = 1234 ):
+    
+    rslt_data = None
+    rslt_labels = None
+           
+    np.random.seed( _random_state )
+   
+    circ_coords_x_out = np.cos(np.linspace(0.0, np.pi, _n_samples))
+    circ_coords_y_out = np.sin(np.linspace(0.0, np.pi, _n_samples))
+    circ_coords_x_in  = 1.0 - np.cos(np.linspace(0.0, np.pi, _n_samples))
+    circ_coords_y_in  = 1.0 - np.sin(np.linspace(0.0, np.pi, _n_samples)) - 0.5 
+    
+    rslt_data = np.transpose( data_vertical_stack( 
+                                np.append(circ_coords_x_out, circ_coords_x_in),
+                                np.append(circ_coords_y_out, circ_coords_y_in)
+                              )
+    )
+    
+    rslt_labels = data_horizontal_stack(
+        np.zeros(_n_samples, dtype=np.int64), 
+        np.ones(_n_samples, dtype=np.int64)
+    )
+
+    if _shuffle == True:
+        new_indices = np.random.permutation( 2 * _n_samples )
+        rslt_data = rslt_data[new_indices]
+        rslt_labels = rslt_labels[new_indices]
+
+    if _noise is not None:
+        rslt_data += np.random.normal(scale=_noise, size=rslt_data.shape)
+            
     
     return rslt_data, rslt_labels
 

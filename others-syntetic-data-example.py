@@ -136,15 +136,22 @@ def circles_example( _verbose = 0 ):
         print("smaller value at two first columns points out the class")
         print(distance_table)
 
+
+
+
 def moon_example( _verbose = 0 ):
-    d, org_labels = make_moons( _n_samples = 100,  noise=0.05, )
+    #d, org_labels = make_moons( n_samples = 100, noise=0.05, )
+    d, org_labels = qdcl.create_moon_data_set( _n_samples = 100, _shuffle = True, _noise = 0.05,  )
     #X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=0)
 
-    f = qdcl.create_plot_for_2d_data(d)
+    f = qdcl.create_circle_plot_for_2d_data(d, _limits=[-2.0, 2.6, -1.5, 1.5])
    
     class0 = d[ org_labels==0 ]
-    class1 = d[ org_labels==1 ]    
-   
+    class1 = d[ org_labels==1 ]
+
+    f = qdcl.create_circle_plot_for_2d_data(class0, _limits=[-2.0, 2.6, -1.5, 1.5])
+    f = qdcl.create_circle_plot_for_2d_data(class1, _limits=[-2.0, 2.6, -1.5, 1.5])
+
     ps_d = np.empty((0,2), dtype=complex)
     for probe in d:
         v0 = probe[0]
@@ -211,8 +218,8 @@ def example_non_linearly_separable_data_2d(  _verbose = 0 ):
     
     f = qdcl.create_scatter_plot_for_2d_data( line_data, _limits=limits_line_data )
             
-circles_example( 1 )
-# moon_example()
+# circles_example( 1 )
+moon_example()
 # example_simple_2d_blob()
 # example_linearly_separable_data_2d()
 # example_non_linearly_separable_data_2d()
