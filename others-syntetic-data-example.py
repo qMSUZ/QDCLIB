@@ -37,14 +37,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-from sklearn import decomposition
-from sklearn.datasets import make_circles
-from sklearn.datasets import make_moons
+#from sklearn import decomposition
+#from sklearn.datasets import make_circles
+from sklearn.datasets import make_moons    
 
 def circles_example( _verbose = 0 ):
     
-    
-    d, org_labels = make_circles(n_samples=100, factor=0.3, noise=0.05, random_state=0)
+    #d, org_labels = make_circles(n_samples=100, factor=0.3, noise=0.05, random_state=0)
+    d, org_labels = qdcl.create_circles_data_set(_n_samples=100, _factor=0.3, _noise=0.05, _random_state=0)
     #X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=0)
         
     f = qdcl.create_circle_plot_for_2d_data(d)    
@@ -211,8 +211,8 @@ def example_non_linearly_separable_data_2d(  _verbose = 0 ):
     
     f = qdcl.create_scatter_plot_for_2d_data( line_data, _limits=limits_line_data )
             
-# circles_example( 1 )
+circles_example( 1 )
 # moon_example()
-example_simple_2d_blob()
+# example_simple_2d_blob()
 # example_linearly_separable_data_2d()
 # example_non_linearly_separable_data_2d()
