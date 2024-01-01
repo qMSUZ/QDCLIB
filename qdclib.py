@@ -3443,9 +3443,6 @@ def create_one_vector( _axis=0, _n_dim=3 ):
     
     return _vector_one
 
-#
-# TO DESC
-#
 def data_vertical_stack(d1, d2):
     """
     Uses numpy.vstack function. Combines the rows of arrays given as parameters
@@ -3479,53 +3476,35 @@ def data_vertical_stack(d1, d2):
     """
     return np.vstack( (d1,d2) )
 
-#
-# TO DESC
-#
-def data_horizontal_stack(d1, d2):
-    return np.hstack( (d1,d2) )
+def create_blob_2d( _n_samples = 100, _center=None):
+    """
+    Uses numpy.random.multivariate_normal function with the unit matrix as 
+    a covariance matrix. Generates samples as two-dimensional blobs.
 
+    Parameters
+    ----------
+    _n_samples : integer, optional
+        The number of samples. The default value is 100.
+    _center : numpy array, optional
+        An array pointing out the center around which blobs will be generated. 
+        The default value is np.array([0, 0]).
 
-#
-# TO DESC
-#
-def create_circles_data_set( _n_samples = 100, _factor = 0.75, _noise = None, _random_state = 1234):
+    Returns
+    -------
+    d1 : numpy array
+        Contains generated samples' coordinates.
+        
+    Example
+    -------
+    Creation of five samples:
+    >>> qdcl.create_blob_2d(5)
+    [[ 0.59011169 -1.59784931]
+     [-1.52844339  0.19637419]
+     [-1.32380436 -0.18730801]
+     [ 1.20515547 -0.69428618]
+     [ 0.70639911  2.31603014]]
     
-    rslt_data = None
-    rslt_labels = None
-    
-    np.random.seed( _random_state )
-    
-    data_for_circle_out = np.linspace(0.0, 2.0 * np.pi, _n_samples, endpoint=False)
-    data_for_circle_in  = np.linspace(0.0, 2.0 * np.pi, _n_samples, endpoint=False)
-  
-    circ_coords_x_out = np.cos(data_for_circle_out)
-    circ_coords_y_out = np.sin(data_for_circle_out)
-    
-    circ_coords_x_in = np.cos(data_for_circle_in) * _factor
-    circ_coords_y_in = np.sin(data_for_circle_in) * _factor  
-  
-     
-    rslt_data = np.transpose( data_vertical_stack( 
-                                np.append(circ_coords_x_out, circ_coords_x_in),
-                                np.append(circ_coords_y_out, circ_coords_y_in)
-                              )
-    )
-    
-    rslt_labels = data_horizontal_stack(
-        np.zeros(_n_samples, dtype=np.int64), 
-        np.ones(_n_samples, dtype=np.int64)
-    )
-    
-    if _noise is not None:
-        rslt_data += np.random.normal(scale=_noise, size=rslt_data.shape)
-    
-    return rslt_data, rslt_labels
-
-#
-# TO DESC
-#
-def create_blob_2d( _n_samples = 100, _center=None):   
+    """   
 
     if _center is None:
         mean_for_d1 = np.array([0, 0])
@@ -4890,11 +4869,27 @@ def create_incidence_matrix( _adj_matrix ):
     else:
         return None    
  
-#
-# TO DESC
-#       
 def create_float_table_zero_filled( _n_samples ):
+    """
+    Generates _n_samples-element array of zeros as float numbers.
     
+    Parameters
+    ----------
+    _n_samples : integer
+        The number of elements in the array.
+    
+    Returns
+    -------
+    ck_tbl : numpy array
+        The array of floats, filled with zeros.
+    
+    Example
+    -------
+    The generation of a 10-element array:
+    >>> qdcl.create_float_table_zero_filled( 10 )
+    [0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+
+    """
     ck_tbl = np.zeros( shape = (_n_samples,), dtype=float )
     
     return ck_tbl
