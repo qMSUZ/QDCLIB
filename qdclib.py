@@ -3606,7 +3606,7 @@ def create_moon_data_set( _n_samples = 100, _shuffle = True, _noise = None, _ran
 #
 # TO DESC
 #
-def create_data_non_line_separated( _n_samples = 50, _centers=None ):        
+def create_data_non_line_separated_four_lines( _n_samples = 50, _centers=None ):        
    
     mean1 = [-2,  2]
     mean2 = [ 1, -1]
