@@ -4984,11 +4984,27 @@ def create_float_table_zero_filled( _n_samples ):
     
     return ck_tbl
 
-#
-# TO DESC
-#
 def create_ck_table_zero_filled( _n_samples ):
+    """
+    Generates _n_samples-element array of zeros as integer numbers.
     
+    Parameters
+    ----------
+    _n_samples : integer
+        The number of elements in the array.
+    
+    Returns
+    -------
+    ck_tbl : numpy array
+        The array of integers, filled with zeros.
+    
+    Example
+    -------
+    The generation of a 10-element array:
+    >>> qdcl.create_ck_table_zero_filled( 10 )
+    [0 0 0 0 0 0 0 0 0 0]
+
+    """
     _ck_tbl = np.zeros( shape = (_n_samples,), dtype=np.int64 )
     
     return _ck_tbl
