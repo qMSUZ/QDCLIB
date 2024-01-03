@@ -3620,11 +3620,18 @@ def create_data_non_line_separated_four_lines( _n_samples = 50, _centers=None ):
     d1 = np.vstack( (d1, np.random.multivariate_normal(mean3, cov, _n_samples)) )
     d2 = np.random.multivariate_normal( mean2, cov, _n_samples )
     d2 = np.vstack( (d2, np.random.multivariate_normal(mean4, cov, _n_samples)) )
-    
+   
+    line_data = None
+    line_labels = None
     
     line_data=data_vertical_stack( d1, d2 )
 
-    return line_data
+    labels_d1 = np.ones( shape=(_n_samples * 2, ) )
+    labels_d2 = np.multiply( np.ones( shape=(_n_samples * 2, ) ), -1.0)
+
+    line_labels = data_horizontal_stack(labels_d1, labels_d2)
+
+    return line_data, line_labels
 
 # add labels 
 #

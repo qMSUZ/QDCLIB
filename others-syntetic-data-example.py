@@ -39,7 +39,7 @@ import numpy as np
 
 #from sklearn import decomposition
 #from sklearn.datasets import make_circles
-from sklearn.datasets import make_moons    
+#from sklearn.datasets import make_moons    
 
 def circles_example( _verbose = 0 ):
     
@@ -212,14 +212,21 @@ def example_linearly_separable_data_2d(  _verbose = 0 ):
 
 def example_non_linearly_separable_data_2d(  _verbose = 0 ):    
    
-    line_data = qdcl.create_data_non_line_separated( 100 )
+    line_data, line_labels = qdcl.create_data_non_line_separated_four_lines( 100 )
+    
     limits_line_data = [ np.min(line_data[:,0]), np.max(line_data[:,0]), np.min(line_data[:,1]), np.max(line_data[:,1]) ]
     limits_line_data = [v * 1.25 for v in limits_line_data]
-    
+
     f = qdcl.create_scatter_plot_for_2d_data( line_data, _limits=limits_line_data )
+    
+    line_dataP1 = line_data[ line_labels ==  1]
+    line_dataM1 = line_data[ line_labels == -1]
+    
+    f = qdcl.create_scatter_plot_for_2d_data( line_dataP1, _limits=limits_line_data )
+    f = qdcl.create_scatter_plot_for_2d_data( line_dataM1, _limits=limits_line_data )
             
 # circles_example( 1 )
-moon_example()
+# moon_example()
 # example_simple_2d_blob()
 # example_linearly_separable_data_2d()
-# example_non_linearly_separable_data_2d()
+example_non_linearly_separable_data_2d()
