@@ -4995,7 +4995,7 @@ def create_ck_table_zero_filled( _n_samples ):
     
     Returns
     -------
-    ck_tbl : numpy array
+    _ck_tbl : numpy array
         The array of integers, filled with zeros.
     
     Example
