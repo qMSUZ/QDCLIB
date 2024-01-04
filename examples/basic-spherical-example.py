@@ -38,7 +38,7 @@ import qdclib as qdcl
 
 def example1():
 
-    _n_samples = 10    
+    _n_samples = 10
 
     print("\n\nExample No. 1\n\n")
 
@@ -93,7 +93,7 @@ def example1():
 def example2():
 
     _n_samples = 30
-    _n_clusters = 5
+    _n_clusters = 3
     
     print("\n\nExample 2\n\n")
     
@@ -103,9 +103,8 @@ def example2():
     print("the kmeans algorithm.")
 
     np.random.seed( 1234 )
-
     
-    d = qdcl.create_focused_circle_probes(_n_samples, _n_clusters, _width_of_cluster=0.15)
+    d = qdcl.create_focused_circle_probes(_n_samples, _n_clusters, _width_of_cluster=0.5)
     labels, centers = qdcl.kmeans_quantum_states( d, _n_clusters, _func_distance=qdcl.COSINE_DISTANCE )
     
     f=qdcl.create_circle_plot_with_centers_for_2d_data( d, _n_clusters, centers, labels )
@@ -135,10 +134,10 @@ def example3():
     for i in range( _n_clusters ):
         print( "distance for cluster", i )
         print( qdcl.get_distances_for_cluster( dt, i ) )
-    
 
-    
+
+
 example1()
 example2()
 example3()
-                                
+
