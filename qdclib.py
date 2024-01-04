@@ -5009,11 +5009,30 @@ def create_ck_table_zero_filled( _n_samples ):
     
     return _ck_tbl
 
-#
-# TO DESC
-#
 def random_assign_clusters_to_ck(_n_samples, _n_clusters):
+    """
+    Generates random _n_samples-element array of class/cluster labels as integer 
+    numbers.
     
+    Parameters
+    ----------
+    _n_samples : integer
+        The number of elements in the array.
+    _n_clusters : integer
+        The number of class/cluster labels to generate.
+    
+    Returns
+    -------
+    _ck : numpy array
+        The array of integers, filled with class/cluster labels.
+    
+    Example
+    -------
+    The generation of a 10-element array for a case with three classes/clusters:
+    >>> qdcl.random_assign_clusters_to_ck( 10, 3 )
+    [1 1 1 2 2 0 1 1 0 1]
+
+    """
     _rng = np.random.default_rng()
     
     _ck = _rng.integers(_n_clusters, size=_n_samples, dtype=np.int64)
