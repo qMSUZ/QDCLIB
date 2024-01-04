@@ -37,13 +37,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
-#from sklearn import decomposition
-#from sklearn.datasets import make_circles
-#from sklearn.datasets import make_moons    
-
 def circles_example( _verbose = 0 ):
     
-    #d, org_labels = make_circles(n_samples=100, factor=0.3, noise=0.05, random_state=0)
     d, org_labels = qdcl.create_circles_data_set(_n_samples=100, _factor=0.3, _noise=0.05, _random_state=0)
     #X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, random_state=0)
         
