@@ -220,8 +220,8 @@ def example_non_linearly_separable_data_2d(  _verbose = 0 ):
     f = qdcl.create_scatter_plot_for_2d_data( line_dataP1, _limits=limits_line_data )
     f = qdcl.create_scatter_plot_for_2d_data( line_dataM1, _limits=limits_line_data )
             
-# circles_example( 1 )
+circles_example( )
 # moon_example()
 # example_simple_2d_blob()
 # example_linearly_separable_data_2d()
-example_non_linearly_separable_data_2d()
+# example_non_linearly_separable_data_2d()
