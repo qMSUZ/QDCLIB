@@ -1699,12 +1699,12 @@ class DistanceQuantumClassification:
     
     def classify_probe( self, _qdX ):
         _dm_qdX = vector_state_to_density_matrix( _qdX )
-        val_for_class = np.zeros( shape=(self._num_of_classes) )
+        _val_for_class = np.zeros( shape=(self._num_of_classes) )
         
         for iclass in range(0, self._num_of_classes):
-            val_for_class[iclass] = self._func_distance( self._centroids[iclass], _dm_qdX )
+            _val_for_class[iclass] = self._func_distance( self._centroids[iclass], _dm_qdX )
         
-        return np.argmin( val_for_class )
+        return np.argmin( _val_for_class )
         
 
 
@@ -2959,13 +2959,13 @@ def trace_distance_vector( _uvector, _vvector, _r=0, _check=0 ):
 #
 # TO DESC
 #
-def trace_distance_density_matrix( _rho, _sigma):
-   
-    _val = 0.0
+def trace_distance_density_matrix( _rho, _sigma):   
     
     _diff_dm =  _rho - _sigma
     
     _evals = np.linalg.eig( _diff_dm )
+
+    _val = 0.0
     
     for idx in range(0, len(_evals[0]) ):
         _val = _val + np.abs(_evals[0][idx])
@@ -3799,7 +3799,7 @@ def create_focused_circle_probes_with_uniform_placed_centers( _n_points, _n_focu
     for i in range(_n_points):
         d[i] = d[i] / np.linalg.norm(d[i])
     
-    return d
+    return d, centers_on_circle
 
 # to check
 #
