@@ -51,7 +51,7 @@ import random as rd
 import math
 import itertools
 
-from ExceptionsClasses import *
+from exceptions_classes import *
 
 # smallest value for entropy calculations
 precision_for_entrpy_calc = 0.00001

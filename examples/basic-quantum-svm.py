@@ -62,7 +62,8 @@ def classic_svm():
     objsvm.set_data(train_d, train_labels)
     objsvm.classic_fit()
     labels_predict = objsvm.classic_predict( test_d )
-    
+
+    print("Classic SVM Example")
     print("Labels: labels_predict - test_labels")
     print(labels_predict - test_labels)
 
@@ -94,6 +95,8 @@ def quantum_svm_direct_api():
     Nu = qdcl.create_nu_coefficent(train_d, b, alphas, n_samples )
     Nx = qdcl.create_nx_coefficent(train_d[0], n_samples ) 
     
+    print("Quantum SVM Direct API Example")
+    
     print("Training data")
     for idx in range(n_samples):
         P = 0.5 * ( 1.0 - qdcl.create_dot_ux_for_classification( Nu, Nx, b, alphas, q_train_d, q_train_d[idx], n_samples))
@@ -113,6 +116,8 @@ def quantum_svm():
     objsvm.quantum_fit()
     labels_predict = objsvm.quantum_predict( test_d )
 
+    print("Quantum SVM Example")
+
     print("Labels: labels_predict - test_labels")
     print(labels_predict - test_labels)
 
@@ -122,6 +127,6 @@ def quantum_svm():
         #print("P < 1/2 we classify probe as +1, otherwise −1")
 
     
-# classic_svm()
-# quantum_svm_direct_api()
+classic_svm()
+quantum_svm_direct_api()
 quantum_svm()

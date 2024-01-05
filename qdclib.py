@@ -31,14 +31,14 @@
 # *                                                                         *
 # ***************************************************************************/
 
-from ExceptionsClasses import *
+from exceptions_classes import *
 
 import matplotlib
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D, proj3d
 
 from sklearn.datasets import make_blobs
-from sklearn.cluster import KMeans
+#from sklearn.cluster import KMeans
 
 
 import numpy as np
@@ -592,7 +592,7 @@ def encode_probe_by_normalization( _qdX ):
     """
     nrm = np.linalg.norm( _qdX )
     _n_features = _qdX.shape[0]
-    x = np.zeros( shape=(_n_features,)  )
+    x = np.zeros( shape = (_n_features,), dtype=complex )
     for k in range(_n_features):
         x[k] = (1.0/nrm) * _qdX[k]
         
@@ -1043,13 +1043,13 @@ def gaussian_kernel( x0, x1, _sigma=0.5):
 def create_kernel_matrix_for_training_data( _qdX, _sigma, _n_samples ):
     
     K = np.zeros( (_n_samples + 1, _n_samples + 1), dtype=complex )
-    sigmaI = np.multiply( 1.0/_sigma, np.eye(_n_samples) )
+    sigmaI = np.multiply( 1.0/_sigma, np.eye(_n_samples), dtype=complex )
     
     gram_matrix = np.zeros( (_n_samples, _n_samples), dtype=complex )
     
     for i in range( _n_samples ):
         for j in range( _n_samples ):
-            gram_matrix[i,j] = np.dot( _qdX[i], _qdX[j] )
+            gram_matrix[i,j] = np.vdot( _qdX[i], _qdX[j] )
 
     K[0 , 1:] = 1.0
     K[1:, 0 ] = 1.0
@@ -1105,7 +1105,7 @@ def create_dot_ux_for_classification(_nu, _nx, _b, _alphas, _qdX, _probe_x, _n_s
     for idx in range(_n_samples):
         vx = _qdX[idx]
         va = _alphas[idx]
-        vsum=vsum + va * np.linalg.norm(vx) * norm_of_probe_x * np.dot(vx, _probe_x)
+        vsum=vsum + va * np.linalg.norm(vx) * norm_of_probe_x * np.vdot(vx, _probe_x)
     
     return ( 1.0/np.sqrt( _nx * _nu) ) * (_b + vsum)
 
@@ -1175,7 +1175,7 @@ class QuantumSVM:
 
             for d in _qdX:
                 q=encode_probe_by_normalization( d )
-                q_train_d = np.append(q_train_d, [[ q[0], q[1] ]], axis=0)
+                q_train_d = np.append(q_train_d, [ q ], axis=0)
 
             self.q_data_for_classification = q_train_d
             self.q_data_labels = _labels
@@ -1353,10 +1353,10 @@ class QuantumSVM:
 
     def quantum_predict( self, _qdX):
 
-        q_test_d = np.empty((0,2), dtype=complex)
+        q_test_d = np.empty((0, _qdX.shape[1]), dtype=complex)
         for d in _qdX:
             q = encode_probe_by_normalization( d )
-            q_test_d = np.append(q_test_d, [[ q[0], q[1] ]], axis=0)
+            q_test_d = np.append(q_test_d, [ q ], axis=0)
         
 
         labels=np.zeros( (q_test_d.shape[0],) )
@@ -3879,7 +3879,7 @@ def slerp(p0, p1, t):
     # p0,p1 to wektory to można sprawdzić
     # czy są tych samych wymiarów,
     # a jak nie, to wyjątkiem ;-) DimensionError, podobnie jak w EntDetectorze
-    omega = np.arccos(np.dot(p0/np.linalg.norm(p0), p1/np.linalg.norm(p1)))
+    omega = np.arccos(np.vdot(p0/np.linalg.norm(p0), p1/np.linalg.norm(p1)))
     so = np.sin(omega)
     
     return np.sin((1.0-t)*omega) / so * p0 + np.sin(t*omega)/so * p1
