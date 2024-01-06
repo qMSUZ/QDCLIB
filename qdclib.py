@@ -1043,13 +1043,14 @@ def gaussian_kernel( x0, x1, _sigma=0.5):
 def create_kernel_matrix_for_training_data( _qdX, _sigma, _n_samples ):
     
     K = np.zeros( (_n_samples + 1, _n_samples + 1), dtype=complex )
-    sigmaI = np.multiply( 1.0/_sigma, np.eye(_n_samples), dtype=complex )
+    sigmaI = np.multiply( 1.0 / _sigma, np.eye(_n_samples), dtype=complex )
     
     gram_matrix = np.zeros( (_n_samples, _n_samples), dtype=complex )
     
     for i in range( _n_samples ):
         for j in range( _n_samples ):
             gram_matrix[i,j] = np.vdot( _qdX[i], _qdX[j] )
+            # gram_matrix[i,j] = polynomial_kernel( _qdX[i], _qdX[j], 4.0 )
 
     K[0 , 1:] = 1.0
     K[1:, 0 ] = 1.0
@@ -1134,10 +1135,10 @@ class QuantumSVM:
         self._n_features = -1
         
         self._sigma = 0.5
-        self._degree = -1
+        self._degree = 3
         self._kernel = None
         self._kernel_type = LINEAR_KERNEL
-        self._value_of_c = None
+        self._value_of_c = 1.0
         self._show_progress = False
         self._absolute_tolerance = 1e-08
         self._relative_tolerance = 1e-08
@@ -1160,6 +1161,10 @@ class QuantumSVM:
     def reset( self ):
         pass
 
+
+    def set_sigma_val(self, _sigma_val):
+        self._sigma = _sigma_val
+        
     def set_data(self, _qdX, _labels, _is_it_quantum=False):
 
         self.data_labels = _labels                
@@ -1174,7 +1179,7 @@ class QuantumSVM:
             q_train_d = np.empty((0, self._n_features), dtype=complex)
 
             for d in _qdX:
-                q=encode_probe_by_normalization( d )
+                q = encode_probe_by_normalization( d )
                 q_train_d = np.append(q_train_d, [ q ], axis=0)
 
             self.q_data_for_classification = q_train_d
@@ -1229,8 +1234,8 @@ class QuantumSVM:
                 if self._kernel_type == GAUSSIAN_KERNEL:
                     gram_matrix[i, j] = gaussian_kernel(self.data_for_classification[i],
                                                         self.data_for_classification[j], 
-                                                        self._gamma)
-                    self._value_of_c = None
+                                                        self._sigma)
+                    self._value_of_c = 1.0
                 if self._kernel_type == POLYNOMIAL_KERNEL:
                     gram_matrix[i, j] = polynomial_kernel(self.data_for_classification[i],
                                                           self.data_for_classification[j], 
@@ -1333,7 +1338,7 @@ class QuantumSVM:
     def quantum_single_predict(self, _qdX):
         _label = 0
         _val = self.quantum_single_project( _qdX )
-        if _val<0.5:
+        if _val < 0.5:
             _label = +1.0
         else:
             _label = -1.0
