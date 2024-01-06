@@ -33,33 +33,63 @@
 
 
 import qdclib as qdcl
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
-import pandas as pd
+#import pandas as pd
 import numpy as np
 
 
 # data preparation
 
-centers=[[0,3],
-         [3,0]]
 
-line1x, line2x, label1, label2 = qdcl.create_data_separated_by_line ( _centers=centers )
+def data_set_seperated_by_line():
+    centers=[[0,3],
+             [3,0]]
+    
+    line1x, line2x, label1, label2 = qdcl.create_data_separated_by_line ( _centers=centers )
+    
+    train_d, train_labels, test_d, test_labels = qdcl.split_data_and_labels(line1x, label1, line2x, label2, 0.30)
+    
+    n_samples = train_d.shape[0]
+    n_samples_test = test_d.shape[0]
+    
+    # unused variables removing
+    del( centers )
+    del( line1x, line2x, label1, label2 )
+    
+    return n_samples, train_d, train_labels, n_samples_test, test_d, test_labels
 
-train_d, train_labels, test_d, test_labels = qdcl.split_data_and_labels(line1x, label1, line2x, label2, 0.30)
+def data_set_non_linearly_separable():
+    
+    n_samples = 100
+    n_samples_test = 30
+     
+    train_d, train_labels = qdcl.create_data_non_line_separated_four_lines( n_samples )
 
-n_samples = train_d.shape[0]
-n_samples_test = test_d.shape[0]
-
-# unused variables removing
-del( centers )
-del( line1x, line2x, label1, label2 )
+    limits_line_data = [ np.min(train_d[:,0]), np.max(train_d[:,0]), np.min(train_d[:,1]), np.max(train_d[:,1]) ]
+    limits_line_data = [ v * 1.25 for v in limits_line_data ]
+    
+    test_d, test_labels =  qdcl.create_data_non_line_separated_four_lines( n_samples_test)
+    
+    return n_samples, train_d, train_labels, n_samples_test, test_d, test_labels
+    
 
 # classic SVM with QuantumSVM class
 
-def classic_svm():
+def classic_svm( n_samples, train_d, train_labels, n_samples_test, test_d, test_labels ):
+    
     objsvm=qdcl.QuantumSVM()
     objsvm.set_data(train_d, train_labels)
+    
+    # objsvm.set_type_kernel( qdcl.LINEAR_KERNEL )
+    # objsvm.set_kernel( qdcl.linear_kernel ) 
+    
+    objsvm.set_type_kernel( qdcl.GAUSSIAN_KERNEL)
+    objsvm.set_kernel( qdcl.gaussian_kernel ) 
+
+    # objsvm.set_type_kernel( qdcl.POLYNOMIAL_KERNEL)
+    # objsvm.set_kernel( qdcl.polynomial_kernel ) 
+    
     objsvm.classic_fit()
     labels_predict = objsvm.classic_predict( test_d )
 
@@ -69,7 +99,7 @@ def classic_svm():
 
 # Quantum version of SVM with QuantumSVM class
 
-def quantum_svm_direct_api():
+def quantum_svm_direct_api( n_samples, train_d, train_labels, n_samples_test, test_d, test_labels ):
     
     q_train_d = np.empty((0,2), dtype=complex)
     for d in train_d:
@@ -109,7 +139,7 @@ def quantum_svm_direct_api():
         print("P=",P," Label = ", 1.0 if P <= 0.5 else -1.0, "org label", test_labels[idx])
         #print("P < 1/2 we classify probe as +1, otherwise −1")
     
-def quantum_svm():
+def quantum_svm( n_samples, train_d, train_labels, n_samples_test, test_d, test_labels ):
     objsvm=qdcl.QuantumSVM()
     objsvm.set_data(train_d, train_labels, _is_it_quantum=True)
     objsvm.prepare_quantum_objects()
@@ -126,7 +156,11 @@ def quantum_svm():
         print("idx=",idx," Label = ", labels_predict[idx], "org label", test_labels[idx])
         #print("P < 1/2 we classify probe as +1, otherwise −1")
 
-    
-classic_svm()
-quantum_svm_direct_api()
-quantum_svm()
+if __name__=="__main__":
+
+    n_samples, train_d, train_labels, n_samples_test, test_d, test_labels = data_set_seperated_by_line()
+    # n_samples, train_d, train_labels, n_samples_test, test_d, test_labels = data_set_non_linearly_separable()
+        
+    classic_svm( n_samples, train_d, train_labels, n_samples_test, test_d, test_labels )
+    quantum_svm_direct_api( n_samples, train_d, train_labels, n_samples_test, test_d, test_labels )
+    quantum_svm( n_samples, train_d, train_labels, n_samples_test, test_d, test_labels )
