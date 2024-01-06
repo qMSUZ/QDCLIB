@@ -1159,6 +1159,23 @@ def create_random_2qubit_pure_state():
 
 
 #
+# TO DOC GEN
+#
+# (4) new function to create quantum states
+def create_random_2qubit_separable_pure_state():
+    _tab=np.ndarray(shape=(4),dtype=complex)
+    
+    _s1=create_random_1qubit_pure_state()
+    _s2=create_random_1qubit_pure_state()
+    
+    _tab[0]=_s1[0]*_s2[0]
+    _tab[1]=_s1[0]*_s2[1]
+    _tab[2]=_s1[1]*_s2[0]
+    _tab[3]=_s1[1]*_s2[1]
+    
+    return _tab
+
+#
 #
 #
 
