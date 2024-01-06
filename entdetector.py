@@ -353,7 +353,10 @@ def create_qutrit_plus_state():
     v[2] = 1.0/np.sqrt(3.0)
     return v
 
-def create_qubit_bell_state(minus=0):
+#
+# docs to update
+#
+def create_qubit_bell_state(minus=0, form=0):
     """
         Create a qubit bell state
 
@@ -380,14 +383,27 @@ def create_qubit_bell_state(minus=0):
         [0.70710678  0.          0.         -0.70710678]
 
     """
-    d = 2
-    n = 2
-    v = np.zeros(d ** n)
-    v[0] = 1.0 / np.sqrt(2)
-    if minus == 1:
-        v[(d ** n) - 1] = -1.0 / np.sqrt(2)
-    else:
-        v[(d ** n) - 1] =  1.0 / np.sqrt(2)
+    if form==0:
+        d = 2
+        n = 2
+        v = np.zeros(d ** n)
+        v[0] = 1.0 / np.sqrt(2)
+        if minus == 1:
+            v[(d ** n) - 1] = -1.0 / np.sqrt(2)
+        else:
+            v[(d ** n) - 1] =  1.0 / np.sqrt(2)
+
+    if form==1:
+        d = 2
+        n = 2
+        v = np.zeros(d ** n)
+        v[1] = 1.0 / np.sqrt(2)
+        if minus == 1:
+            v[2] = -1.0 / np.sqrt(2)
+        else:
+            v[2] =  1.0 / np.sqrt(2)
+
+                
     return v
 
 #
