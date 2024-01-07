@@ -3484,12 +3484,39 @@ def data_vertical_stack(d1, d2):
     """
     return np.vstack( (d1,d2) )
 
-#
-# TO DESC
-#
 def data_horizontal_stack(d1, d2):
-    return np.hstack( (d1,d2) )
+    """
+    Uses numpy.hstack function. Stacks two arrays into one horizontally (column 
+    wise).
 
+    Parameters
+    ----------
+    d1, d2 : numpy arrays
+        Two one-dimensional arrays with an arbitrary number of columns or the
+        arrays may have more dimensions but then they have to be of the same 
+        dimensions.
+
+    Returns
+    -------
+    numpy array
+        An array combining arrays given as this function's parameters.
+        
+    Examples
+    --------
+    Joining one-dimensional arrays:
+    >>> a = np.array([0, 1, 2])
+    >>> b = np.array([3, 1])
+    >>> qdcl.data_horizontal_stack(a,b)
+    [0 1 2 3 1]
+    Joining two-dimensional arrays:
+    >>> a = np.array([[1,0,2],[0,0,1]])
+    >>> b = np.array([[1,0,1],[2,0,1]])
+    >>> qdcl.data_horizontal_stack(a,b)
+    [[1 0 2 1 0 1]
+     [0 0 1 2 0 1]]
+    
+    """
+    return np.hstack( (d1,d2) )
 
 def create_blob_2d( _n_samples = 100, _center=None):
     """
