@@ -3665,12 +3665,36 @@ def create_data_non_line_separated_four_lines( _n_samples = 50, _centers=None ):
 
     return line_data, line_labels
 
-# add labels 
-#
-# TO DESC
-#
 def create_data_separated_by_line( _n_samples = 100, _centers=None ):        
+    """
+    Uses numpy.random.multivariate_normal function to generate two clusters 
+    with linearly separable points.
+
+    Parameters
+    ----------
+    _n_samples : integer, optional
+        The number of samples in each cluster. The default value is 100.
+    _center : numpy array, optional
+        An array pointing out the centers around which points will be generated. 
+        The default values are np.array([0, 3]) and np.array([3, 0]).
+
+    Returns
+    -------
+    tuple of four numpy arrays
+        Contains: d1 (points of the first cluster), d2 (points of the second 
+        cluster), labels_d1 (labels of points from the first cluster), and 
+        labels_d2 (labels of points from the second cluster).
+        
+    Example
+    -------
+    Creation of two linearly separable clusters (labels: 1, -1) - each 
+    cluster consists of two 2-dimensional points:
+    >>> qdcl.create_data_separated_by_line(2)
+    (array([[-0.26836723,  3.75937596],
+           [ 0.16146226,  2.95330434]]), array([[ 0.66130665, -1.44877126],
+           [ 3.40086471,  0.94903007]]), array([1., 1.]), array([-1., -1.]))
     
+    """
     if _centers == None:
         mean_for_d1 = np.array([0, 3])
         mean_for_d2 = np.array([3, 0])
