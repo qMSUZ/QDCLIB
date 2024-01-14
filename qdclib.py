@@ -3674,9 +3674,10 @@ def create_data_separated_by_line( _n_samples = 100, _centers=None ):
     ----------
     _n_samples : integer, optional
         The number of samples in each cluster. The default value is 100.
-    _center : numpy array, optional
-        An array pointing out the centers around which points will be generated. 
-        The default values are np.array([0, 3]) and np.array([3, 0]).
+    _centers : list, optional
+        A list of two lists (e.g. [[1,2],[2,1]]) pointing out the centers 
+        around which points will be generated. 
+        The default value is [[0,3],[3,0]].
 
     Returns
     -------
