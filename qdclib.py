@@ -781,7 +781,7 @@ class BlochVisualization:
             qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
             
             # change sign for x coords
-            xcoord = - np.trace( _internal_pauli_x() @ qstateden )
+            xcoord =   np.trace( _internal_pauli_x() @ qstateden )
             ycoord =   np.trace( _internal_pauli_y() @ qstateden )
             zcoord =   np.trace( _internal_pauli_z() @ qstateden )
         
@@ -797,7 +797,7 @@ class BlochVisualization:
             qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
             
             # change sign for x coords
-            xcoord = - np.trace( _internal_pauli_x() @ qstateden )
+            xcoord =   np.trace( _internal_pauli_x() @ qstateden )
             ycoord =   np.trace( _internal_pauli_y() @ qstateden )
             zcoord =   np.trace( _internal_pauli_z() @ qstateden )
         
@@ -811,7 +811,23 @@ class BlochVisualization:
         self.additional_states = [ ]
 
     def add_pure_states(self, _states=None, _color=None, _marker=None):
-        pass
+        ptns = np.empty((0,3))
+
+        for qstate in _states:
+            qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
+            
+            # change sign for x coords
+            xcoord =   np.trace( _internal_pauli_x() @ qstateden )
+            ycoord =   np.trace( _internal_pauli_y() @ qstateden )
+            zcoord =   np.trace( _internal_pauli_z() @ qstateden )
+        
+            ptns = np.append( ptns, [[ xcoord, ycoord, zcoord]], axis=0)  # for state
+    
+        if _color is not None:
+            self.point_color=_color
+            self.add_points( ptns, _color )
+        else:
+            self.add_points( ptns )
     
     def render_hemisphere(self):
         self.axes.plot_surface(
