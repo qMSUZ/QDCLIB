@@ -917,9 +917,6 @@ class BlochVisualization:
         self.axes.text(0, 0, self.zlabelpos[1], self.zlabel[1], **common_opts)
     
     def render_points( self ):
-        # warning: ?axis needs reorganisation?
-        if  self.additional_points == []:
-            return
         
         if self.draw_mode == POINTS_DRAW:
             self.axes.scatter(
@@ -3438,7 +3435,7 @@ def create_zero_vector( _n_dim=3 ):
     --------
     """
     
-    _vector_zero = np.zeros( (_n_dim), dtype=np.complex )
+    _vector_zero = np.zeros( (_n_dim), dtype=complex )
     
     return _vector_zero
 
@@ -3462,7 +3459,7 @@ def create_one_vector( _axis=0, _n_dim=3 ):
 
     """
     
-    _vector_one = np.zeros( (_n_dim), dtype=np.complex )
+    _vector_one = np.zeros( (_n_dim), dtype=complex )
     _vector_one[ _axis ] = 1.0  
     
     return _vector_one
