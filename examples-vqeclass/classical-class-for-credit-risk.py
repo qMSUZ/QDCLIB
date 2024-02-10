@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-
 #/***************************************************************************
-# *   Copyright (C) 2020 -- 2022 by Marek Sawerwain                         *
+# *   Copyright (C) 2022 -- 2024 by Marek Sawerwain                         *
 # *                                  <M.Sawerwain@gmail.com>                *
 # *                                  <M.Sawerwain@issi.uz.zgora.pl>         *
 # *                                                                         *
@@ -11,8 +10,8 @@
 # *                                  <Joanna.Wisniewska@wat.edu.pl>         *
 # *                                                                         *
 # *                                                                         *
-# *   Part of the VQEClassification:                                              *
-# *         https://github.com/qMSUZ/VQEClassification                            *
+# *   Part of the VQEClassification for QDCL                                *
+# *         https://github.com/qMSUZ/VQEClassification                      *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU General Public License as published by  *
@@ -35,8 +34,9 @@ import numpy as np
 
 import pandas as pd
 
-from sympy import sqrt, I
-#import pickle
+from sympy import sqrt
+#from sympy import I
+
 
 import matplotlib.pyplot as plt
 
@@ -70,7 +70,7 @@ def read_data():
     #jest 7 zmiennych decyzyjnych - 4 calkowite (1-4) + 3 binarne (5-7)
     #zadanie klasyfikacji 2-wartosciowej
     #df = pd.read_excel (r'C:\Users\Ron\Desktop\Product List.xlsx') #place "r" before the path string to address special character, such as '\'. Don't forget to put the file name at the end of the path + '.xlsx'
-    df = pd.read_excel (r'ZbiorUczacy_8zm.xlsx')
+    df = pd.read_excel (r'train-data-v0.xlsx')
     #df = pd.read_excel (r'train-data.xlsx')
     #print (df)
     
