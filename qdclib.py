@@ -330,6 +330,7 @@ def convert_qubit_pure_state_to_bloch_vector( qstate ):
     -------
     numpy array
         The Bloch vector representation of a given 1-qubit state.
+
     Examples
     --------
     >>> print(qdcl.convert_qubit_pure_state_to_bloch_vector( np.array( [1,0] )))
@@ -5129,7 +5130,7 @@ def create_initial_centroids(_qdX, _n_samples, _n_clusters):
     return _local_ck
     
     
-def get_indices_for_cluster_k(_ck, _k):
+def get_indices_for_cluster_k( _ck, _k ):
     """
     Calculates the coordinates of points belonging to the class _k.
 
