@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #/***************************************************************************
-# *   Copyright (C) 2022 -- 2024 by Marek Sawerwain                         *
+# *   Copyright (C) 2020 -- 2024 by Marek Sawerwain                         *
 # *                                  <M.Sawerwain@gmail.com>                *
 # *                                  <M.Sawerwain@issi.uz.zgora.pl>         *
 # *                                                                         *
