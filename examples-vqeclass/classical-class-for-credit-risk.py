@@ -10,8 +10,10 @@
 # *                                  <Joanna.Wisniewska@wat.edu.pl>         *
 # *                                                                         *
 # *                                                                         *
-# *   Part of the VQEClassification for QDCL                                *
-# *         https://github.com/qMSUZ/VQEClassification                      *
+# *   Part of the of QDCL the credit sales classification example --        *
+# *      classical approach                                                 *
+# *                                                                         *
+# *         https://github.com/qMSUZ/QDCLIB                                 *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU General Public License as published by  *
