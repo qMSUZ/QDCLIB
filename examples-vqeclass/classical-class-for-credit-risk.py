@@ -143,6 +143,12 @@ def read_data():
 print("read data")
 df, Q, Q0, Q1 = read_data()
 
+# Pearson Correlation Coefficient  (PCC)
+pcc_rho = np.corrcoef( Q[:,0:7].transpose() )
+
+print("Pearson Correlation Coefficients")
+print(pcc_rho)
+
 pca = decomposition.PCA(n_components=2)
 Q0_r = pca.fit(Q0).transform(Q0)
 Q1_r = pca.fit(Q1).transform(Q1)
