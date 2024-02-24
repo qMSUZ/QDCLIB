@@ -33,7 +33,7 @@
 
 
 import numpy as np
-
+import seaborn as sns
 import pandas as pd
 
 from sympy import sqrt
@@ -56,28 +56,21 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 
 from sklearn import decomposition
+from sklearn.preprocessing import MinMaxScaler
 
-
-# def get_var_form(params):
-#     qr = QuantumRegister(1, name="q")
-#     cr = ClassicalRegister(1, name='c')
-#     qc = QuantumCircuit(qr, cr)
-#     qc.u(params[0], params[1], params[2], qr[0])
-#     qc.measure(qr, cr[0])
-#     return qc
-
+# we hide RuntimeWarning for cleanout text output
+import warnings
+warnings.filterwarnings("ignore", category=RuntimeWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 def read_data():
-    #wczytanie danych z arkusza
-    #jest 7 zmiennych decyzyjnych - 4 calkowite (1-4) + 3 binarne (5-7)
-    #zadanie klasyfikacji 2-wartosciowej
-    #df = pd.read_excel (r'C:\Users\Ron\Desktop\Product List.xlsx') #place "r" before the path string to address special character, such as '\'. Don't forget to put the file name at the end of the path + '.xlsx'
+    # wczytanie danych z arkusza
+    # jest 7 zmiennych decyzyjnych - 4 calkowite (1-4) + 3 binarne (5-7)
+    # zadanie klasyfikacji 2-wartosciowej
     df = pd.read_excel (r'train-data-v0.xlsx')
-    #df = pd.read_excel (r'train-data.xlsx')
-    #print (df)
     
-    #normalizacja klasyczna
-    #zmienne x1..x4
+    # normalizacja klasyczna
+    # zmienne x1..x4
     j=1
     K=np.ndarray(shape=(80,8))
     while(j<5):
@@ -108,7 +101,6 @@ def read_data():
         K[i,5]=x6_pom[i]
         K[i,6]=x7_pom[i]
         K[i,7]=x8_pom[i]
-    #print(K)
     
     #normalizacja kwantowa - dane do tablicy numpy-owej Q
     Q=np.ndarray(shape=(80,8))
@@ -120,13 +112,10 @@ def read_data():
             sum_all+=K[i,j]
         for j in range(8):
             Q[i,j]=sqrt(K[i,j]/sum_all)
-    #print(Q)  
-    #spr
     for i in range(80):
         suma=0
         for j in range(8):
             suma+=Q[i,j]*Q[i,j]
-        #print(suma)
     for i in range(80):  
         if df.Y[i] == 0:
             Q0=np.vstack((Q0, Q[i]));
@@ -139,27 +128,6 @@ def read_data():
     return df, Q, Q0, Q1
 
 
-
-print("read data")
-df, Q, Q0, Q1 = read_data()
-
-# Pearson Correlation Coefficient  (PCC)
-pcc_rho = np.corrcoef( Q[:,0:7].transpose() )
-
-print("Pearson Correlation Coefficients")
-print(pcc_rho)
-
-pca = decomposition.PCA(n_components=2)
-Q0_r = pca.fit(Q0).transform(Q0)
-Q1_r = pca.fit(Q1).transform(Q1)
-
-plt.figure()
-plt.scatter(Q0_r[:, 0], Q0_r[:, 1], color="blue")
-plt.scatter(Q1_r[:, 0], Q1_r[:, 1], color="red")
-plt.title("PCA")
-plt.show()
-#plt.savefig("pca-figure.png")
-            
 def perform_SVC(t_kernel):
     C = 10
     #n_features = 8
@@ -235,6 +203,44 @@ def perform_QuadraticDiscriminantAnalysis():
     accuracy = accuracy_score(df.Y, y_pred)
     print("QuadraticDiscriminantAnalysis")
     print("Accuracy (train) for %s: %0.1f%% " % ("QuadraticDiscriminantAnalysis", accuracy * 100))
+
+
+def pca_figure():
+    pca = decomposition.PCA(n_components=2)
+    Q0_r = pca.fit(Q0).transform(Q0)
+    Q1_r = pca.fit(Q1).transform(Q1)
+    
+    plt.figure()
+    plt.scatter(Q0_r[:, 0], Q0_r[:, 1], color="blue")
+    plt.scatter(Q1_r[:, 0], Q1_r[:, 1], color="red")
+    plt.title("PCA")
+    plt.savefig("pca-figure.png")
+    plt.savefig("pca-figure.eps") 
+
+
+def data_analysis_figure():
+    features = Q
+    features = MinMaxScaler().fit_transform(features)
+    
+    df2 = pd.DataFrame(Q, columns=df.columns[0:8])
+    df2["class"] = pd.Series(df.Y)
+    
+    plt2 = sns.pairplot(df2, hue="class", palette="tab10")
+    plt2.savefig("data-analysis.png")
+    plt2.savefig("data-analysis.eps") 
+
+
+print("read data")
+df, Q, Q0, Q1 = read_data()
+
+# Pearson Correlation Coefficient  (PCC)
+pcc_rho = np.corrcoef( Q[:,0:7].transpose() )
+
+print("Pearson Correlation Coefficients")
+print(pcc_rho)
+
+pca_figure()
+data_analysis_figure()
 
 
 perform_SVC("sigmoid")
