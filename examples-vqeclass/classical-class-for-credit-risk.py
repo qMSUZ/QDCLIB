@@ -64,13 +64,13 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 def read_data():
-    # wczytanie danych z arkusza
-    # jest 7 zmiennych decyzyjnych - 4 calkowite (1-4) + 3 binarne (5-7)
-    # zadanie klasyfikacji 2-wartosciowej
+    # data read-in
+    # 7 decision variables - 4 integers (1-4) + 3 Boolean (5-7)
+    # 2-valued classification task
     df = pd.read_excel (r'train-data-v0.xlsx')
     
-    # normalizacja klasyczna
-    # zmienne x1..x4
+    # classical normalization
+    # variables x1..x4
     j=1
     K=np.ndarray(shape=(80,8))
     while(j<5):
@@ -82,16 +82,12 @@ def read_data():
                 min1=x_pom[i]
             if x_pom[i] > max1:
                 max1=x_pom[i]
-        # print('Wartosc najmniejsza dla ' +str(j)+' wspolrzednej:')
-        # print(min1)
-        # print('Wartosc najwieksza dla ' +str(j)+' wspolrzednej:')
-        # print(max1)
         zakres=max1-min1
-        #dane znormalizowane beda w tablicy numpy-owej K
+        #normalized data will be saved in "K" numpy array
         for i in range(80):
             K[i,(j-1)]=(x_pom[i]-min1)/zakres
         j+=1
-    #dodaje dane binarne (x5..x8) do tablicy K, zeby miec wszystko w jednym miejscu
+    #altering array "K" with columns x5..x8 (Boolean variables)
     x5_pom=df["X5"]
     x6_pom=df["X6"]
     x7_pom=df["X7"]
@@ -102,7 +98,7 @@ def read_data():
         K[i,6]=x7_pom[i]
         K[i,7]=x8_pom[i]
     
-    #normalizacja kwantowa - dane do tablicy numpy-owej Q
+    #quantum normalizetion - data saved in "Q" numpy array
     Q=np.ndarray(shape=(80,8))
     Q0=np.ndarray(shape=(1,8))
     Q1=np.ndarray(shape=(1,8))
