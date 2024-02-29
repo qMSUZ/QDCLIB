@@ -39,6 +39,11 @@ import numpy as np
 from sklearn import datasets
 
 
+
+#
+# cleanup in progress ...
+#
+
 b = qdcl.BlochVisualization()
 #b.set_view(-20, 15)
 b.set_title("Bloch Vector Points")
