@@ -1,4 +1,6 @@
 
+*.eps
+*.png
 *.npy
 *.pyc
 .ipynb_checkpoints/basic-kmeans-1-checkpoint.ipynb
