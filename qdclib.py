@@ -61,37 +61,37 @@ import datasets
 
 
 
-CUSTOM_DISTANCE    =  999
-COSINE_DISTANCE    = 1000
-DOT_DISTANCE       = 1001
-FIDELITY_DISTANCE  = 1002
-TRACE_DISTANCE     = 1003
-MANHATTAN_DISTANCE = 1004
-BURES_DISTANCE     = 1005
-HS_DISTANCE        = 1006
-P_CQA_DISTANCE     = 1007
-P_CQB_DISTANCE     = 1008
-SWAP_TEST_DISTANCE = 1009
+CUSTOM_DISTANCE    = 0x1000
+COSINE_DISTANCE    = 0x1001
+DOT_DISTANCE       = 0x1002
+FIDELITY_DISTANCE  = 0x1003
+TRACE_DISTANCE     = 0x1004
+MANHATTAN_DISTANCE = 0x1005
+BURES_DISTANCE     = 0x1006
+HS_DISTANCE        = 0x1007
+P_CQA_DISTANCE     = 0x1008
+P_CQB_DISTANCE     = 0x1009
+SWAP_TEST_DISTANCE = 0x100A
 
-EUCLIDEAN_DISTANCE_WITH_SQRT    = 1010
-EUCLIDEAN_DISTANCE_WITHOUT_SQRT = 1011
+EUCLIDEAN_DISTANCE_WITH_SQRT    = 0x100B
+EUCLIDEAN_DISTANCE_WITHOUT_SQRT = 0x100C
 
-POINTS_DRAW        = 2000
-LINES_DRAW         = 2001
+POINTS_DRAW        = 0x2000
+LINES_DRAW         = 0x2001
 
-POINTS_MULTI_BATCH_DRAW   = 3000
-LINES_MULTI_BATCH_DRAW    = 3001
-VECTORS_SINGLE_BATCH_DRAW = 3002
-VECTORS_MULTI_BATCH_DRAW  = 3003
+POINTS_MULTI_BATCH_DRAW   = 0x3000
+LINES_MULTI_BATCH_DRAW    = 0x3001
+VECTORS_SINGLE_BATCH_DRAW = 0x3002
+VECTORS_MULTI_BATCH_DRAW  = 0x3003
 
-LINEAR_KERNEL     = 4000
-POLYNOMIAL_KERNEL = 4001
-GAUSSIAN_KERNEL   = 4002
+LINEAR_KERNEL     = 0x4000
+POLYNOMIAL_KERNEL = 0x4001
+GAUSSIAN_KERNEL   = 0x4002
 
-OPT_COBYLA = 5000
-OPT_SPSA   = 5001
-OPT_SLSQP  = 5002
-OPT_POWELL = 5003
+OPT_COBYLA = 0x5000
+OPT_SPSA   = 0x5001
+OPT_SLSQP  = 0x5002
+OPT_POWELL = 0x5003
 
 QDCL_SEED = 1234
 
@@ -522,9 +522,9 @@ def convert_bloch_vector_to_pure_state( _x, _y, _z ):
     return pure_state_qubit
 
 
-def stereographic_projection_to_two_component_vector( _x, _y, _z ):
+def stereographic_projection_of_three_component_vector_to_two_component_vector( _x, _y, _z ):
     """
-    The stereographic projection of a Bloch vector to two-element vector.
+    The stereographic projection of a three component vector to two-element vector.
 
     Parameters
     ----------
@@ -538,11 +538,15 @@ def stereographic_projection_to_two_component_vector( _x, _y, _z ):
     Returns
     -------
     two_component_vector : numpy vector
-        The 1-qubit pure state vector.
+        The two component vector which maps (x,y,z) coords on the plane (x,y).
         
-    Examples
+    Example
     --------
-    >>> ...
+    >>> import qdcl
+    >>> v = np.array( [-0.57922797,  0.40557979,  0.70710678] )
+    >>> v2 = qdcl.stereographic_projection_of_three_component_vector_to_two_component_vector(v[0], v[1], v[2])
+    >>> print(v2)
+        [-1.97760798+0.j  1.38473601+0.j]
     """
     two_component_vector = create_zero_vector( 2 )
     
@@ -551,6 +555,21 @@ def stereographic_projection_to_two_component_vector( _x, _y, _z ):
     
     return two_component_vector
     
+#
+# TO DESC
+#
+def two_component_vector_convert_by_inverse_stereographic_projection( _x, _y ):
+
+    three_component_vector = create_zero_vector( 3 )
+    
+    denumval = 1.0 + (_x * _x) + (_y * _y)
+    
+    three_component_vector[0] = ( 2 * _x ) / ( denumval )
+    three_component_vector[1] = ( 2 * _y ) / ( denumval )
+    three_component_vector[2] = ( -1 + (_x * _x) + (_y * _y) ) / ( denumval )
+    
+    return three_component_vector
+
 #
 # TO DESC
 #
@@ -817,18 +836,18 @@ class BlochVisualization:
         for qstate in _states:
             qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
             
-            # change sign for x coords
-            xcoord =   np.trace( _internal_pauli_x() @ qstateden )
-            ycoord =   np.trace( _internal_pauli_y() @ qstateden )
-            zcoord =   np.trace( _internal_pauli_z() @ qstateden )
+            # ??change sign for x coords??
+            xcoord = np.trace( _internal_pauli_x() @ qstateden )
+            ycoord = np.trace( _internal_pauli_y() @ qstateden )
+            zcoord = np.trace( _internal_pauli_z() @ qstateden )
         
             ptns = np.append( ptns, [[ xcoord, ycoord, zcoord]], axis=0)  # for state
     
         if _color is not None:
             self.point_color=_color
-            self.add_points( ptns, _color )
+            self.add_points( ptns, _color, _marker )
         else:
-            self.add_points( ptns )
+            self.add_points( ptns, None, _marker )
     
     def render_hemisphere(self):
         self.axes.plot_surface(
@@ -917,6 +936,26 @@ class BlochVisualization:
         self.axes.text(0, 0, self.zlabelpos[0], self.zlabel[0], **common_opts)
         self.axes.text(0, 0, self.zlabelpos[1], self.zlabel[1], **common_opts)
     
+    def render_labels_for_points( self ):
+        common_opts = { "fontsize" : self.main_font_size,
+                        "color" : self.main_font_color,
+                        "horizontalalignment" : "center",
+                        "verticalalignment" : "center" }
+
+        # if self.draw_mode == POINTS_DRAW:
+        #     self.axes.text(np.real(self.additional_points[0,1])-0.2, 
+        #                np.real(self.additional_points[0,0]), 
+        #                np.real(self.additional_points[0,2]), 
+        #                "q0", **common_opts)
+
+        # if self.draw_mode == POINTS_MULTI_BATCH_DRAW:
+        #     t,(c,m) = self.additional_points[0]
+        #     self.axes.text(np.real(t[0,1])-0.2, 
+        #                np.real(t[0,0]), 
+        #                np.real(t[0,2]), 
+        #                "q0", **common_opts)
+
+    
     def render_points( self ):
         
         if self.draw_mode == POINTS_DRAW:
@@ -945,10 +984,11 @@ class BlochVisualization:
                     color=c,
                     marker=m,
                 )
+
                 
     def render_vectors( self ):
-        if self.additional_vectors == []:
-            return        
+        #if self.additional_vectors == []:
+        #    return        
         if self.vector_draw_mode == VECTORS_SINGLE_BATCH_DRAW:
             for idx in range(self.additional_vectors.shape[0]):
                 self.axes.quiver(
@@ -1013,6 +1053,8 @@ class BlochVisualization:
 
         self.render_points()
         self.render_vectors()
+
+        self.render_labels_for_points()
 
         self.render_equator_and_parallel()
 
@@ -3878,10 +3920,10 @@ def create_focused_circle_probes_with_uniform_placed_centers( _n_points, _n_focu
 #
 def create_focused_qubits_probes( _n_points, _n_focus_points, _width_of_cluster=0.25 ):
     
-    d, _ = make_blobs( n_samples=_n_points,
-                       n_features=3,
+    d, _ = make_blobs( n_samples = _n_points,
+                       n_features = 3,
                        centers = _n_focus_points,
-                       cluster_std=_width_of_cluster )
+                       cluster_std = _width_of_cluster )
 
     for i in range(_n_points):
         d[i] = d[i] / np.linalg.norm(d[i])
