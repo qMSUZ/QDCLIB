@@ -555,10 +555,31 @@ def stereographic_projection_of_three_component_vector_to_two_component_vector( 
     
     return two_component_vector
     
-#
-# TO DESC
-#
+
 def two_component_vector_convert_by_inverse_stereographic_projection( _x, _y ):
+    """
+    The inversion of a two-element vector to the stereographic projection.
+
+    Parameters
+    ----------
+    _x : float
+        The coordinate with a respect to the x-axis.
+    _y : float
+        The coordinate with a respect to the y-axis.
+
+    Returns
+    -------
+    three_component_vector : numpy vector
+        The coordinates of a quantum state on the Bloch sphere.
+        
+    Examples
+    --------
+    >>> import qdcl
+    >>> v = np.array( [-0.57922797,  0.4055643] )
+    >>> v2 = qdcl.two_component_vector_convert_by_inverse_stereographic_projection(v[0], v[1])
+    >>> print(v2)
+        [-0.77231043+0.j  0.54075693+0.j -0.3333445 +0.j]
+    """
 
     three_component_vector = create_zero_vector( 3 )
     
