@@ -759,22 +759,25 @@ class BlochVisualization:
     def enable_multi_batch_draw( self ):
         self.draw_mode = POINTS_MULTI_BATCH_DRAW
 
-    def set_points(self, _points=None):
+    def set_points(self, _points=None, _color=None, _marker=None):
         self.enable_single_batch_draw()
-        self.additional_points = _points.copy()
+        self.additional_points = [ ]
         
-        for row in range(0, self.additional_points.shape[0]):
+        cp_points = _points.copy()
+        
+        for row in range(0, cp_points.shape[0]):
             # normalization points
-            self.additional_points[row] /= np.linalg.norm(self.additional_points[row])
-            self.additional_points[row] *= (self.radius + 0.01)
+            cp_points[row] /= np.linalg.norm( cp_points[row] )
+            cp_points[row] *= (self.radius + 0.01)
             
-        # rescale to radius r
+        self.additional_points.append( [ cp_points, (_color, _marker) ] )
        
     def clear_points(self):
         self.additional_points = [ ]
 
     def add_points(self, _points=None, _color=None, _marker=None):
         self.draw_mode = POINTS_MULTI_BATCH_DRAW
+        
         cp_points = _points.copy()
         
         for row in range(0, cp_points.shape[0]):

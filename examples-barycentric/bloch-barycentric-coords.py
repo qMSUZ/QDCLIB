@@ -36,7 +36,7 @@ import qdclib as qdcl
 import numpy as np
 
 #from sklearn import decomposition
-#from sklearn import datasets
+from sklearn import datasets
 
 
 
@@ -115,66 +115,43 @@ def basic_example():
 
 
 def simple_blobs_example():
-    pass
+
+    n_samples = 20
+    n_clusters = 2
+   
+    centers = [ (1.0,  0.0), (0.0, 1.0) ]
+    
+    d = qdcl.create_focused_qubits_probes_with_uniform_placed_centers(n_samples, 2, 2, 0.15)
+    
+    labels, centroids = qdcl.quantum_kmeans( d, n_samples, n_clusters, 128, qdcl.cosine_distance )
+    
+    dnrm_set1 = d[ labels == 0]
+    dnrm_set2 = d[ labels == 1]   
+    
+    b = qdcl.BlochVisualization()
+    
+    b.set_title("Quantum States for two blobs")
+    
+    b.clear_points()
+    b.clear_vectors()
+    b.enable_single_batch_draw()
+    
+    b.set_points( dnrm_set1, "green", "*" )
+    b.add_points( dnrm_set2, "green", "*" )
+    b.add_points( centroids, "red", "^" )
+    
+    f=b.make_figure()
+    f.show()
+    f.savefig("simple-blobs.png")
 
 def iris_set_example():
     pass
 
 
 
-basic_example()
+#basic_example()
+simple_blobs_example()
 
-
-# #
-# # simple blobs
-# #
-
-# n_samples = 20
-# n_clusters = 2
-   
-# centers = [ (1.0,  0.0), (0.0, 1.0) ]
-
-# #d = qdcl.create_blob_2d( n_samples, centers )
-# # d, org_labels = datasets.make_blobs( n_samples=n_samples, 
-# #                                       centers=centers, 
-# #                                       cluster_std=0.10, 
-# #                                       shuffle=False, 
-# #                                       random_state=1234 )
-
-# d = qdcl.create_focused_qubits_probes_with_uniform_placed_centers(n_samples, 2, 2, 0.15)
-
-# #dnrm = qdcl.encode_probes_by_normalization(d)
-# dnrm=d
-
-# labels, centroids = qdcl.quantum_kmeans( dnrm, n_samples, n_clusters, 128, qdcl.cosine_distance )
-
-# dnrm_set1 = dnrm[0:10]
-# dnrm_set2 = dnrm[10:20]
-
-# #f = qdcl.create_circle_plot_for_2d_data( dnrm )
-# #f = qdcl.create_circle_plot_for_2d_data( dnrm_set1 )
-# #f = qdcl.create_circle_plot_for_2d_data( dnrm_set2 )
-
-# b = qdcl.BlochVisualization()
-# #b.set_view(-20, 15)
-
-# b.set_title("Quantum States for two blobs")
-
-# b.clear_points()
-# b.clear_vectors()
-# b.enable_single_batch_draw()
-# #b.enable_single_batch_draw()
-
-# b.set_points( d )
-# #b.set_points( centroids )
-# b.enable_single_batch_draw()
-    
-# #b.add_pure_states( dnrm_set1, "red" )
-# #b.add_pure_states( centroids, "green" )
-
-# f=b.make_figure()
-# f.show()
-# f.savefig("simple-blobs.png")
 
 
 # ####
