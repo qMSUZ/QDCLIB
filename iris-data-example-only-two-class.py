@@ -100,7 +100,7 @@ def read_iris_data( fname ):
     return df.values, Q, QPrime, Y,  Q0, Q1, Q2
 
 
-org_iris_data, d,  dprime, Y, d0, d1, d2 = read_iris_data( 'data/iris_data.txt')
+org_iris_data, d,  dprime, Y, d0, d1, d2 = read_iris_data( 'datasets/iris_data.txt')
 
 fig = plt.figure( figsize = (12,12) )
 ax = fig.add_subplot( )
@@ -144,8 +144,8 @@ ax.set_ylabel('Y Label')
 ax.set_zlabel('Z Label')
 plt.show()
 
-class1=d[    0:49, 0:3 ]
-#class2=d[  50:99, : ]
+class1=d[   0:49 , 0:3 ]
+class2=d[  50:99 ,  :  ]
 class3=d[ 100:149, 0:3 ]
 
 
@@ -153,7 +153,7 @@ class3=d[ 100:149, 0:3 ]
 dataset = np.vstack( (class1, class3) )
 #labels, centers = qdcl.kmeans_quantum_states( dataset, 2, _func_distance=qdcl.FIDELITY_DISTANCE )
 #labels, centers = qdcl.kmedoids_quantum_states( dataset, 2, _func_distance=qdcl.MANHATTAN_DISTANCE )
-labels, centers = qdcl.kmedoids_quantum_states( dataset, 2, _func_distance=qdcl.MANHATTAN_DISTANCE )
+labels, centers = qdcl.kmedoids_quantum_states( dataset, 3, _func_distance=qdcl.MANHATTAN_DISTANCE )
 
 b = qdcl.BlochVisualization()
 b.set_view(15, 30)
@@ -162,15 +162,15 @@ b.set_title("Bloch Vector Points for first three features")
 
 b.clear_points()
 b.add_points( class1, "red", "+")
+b.add_points( class2, "green", "^")
 b.add_points( class3, "blue", ".")
 
-b.set_vectors( centers )
+#b.set_vectors( centers )
 
 
 b.enable_multi_batch_draw()
 
 f=b.make_figure()
 f.show()
-
-
+f.savefig("iris-dataset.png")
 

@@ -91,7 +91,7 @@ ax.set_zlabel('Z Label')
 plt.show()
 
 class1=d[    0:49, 0:3 ]
-#class2=d[  50:99, : ]
+class2=d[  50:99, : ]
 class3=d[ 100:149, 0:3 ]
 
 # Find centers
@@ -107,6 +107,7 @@ b.set_title("Bloch Vector Points for first three features")
 
 b.clear_points()
 b.add_points( class1, "red", "+")
+b.add_points( class2, "red", "+")
 b.add_points( class3, "blue", ".")
 
 b.set_vectors( centers )

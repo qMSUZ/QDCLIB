@@ -34,6 +34,7 @@
 import numpy as np
 import qdclib as qdcl
 
+
 # direct points
 # as Bloch vectors
 def example1():  
@@ -60,19 +61,19 @@ def example1():
 def example2():  
     ptns = np.empty((0,3))
 
-    for degree in range(0, 95, 5):
+    for degree in range(0, 90+90+90+5, 5):
         ptns = np.append( ptns, 
-             [ qdcl.convert_spherical_point_to_bloch_vector(
+             [ qdcl.convert_spherical_coordinates_to_bloch_vector(
                                 1.0, 
-                                np.radians(0), 
-                                np.radians(90 + degree)) 
+                                np.radians(90),          # (0 <= _theta <= np.pi
+                                np.radians(0 + degree))  # (0 <= _phi <= 2.0 * np.pi)
              ], axis=0 )
     
     b = qdcl.BlochVisualization()
     b.set_title("Bloch Vector Points")
-    b.enable_single_batch_draw()
 
     b.set_points( ptns )
+    b.enable_single_batch_draw()
 
     f=b.make_figure()
     f.show()
@@ -260,6 +261,7 @@ def example9():
     ptns1 = np.empty((0,2))
     ptns1 = np.append(ptns1, [ [1.0, 0.0] ], axis=0)
     ptns1 = np.append(ptns1, [ [0.0, 1.0] ], axis=0)
+    ptns1 = np.append(ptns1, [ [1.0/np.sqrt(2), 1.0/np.sqrt(2)] ], axis=0)
     
     b.set_pure_states( ptns1, "red" )
     b.set_pure_states_as_vectors( ptns1, "green" )
@@ -269,7 +271,7 @@ def example9():
     f.show()
 
 
-#example1()
+example1()
 #example2()
 #example3()
 #example4a()
@@ -279,4 +281,4 @@ def example9():
 #example6b()
 #example7()
 #example8()
-example9()
+#example9()

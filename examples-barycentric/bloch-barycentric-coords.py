@@ -149,8 +149,8 @@ def iris_set_example():
 
 
 
-#basic_example()
-simple_blobs_example()
+basic_example()
+# simple_blobs_example()
 
 
 

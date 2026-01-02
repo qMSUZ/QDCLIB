@@ -1,7 +1,8 @@
 numpy
 scipy
 matplotlib
-sklearn
+scikit-learn
+cvxopt
 openpyxl
 pandas
 seaborn
