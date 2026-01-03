@@ -170,18 +170,43 @@ def _internal_qdcl_create_density_matrix_from_vector_state(q):
 # discussed at:
 #   https://stackoverflow.com/questions/43751591/does-python-have-a-similar-function-of-chop-in-mathematica
 def _internal_chop(expr, delta=10 ** -10):
-    if isinstance(expr, (int, float)):
-        return 0 if -delta <= expr <= delta else expr
+    """
+    Function replaces approximate real and complex numbers in expr that are in 
+    proximity to zero given by parameter delta by the exact integer 0. 
+
+    Parameters
+    ----------
+    expr : float, complex
+        An approximate real or complex number.
+    delta : float
+        A precision of approximation.
+
+    Returns
+    -------
+    integer, float, complex
+        Zero if the number expr is lesser than the order of magnitude described 
+        by the parameter delta and float otherwise.
+        
+    Examples
+    --------
+    >>> print(_internal_chop(0.001, delta=10 ** -3))
+        0
+    >>> print(_internal_chop(0.001, delta=10 ** -7))
+        0.001 
+    >>> print(_internal_chop(complex(0.001,0.0000000001), delta=10 ** -7))
+        (0.001+0j)
+
+    """
     
     if isinstance(expr, complex):
-        realpart  = expr.real
-        impart = expr.imag
-        realpart  = 0 if -delta <= realpart <= delta else realpart
-        impart =  0 if -delta <= impart <= delta else impart
-               
-        return complex(realpart, impart)
-        
-    return [_internal_chop(x) for x in expr]
+        re = 0.0 if abs(expr.real) < delta else expr.real
+        im = 0.0 if abs(expr.imag) < delta else expr.imag
+        return complex(re, im)
+
+    if isinstance(expr, (int, float)):
+        return 0.0 if abs(expr) < delta else expr
+
+    return [_internal_chop(x, delta) for x in expr]
 
 chop = _internal_chop
 
@@ -494,9 +519,45 @@ def convert_spherical_coordinates_to_pure_state( _theta, _phi, _round=0):
     
     return pure_state_qubit
 
+def convert_bloch_vector_to_spherical_point( _x, _y, _z ):
+    """
+    Converts a Bloch vector to a spherical point.
+
+    Parameters
+    ----------
+    _x : float
+        The coordinate of the Bloch vector with respect to the x-axis.
+    _y : float
+        The coordinate of the Bloch vector with respect to the y-axis.
+    _z : float
+        The coordinate of the Bloch vector with respect to the z-axis.
+
+    Returns
+    -------
+    numpy ndarray
+        A data of the spherical point: radius, theta phi, and phi angle.
+        
+    Examples
+    --------
+    >>> print(qdcl.convert_bloch_vector_to_spherical_point(0.0, 0.0, 1.0))
+        [1. 0. 0.]
+    >>> print(qdcl.convert_bloch_vector_to_spherical_point(0.0, 0.0, -1.0))
+        [1.         3.14159265 0.        ]
+    >>> print(qdcl.convert_bloch_vector_to_spherical_point(1.0, 0.0, 0.0))
+        [1.         1.57079633 0.        ]
+    >>> print(qdcl.convert_bloch_vector_to_spherical_point(0.0, 1.0, 0.0))
+        [1.         1.57079633 1.57079633]
+    """
+    r = np.sqrt( _x * _x + _y * _y + _z * _z )
+    theta = np.arccos(np.clip(_z / r, -1.0, 1.0))
+    phi = np.arctan2(_y, _x)
+    #phi = np.sign(_y) *  np.arccos( _x / np.sqrt(_x*_x + _y*_y) ) 
+    
+    return np.array([r, theta, phi ])
+
 def convert_bloch_vector_to_pure_state( _x, _y, _z ):
     """
-    Converts a Bloch vector to a pure vector.
+    Converts a Bloch vector to a pure state vector.
 
     Parameters
     ----------
@@ -514,13 +575,22 @@ def convert_bloch_vector_to_pure_state( _x, _y, _z ):
         
     Examples
     --------
-    >>> ...
+    >>> print(qdcl.convert_bloch_vector_to_pure_state(0.0, 0.0, 1.0))
+        [1.+0.j 0.+0.j]
+    >>> print(qdcl.convert_bloch_vector_to_pure_state(0.0, 0.0, -1.0))
+        [0.+0.j 1.+0.j]
+    >>> print(qdcl.convert_bloch_vector_to_pure_state(1.0, 0.0, 0.0))
+        [0.70710678+0.j 0.70710678+0.j]
+    >>> print(qdcl.convert_bloch_vector_to_pure_state(0.0, 1.0, 0.0))
+        [0.70710678+0.j         0.        +0.70710678j]
     """
-    r, theta, phi = convert_bloch_vector_to_spherical_coordinates(_x, _y, _z)
-    pure_state_qubit = convert_spherical_coordinates_to_pure_state( theta, phi  )
+    r,theta,phi = convert_bloch_vector_to_spherical_point( _x, _y, _z)
+    pure_state_qubit = convert_spherical_point_to_pure_state( theta, phi  )
+    #chop pure state
+    pure_state_qubit[0]=_internal_chop(pure_state_qubit[0])
+    pure_state_qubit[1]=_internal_chop(pure_state_qubit[1])
     
     return pure_state_qubit
-
 
 def stereographic_projection_of_three_component_vector_to_two_component_vector( _x, _y, _z ):
     """
@@ -595,6 +665,30 @@ def two_component_vector_convert_by_inverse_stereographic_projection( _x, _y ):
 # TO DESC
 #
 def vector_data_encode_with_inverse_stereographic_projection( _v ):
+    """
+    The projection of a two-element vector to the Bloch vector.
+
+    Parameters
+    ----------
+    two_component_vector : numpy vector
+        The 1-qubit pure state vector.
+    
+    Returns
+    -------
+    _x : float
+        The coordinate of the Bloch vector with respect to the x-axis.
+    _y : float
+        The coordinate of the Bloch vector with respect to the y-axis.
+    _z : float
+        The coordinate of the Bloch vector with respect to the z-axis.
+        
+    Examples
+    --------
+    >>> print(qdcl.vector_data_encode_with_inverse_stereographic_projection(np.array([1,0])))
+        [0.70710678 0.         0.70710678]
+    >>> print(qdcl.vector_data_encode_with_inverse_stereographic_projection(np.array([1/np.sqrt(2),-1/np.sqrt(2)])))
+        [ 0.5        -0.5         0.70710678]
+    """
     d = _v.shape[0]
     
     rsltvec = np.zeros( shape=(d+1,) )
@@ -3482,47 +3576,58 @@ def euclidean_distance_with_sqrt(uvector, vvector, r=0, check=0):
         return round(np.sqrt(rslt), r)
     
 
-#
-# TO DESC
-#
 def create_zero_vector( _n_dim=3 ):
     """
+    Generates a vector of complex numbers, filled with zeros.
     
     Parameters
     ----------
-    _n_dim : TYPE, optional
-        DESCRIPTION. The default is 3.
+    _n_dim : int, optional
+        Number of elements in a generated vector. The default is 3.
 
     Returns
     -------
-    _vector_zero : TYPE
-        DESCRIPTION.
+    _vector_zero : numpy ndarray
+        A vector filled with zeros as complex numbers.
 
     Examples
     --------
+    >>> print(qdcl.create_zero_vector())
+        [0.+0.j 0.+0.j 0.+0.j]
+    >>> print(qdcl.create_zero_vector(2))
+        [0.+0.j 0.+0.j]
     """
     
     _vector_zero = np.zeros( (_n_dim), dtype=complex )
     
     return _vector_zero
 
-#
-# TO DESC
-#
 def create_one_vector( _axis=0, _n_dim=3 ):
     """
+    Generates a vector of complex numbers, describing so-called standard basis state.
+    The vectors expressing standard basis states contain one 1 and the other 
+    elements are zeros.
 
     Parameters
     ----------
-    _axis : TYPE, optional
-        DESCRIPTION. The default is 0.
-    _n_dim : TYPE, optional
-        DESCRIPTION. The default is 3.
+    _axis : int, optional
+        The position of non-zero element. The default is 0.
+    _n_dim : int, optional
+        Number of elements in a generated vector. The default is 3.
 
     Returns
     -------
-    _vector_one : TYPE
-        DESCRIPTION.
+    _vector_one : numpy ndarray
+        A vector representing a standard basis state.
+    
+    Examples
+    --------
+    Default three-element vector describing one-qutrit state |0>:
+    >>> print(qdcl.create_one_vector())
+        [1.+0.j 0.+0.j 0.+0.j]
+    Two-element vector describing one-qudit state |1>:
+    >>> print(qdcl.create_one_vector(1,2))
+        [[0.+0.j 1.+0.j]]
 
     """
     
