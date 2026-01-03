@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #/***************************************************************************
-# *   Copyright (C) 2022 -- 2023 by Marek Sawerwain                         *
+# *   Copyright (C) 2022 -- 2026 by Marek Sawerwain                         *
 # *                                  <M.Sawerwain@gmail.com>                *
 # *                                  <M.Sawerwain@issi.uz.zgora.pl>         *
 # *                                                                         *
@@ -208,6 +208,9 @@ def _internal_chop(expr, delta=10 ** -10):
 
     return [_internal_chop(x, delta) for x in expr]
 
+#
+# assign for normal function name ;-)
+#
 chop = _internal_chop
 
 
@@ -585,10 +588,11 @@ def convert_bloch_vector_to_pure_state( _x, _y, _z ):
         [0.70710678+0.j         0.        +0.70710678j]
     """
     r,theta,phi = convert_bloch_vector_to_spherical_point( _x, _y, _z)
-    pure_state_qubit = convert_spherical_point_to_pure_state( theta, phi  )
-    #chop pure state
-    pure_state_qubit[0]=_internal_chop(pure_state_qubit[0])
-    pure_state_qubit[1]=_internal_chop(pure_state_qubit[1])
+    pure_state_qubit = convert_spherical_coordinates_to_pure_state( theta, phi )
+   
+    # chop pure state
+    pure_state_qubit[0]=_internal_chop( pure_state_qubit[0] )
+    pure_state_qubit[1]=_internal_chop( pure_state_qubit[1] )
     
     return pure_state_qubit
 
