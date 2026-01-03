@@ -101,6 +101,11 @@ def read_iris_data( fname ):
     return df.values, Q, QPrime, Y,  Q0, Q1, Q2
 
 
+_SHOW_DATA = 0x0001
+_SAVE_DATA = 0x0002
+
+show_or_save = _SAVE_DATA
+
 org_iris_data, d,  dprime, Y, d0, d1, d2 = read_iris_data( 'datasets/iris_data.txt')
 
 n_components = 2
@@ -119,10 +124,13 @@ ax = fig.add_subplot( )
 ax.scatter( ddata[0:49, 0],    ddata[0:49, 1],    color="red")
 ax.scatter( ddata[50:99, 0],   ddata[50:99, 1],   color="green")
 ax.scatter( ddata[100:149, 0], ddata[100:149, 1], color="blue")
-ax.set_title("Oryginal Iris data after PCA 2 components")
+ax.set_title("Original Iris data after PCA 2 components")
 ax.set_xlabel('X Label')
 ax.set_ylabel('Y Label')
-plt.show()
+if show_or_save == _SHOW_DATA:
+    plt.show()
+if show_or_save == _SAVE_DATA:
+    plt.savefig("iris-2-pca-original.eps")
 
 minx=np.min(ddata[:, 0])
 maxx=np.max(ddata[:, 0])
@@ -152,7 +160,11 @@ ax.set_title("Gaussian KDE for Iris data expresed as qubit states after two comp
 # force for aspect ratio 1:1
 (e0,e1,e2,e3) =  ax.get_images()[0].get_extent()
 ax.set_aspect( np.abs( (e1-e0)/(e3-e2) ) )
-plt.show()
+
+if show_or_save == _SHOW_DATA:
+    plt.show()
+if show_or_save == _SAVE_DATA:
+    plt.savefig("gaussian-kde-iris-2-pca-original.eps")
 
 # Schrodinger potential for Iris data expresed as qubit states after two components PCA
 
@@ -179,4 +191,8 @@ ax.contour(X, Y, Z)
 ax.set_title("Schrodinger potential for Iris data expresed as qubit states after two components PCA")
 (e0,e1,e2,e3) =  ax.get_images()[0].get_extent()
 ax.set_aspect( np.abs( (e1-e0)/(e3-e2) ) )
-plt.show()
+
+if show_or_save == _SHOW_DATA:
+    plt.show()
+if show_or_save == _SAVE_DATA:
+    plt.savefig("schrodinger-potential-iris-2-pca-original.eps")
