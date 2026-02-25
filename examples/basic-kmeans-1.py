@@ -36,6 +36,11 @@ import numpy as np
 
 import qdclib as qdcl
 
+_SHOW_DATA = 0x0001
+_SAVE_DATA = 0x0002
+
+show_or_save = _SAVE_DATA
+
 seed_value = 1234
 np.random.seed( seed_value )
 
@@ -87,7 +92,12 @@ for idx in range(n_clusters):
                              arrowprops = dict( arrowstyle="->" ) )
     
 ax.add_patch( circle )
-fig.show()
+if show_or_save == _SHOW_DATA:
+    fig.tight_layout()
+    fig.show()
+if show_or_save == _SAVE_DATA:
+    fig.tight_layout()
+    fig.savefig("unity-circles-probes_and_centers_kmeans.png")
 
 print( "Distance between probes and centers for each class" )
 t = qdcl.create_distance_table( d, centers, labels, n_clusters, 

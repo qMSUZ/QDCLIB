@@ -161,6 +161,6 @@ if __name__=="__main__":
     n_samples, train_d, train_labels, n_samples_test, test_d, test_labels = data_set_seperated_by_line()
     # n_samples, train_d, train_labels, n_samples_test, test_d, test_labels = data_set_non_linearly_separable()
         
-    classic_svm( n_samples, train_d, train_labels, n_samples_test, test_d, test_labels )
+    #classic_svm( n_samples, train_d, train_labels, n_samples_test, test_d, test_labels )
     quantum_svm_direct_api( n_samples, train_d, train_labels, n_samples_test, test_d, test_labels )
-    quantum_svm( n_samples, train_d, train_labels, n_samples_test, test_d, test_labels )
+    #quantum_svm( n_samples, train_d, train_labels, n_samples_test, test_d, test_labels )

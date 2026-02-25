@@ -116,7 +116,7 @@ def basic_example():
 
 def simple_blobs_example():
 
-    n_samples = 20
+    n_samples = 40
     n_clusters = 2
    
     centers = [ (1.0,  0.0), (0.0, 1.0) ]
@@ -125,8 +125,8 @@ def simple_blobs_example():
     
     labels, centroids = qdcl.quantum_kmeans( d, n_samples, n_clusters, 128, qdcl.cosine_distance )
     
-    dnrm_set1 = d[ labels == 0]
-    dnrm_set2 = d[ labels == 1]   
+    dnrm_set1 = d[ labels == 0 ]
+    dnrm_set2 = d[ labels == 1 ]   
     
     b = qdcl.BlochVisualization()
     
@@ -141,7 +141,8 @@ def simple_blobs_example():
     b.add_points( centroids, "red", "^" )
     
     f=b.make_figure()
-    f.show()
+    #f.show()
+    f.tight_layout()
     f.savefig("simple-blobs.png")
 
 def iris_set_example():
@@ -149,8 +150,8 @@ def iris_set_example():
 
 
 
-basic_example()
-# simple_blobs_example()
+#basic_example()
+simple_blobs_example()
 
 
 

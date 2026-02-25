@@ -41,6 +41,10 @@ import numpy as np
 from sklearn import decomposition
 from sklearn import cluster, datasets
 
+_SHOW_DATA = 0x0001
+_SAVE_DATA = 0x0002
+
+show_or_save = _SAVE_DATA
 
 def blobs_example():
     centers = [
@@ -253,7 +257,14 @@ def quantum_spectral_clustering_example_simple_two_circles():
     
     
     f = qdcl.create_scatter_plot_for_2d_data( d, _limits=[-1.10, 1.10, -1.10, 1.10] )
-
+    
+    if show_or_save == _SHOW_DATA:
+        f.tight_layout()
+        f.show()
+    if show_or_save == _SAVE_DATA:
+        f.tight_layout()
+        f.savefig("two_circles_data.png")
+    
     labels, _ = qdcl.quantum_spectral_clustering( d,
                                                  _n_samples,
                                                  _n_clusters, 
@@ -274,7 +285,12 @@ def quantum_spectral_clustering_example_simple_two_circles():
 
     fig, ax = plt.subplots()
     im = ax.imshow( rho )
-
+    if show_or_save == _SHOW_DATA:
+        fig.tight_layout()
+        fig.show()
+    if show_or_save == _SAVE_DATA:
+        fig.tight_layout()
+        fig.savefig("two_density_matrix.png")
 
 
 # create a mesurement operator for qauntum spectral clustering
@@ -330,10 +346,10 @@ def quantum_spectral_clustering_example_measurement_projectors():
             if cidx == cind:
                 projectors[ n, n, cidx ] = 1.0
 
-# blobs_example()
-# classical_spectral_clustering_example()
-# quantum_spectral_clustering_example_simple_two_blobs()
-# quantum_spectral_clustering_example_simple_two_circles()
-# quantum_spectral_clustering_example_measurement_projectors()
-# quantum_kmeans_example_direct_api()
-quantum_kmeans_example()
+#blobs_example()
+#classical_spectral_clustering_example()
+#quantum_spectral_clustering_example_simple_two_blobs()
+quantum_spectral_clustering_example_simple_two_circles()
+#quantum_spectral_clustering_example_measurement_projectors()
+#quantum_kmeans_example_direct_api()
+#quantum_kmeans_example()

@@ -38,7 +38,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D, proj3d
 
 from sklearn.datasets import make_blobs
-#from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans
 
 
 import numpy as np
