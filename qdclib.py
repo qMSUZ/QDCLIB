@@ -770,6 +770,10 @@ def encode_probes_by_normalization( _qdX ):
 # TO DESC
 #
 class BlochVisualization:
+    """
+    Class serving the visualization of quantum states on the Bloch sphere.
+        
+    """
 
     def __init__( self ):
                
@@ -817,7 +821,23 @@ class BlochVisualization:
         self.pure_states_draw_mode = 0
         
     def reset( self ):
-        pass
+        """
+        If user changes the values of class atributes, this method will restore
+        the default values.
+            
+        Example
+        --------
+        >>> bv = qdcl.BlochVisualization()
+        >>> print(bv.radius)
+            2.0
+        >>> bv.radius=1.0
+        >>> print(bv.radius)
+            1.0
+        >>> bv.reset()
+        >>> print(bv.radius)
+            2.0
+        """
+        self.__init__()
     
     def make_figure( self ):        
         self.prepare_mesh()
@@ -826,12 +846,42 @@ class BlochVisualization:
         return f
     
     def set_view(self, a, b):
+        """
+        Changes the view angle at which the Bloch sphere is presented.
+        
+        Parameters
+        ----------
+        a : float
+            The angle of horizontal rotation expressed in degrees.
+        b : float
+            The angle of vertical rotation expressed in degrees.
+            
+        Example
+        --------
+        >>> ?
+        """
         self.viewangle=[a,b]
         
     def set_title(self, _title):
+        """
+        This method inserts string _title as a title of your figure.
+            
+        Example
+        --------
+        >>> ?
+        """
         self.title = _title
     
     def prepare_mesh( self, _hemisphere = 0 ):
+        """
+        This method is used to generate a grid of Cartesian coordinates, 
+        which are necessary to draw the surface of the Bloch sphere (or part 
+        of it).
+            
+        Example
+        --------
+        >>> ?
+        """
         if _hemisphere == 0: # north 
             self.u_angle = np.linspace(-np.pi, np.pi, self.resolution_of_mesh)
             self.v_angle = np.linspace(0.0, np.pi/2, self.resolution_of_mesh)
@@ -849,15 +899,45 @@ class BlochVisualization:
             self.z_dir = np.outer(np.ones(self.u_angle.shape[0]), np.cos(self.v_angle))
     
     def reset_draw_mode( self ):
+        """
+        This method serves to restore the default drawing mode in an object of 
+        the BlochVisualization class.
+            
+        Example
+        --------
+        >>> ?
+        """
         self.draw_mode = 0
 
     def enable_single_batch_draw( self ):
+        """
+        Fixing draw_mode flag to a value of the POINTS_DRAW constant.
+            
+        Example
+        --------
+        >>> ?
+        """
         self.draw_mode = POINTS_DRAW
 
     def enable_multi_batch_draw( self ):
+        """
+        Fixing draw_mode flag to a value of the POINTS_MULTI_BATCH_DRAW constant.
+            
+        Example
+        --------
+        >>> ?
+        """
         self.draw_mode = POINTS_MULTI_BATCH_DRAW
 
     def set_points(self, _points=None, _color=None, _marker=None):
+        """
+        The user enters quantum states in the form of Bloch vectors, which will 
+        be represented on the Bloch sphere as points.
+            
+        Example
+        --------
+        >>> ?
+        """
         self.enable_single_batch_draw()
         self.additional_points = [ ]
         
@@ -871,9 +951,23 @@ class BlochVisualization:
         self.additional_points.append( [ cp_points, (_color, _marker) ] )
        
     def clear_points(self):
-        self.additional_points = [ ]
+        """
+        Clears the list of points saved in the object.
+            
+        Example
+        --------
+        >>> ?
+        """
+        self.additional_points = None
 
     def add_points(self, _points=None, _color=None, _marker=None):
+        """
+        Allows drawing multiple independent sets of points on the Bloch sphere.
+            
+        Example
+        --------
+        >>> ?
+        """
         self.draw_mode = POINTS_MULTI_BATCH_DRAW
         
         cp_points = _points.copy()
@@ -886,12 +980,30 @@ class BlochVisualization:
         self.additional_points.append( [ cp_points, (_color, _marker) ] )
     
     def set_vectors(self, _points=None):
-        self.additional_vectors = [ ]
+        """
+        This code sets one set of vectors to be drawn on the Bloch sphere, 
+        clears the previous vectors, switches the vector drawing mode, and 
+        normalizes each vector to the length of the sphere's radius.
+            
+        Example
+        --------
+        >>> ?
+        """
+        self.additional_vectors = None
         self.vector_draw_mode = VECTORS_SINGLE_BATCH_DRAW
         
-        #
         # type check
-        #
+        if _points is None:
+            raise ValueError("_points cannot be None")
+
+        if not isinstance(_points, np.ndarray):
+            raise TypeError("_points must be a numpy.ndarray")
+
+        if _points.ndim != 2 or _points.shape[1] != 3:
+            raise ValueError("_points must have shape (N, 3)")
+
+        if np.any(np.linalg.norm(_points, axis=1) == 0):
+            raise ValueError("_points contains zero-length vectors")
         
         self.additional_vectors = _points.copy()
         
@@ -903,9 +1015,24 @@ class BlochVisualization:
         # rescale to radius r
 
     def clear_vectors(self):
-        self.additional_vectors = [ ]
+        """
+        Clears the list of vectors saved in the object.
+            
+        Example
+        --------
+        >>> ?
+        """
+        self.additional_vectors = None
 
     def add_vectors(self, _points=None, _color=None, _marker=None):
+        """
+        Allows drawing multiple independent sets of vectors on the Bloch sphere.
+            
+        Example
+        --------
+        >>> ?
+        """
+
         self.vector_draw_mode = VECTORS_MULTI_BATCH_DRAW
         cp_points = _points.copy()
 
@@ -918,6 +1045,15 @@ class BlochVisualization:
 
 
     def set_pure_states(self, _states=None, _color=None):
+	"""
+        The user provides a list of pure (vector) quantum states, each of which 
+        is converted into a Bloch vector, and then these vectors are prepared 
+        to be drawn on the Bloch sphere as points.
+            
+        Example
+        --------
+        >>> ?
+        """
         ptns = np.empty((0,3))
         for qstate in _states:
             qstateden = _internal_qdcl_vector_state_to_density_matrix( qstate )
