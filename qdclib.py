@@ -1045,7 +1045,7 @@ class BlochVisualization:
 
 
     def set_pure_states(self, _states=None, _color=None):
-	"""
+        """
         The user provides a list of pure (vector) quantum states, each of which 
         is converted into a Bloch vector, and then these vectors are prepared 
         to be drawn on the Bloch sphere as points.
@@ -3887,7 +3887,9 @@ def create_blob_2d( _n_samples = 100, _center=None):
 
 
 
-
+#
+# TO DESC
+#
 class TwoCirclesData:
     def __init__(self, rows):
         self.coords = rows
