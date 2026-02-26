@@ -36,7 +36,15 @@ import numpy as np
 
 import qdclib as qdcl
 
-o1 = qdcl.create_circles_data_set(_n_samples = 200, _noise=0.02)
-x = o1[0][:,0]
-y = o1[0][:,1]
-plt.plot(x,y, '.')
+#o1_data, o1_labels = qdcl.create_circles_data_set(_n_samples = 200, _noise=0.02)
+#x = o1_data[:,0]
+#y = o1_data[:,1]
+#l = o1_labels
+
+
+circles_data = qdcl.create_two_circles_data_set(_n_samples = 200, _noise=0.02)
+
+plt.plot(circles_data.coords.x,
+         circles_data.coords.y, '.')
+
+#plt.plot(x,y, '.')

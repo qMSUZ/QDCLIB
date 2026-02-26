@@ -3750,10 +3750,16 @@ def create_blob_2d( _n_samples = 100, _center=None):
     return d1
 
 
+
+
+class TwoCirclesData:
+    def __init__(self, rows):
+        self.coords = rows
+
 #
 # TO DESC
 #
-def create_circles_data_set( _n_samples = 100, _factor = 0.75, _noise = None, _random_state = 1234):
+def create_two_circles_data_set( _n_samples = 100, _factor = 0.75, _noise = None, _random_state = 1234):
     
     rslt_data = None
     rslt_labels = None
@@ -3784,7 +3790,15 @@ def create_circles_data_set( _n_samples = 100, _factor = 0.75, _noise = None, _r
     if _noise is not None:
         rslt_data += np.random.normal(scale=_noise, size=rslt_data.shape)
     
-    return rslt_data, rslt_labels
+    # repack data to more structed type
+    two_circles_dtype = np.dtype([('x', float), ('y', float), ('label', int)])
+    two_circles_rows = np.rec.fromarrays( [ rslt_data[:, 0],
+                                            rslt_data[:, 1],
+                                            rslt_labels ], dtype=two_circles_dtype)
+
+    tc_data = TwoCirclesData(two_circles_rows)
+
+    return tc_data
 
 #
 # TO DESC
