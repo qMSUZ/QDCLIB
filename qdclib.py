@@ -3887,17 +3887,56 @@ def create_blob_2d( _n_samples = 100, _center=None):
 
 
 
-#
-# TO DESC
-#
-class TwoCirclesData:
+class DataTypeXYL:
     def __init__(self, rows):
+        """
+        This auxiliary class stores data in a field "coords". This field is 
+        to consist of three parts: coordinate x (X), coordinate y (Y), and 
+        label (L). 
+        
+        """
         self.coords = rows
 
-#
-# TO DESC
-#
-def create_two_circles_data_set( _n_samples = 100, _factor = 0.75, _noise = None, _random_state = 1234):
+
+def create_two_circles_data_set( _n_samples = 100, _factor = 0.75, _noise = None, _random_state = 1234, _return_result_as_object = False):
+    """
+    Generates two concentric circles.
+
+    Parameters
+    ----------
+    _n_samples : integer, optional
+        The number of points on the circle. The default value is 100.
+    _factor : float, optional
+        Radius of the inner circle. The default value is 0.75.
+    _noise :
+        Random point shifts. The default value is None.
+    _random_state :
+        A seed of randomness. The default value is 1234.
+    _return_result_as_object : boolean, optional
+        Data may be raturned as an object of class TwoCirclesData, if this parameter
+        is set to True, otherwise as coordinates of points on the circles and class
+        labels.
+
+    Returns
+    -------
+    tc_data : object
+        An object of TwoCirclesData class.
+    rslt_data, rslt_labels : numpy arrays
+        The first array contains points on the circles, the second one labels 
+        of classes for each point.
+        
+    Example
+    -------
+    Creation of two circles with two points each:
+    >>> qdcl.create_two_circles_data_set(2, _return_result_as_object = False)
+    (array([[ 1.00000000e+00,  0.00000000e+00],
+           [-1.00000000e+00,  1.22464680e-16],
+           [ 7.50000000e-01,  0.00000000e+00],
+           [-7.50000000e-01,  9.18485099e-17]]), array([0, 0, 1, 1]))
+    >>> qdcl.create_two_circles_data_set(2, _return_result_as_object = True)
+    <qdclib.TwoCirclesData object at 0x0000013A36A68800>
+    
+    """   
     
     rslt_data = None
     rslt_labels = None
@@ -3934,14 +3973,52 @@ def create_two_circles_data_set( _n_samples = 100, _factor = 0.75, _noise = None
                                             rslt_data[:, 1],
                                             rslt_labels ], dtype=two_circles_dtype)
 
-    tc_data = TwoCirclesData(two_circles_rows)
+    tc_data = DataTypeXYL(two_circles_rows)
+    
+    if _return_result_as_object: return tc_data
+    else: return rslt_data, rslt_labels
 
-    return tc_data
 
-#
-# TO DESC
-#
-def create_moon_data_set( _n_samples = 100, _shuffle = True, _noise = None, _random_state = 1234 ):
+def create_moon_data_set( _n_samples = 100, _shuffle = True, _noise = None, _random_state = 1234, _return_result_as_object = False):
+    """
+    Generates two moon-type data sets.
+
+    Parameters
+    ----------
+    _n_samples : integer, optional
+        The number of points creating each moon. The default value is 100.
+    _shuffle : boolean
+        Shuffles points from two classes. The default value is True.
+    _noise :
+        Random point shifts. The default value is None.
+    _random_state :
+        A seed of randomness. The default value is 1234.
+    _return_result_as_object : boolean, optional
+        Data may be raturned as an object of class TwoCirclesData, if this parameter
+        is set to True, otherwise as coordinates of points creating moons and class
+        labels.
+
+    Returns
+    -------
+    rslt_data : numpy array
+        Coordinates of points creating moons.
+    rslt_labels : numpy array
+        Class lables for each point.
+        
+    Example
+    -------
+    Generation of two moon - three point each:
+    >>> qdcl.create_moon_data_set(3)
+    (array([[-1.0000000e+00,  1.2246468e-16],
+           [ 6.1232340e-17,  1.0000000e+00],
+           [ 2.0000000e+00,  5.0000000e-01],
+           [ 1.0000000e+00,  0.0000000e+00],
+           [ 1.0000000e+00, -5.0000000e-01],
+           [ 0.0000000e+00,  5.0000000e-01]]), array([0, 0, 1, 0, 1, 1]))
+    >>> qdcl.create_moon_data_set(2, _return_result_as_object = True)
+    <qdclib.TwoCirclesData object at 0x0000019890A5A9C0>
+    
+    """   
     
     rslt_data = None
     rslt_labels = None
@@ -3971,20 +4048,68 @@ def create_moon_data_set( _n_samples = 100, _shuffle = True, _noise = None, _ran
 
     if _noise is not None:
         rslt_data += np.random.normal(scale=_noise, size=rslt_data.shape)
-            
     
-    return rslt_data, rslt_labels
+    # repack data to more structed type
+    two_moons_dtype = np.dtype([('x', float), ('y', float), ('label', int)])
+    two_moons_rows = np.rec.fromarrays( [ rslt_data[:, 0],
+                                            rslt_data[:, 1],
+                                            rslt_labels ], dtype=two_moons_dtype)
+
+    tc_data = DataTypeXYL(two_moons_rows)
+    
+    if _return_result_as_object: return tc_data
+    else: return rslt_data, rslt_labels
 
 # add labels 
 #
-# TO DESC
+# TO DO: introdce data return as object
 #
-def create_data_non_line_separated_four_lines( _n_samples = 50, _centers=None ):        
-   
-    mean1 = [-2,  2]
-    mean2 = [ 1, -1]
-    mean3 = [ 3, -3]
-    mean4 = [-4,  4]
+def create_data_non_line_separated_four_lines( _n_samples = 50, _centers=None ):  
+    """
+    Generates four data clusters which belong to two classes and cannot be 
+    linearly separated.
+
+    Parameters
+    ----------
+    _n_samples : integer, optional
+        The number of points in each cluster. The default value is 100.
+    _centers : list, optional
+        A list of two lists pointing out the centers around which points will 
+        be generated. The default value is [[-2,2],[1,-1],[3,-3],[-4,4]].
+
+    Returns
+    -------
+    line_data : numpy array
+        Coordinates of points creating each cluster.
+    line_labels : numpy array
+        Class lables for each point.
+        
+    Example
+    -------
+    Generation of four clusters - two points each:
+    >>> create_data_non_line_separated_four_lines(2)
+    (array([[-3.32651893,  0.53365889],
+           [-1.49603265,  2.90071868],
+           [ 2.30450783, -3.98015413],
+           [ 3.48618067, -3.51677853],
+           [-0.34272204, -1.8991103 ],
+           [ 0.5227809 , -2.38115174],
+           [-3.67485534,  4.32609202],
+           [-4.45983003,  3.66945582]]), array([ 1.,  1.,  1.,  1., -1., -1., -1., -1.]))
+    
+    """   
+    
+    if _centers == None:
+        mean1 = [-2,  2]
+        mean2 = [ 1, -1]
+        mean3 = [ 3, -3]
+        mean4 = [-4,  4]
+    else:
+        mean1 = np.array( _centers[0] )
+        mean2 = np.array( _centers[1] )
+        mean3 = np.array( _centers[2] )
+        mean4 = np.array( _centers[3] )
+        
 
     cov = [[1.0, 0.9], 
            [0.9, 1.0]]
@@ -4006,6 +4131,7 @@ def create_data_non_line_separated_four_lines( _n_samples = 50, _centers=None ):
 
     return line_data, line_labels
 
+# TO DO: introdce data return as object
 def create_data_separated_by_line( _n_samples = 100, _centers=None ):        
     """
     Uses numpy.random.multivariate_normal function to generate two clusters 
@@ -4056,9 +4182,33 @@ def create_data_separated_by_line( _n_samples = 100, _centers=None ):
     return d1, d2, labels_d1, labels_d2
 
 #
-# TO DESC
+# TO Correct
 #
 def split_data_and_labels( _qdX1, _labels1,  _qdX2, _labels2, _ratio ):
+    """
+    This function divides the data into training and test sets.
+
+    Parameters
+    ----------
+    _qdX1, _qdX2 : ?
+        ?
+    _labels1, _labels2 : ?
+        ?
+    _ratio: ?
+        ?
+
+    Returns
+    -------
+    tuple of four numpy arrays
+        Contains: train_d (data of the train set), train_labels (labels for data
+        from the train set), test_d (data of the test set), and test_labels 
+        (labels for data from the test set).
+        
+    Example
+    -------
+    ?
+    
+    """
     
     idx_for_cutoff = int( _qdX1.shape[0] * _ratio )
     
