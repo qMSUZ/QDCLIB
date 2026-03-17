@@ -3913,14 +3913,14 @@ def create_two_circles_data_set( _n_samples = 100, _factor = 0.75, _noise = None
     _random_state :
         A seed of randomness. The default value is 1234.
     _return_result_as_object : boolean, optional
-        Data may be raturned as an object of class TwoCirclesData, if this parameter
+        Data may be raturned as an object of class DataTypeXYL, if this parameter
         is set to True, otherwise as coordinates of points on the circles and class
         labels.
 
     Returns
     -------
     tc_data : object
-        An object of TwoCirclesData class.
+        An object of DataTypeXYL class.
     rslt_data, rslt_labels : numpy arrays
         The first array contains points on the circles, the second one labels 
         of classes for each point.
@@ -3994,12 +3994,14 @@ def create_moon_data_set( _n_samples = 100, _shuffle = True, _noise = None, _ran
     _random_state :
         A seed of randomness. The default value is 1234.
     _return_result_as_object : boolean, optional
-        Data may be raturned as an object of class TwoCirclesData, if this parameter
+        Data may be raturned as an object of class DataTypeXYL, if this parameter
         is set to True, otherwise as coordinates of points creating moons and class
         labels.
 
     Returns
     -------
+    tc_data : object
+        An object of DataTypeXYL class.
     rslt_data : numpy array
         Coordinates of points creating moons.
     rslt_labels : numpy array
