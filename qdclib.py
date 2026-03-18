@@ -4064,9 +4064,7 @@ def create_moon_data_set( _n_samples = 100, _shuffle = True, _noise = None, _ran
 
 # add labels 
 #
-# TO DO: introdce data return as object
-#
-def create_data_non_line_separated_four_lines( _n_samples = 50, _centers=None ):  
+def create_data_non_line_separated_four_lines( _n_samples = 50, _centers=None, _return_result_as_object = False ):  
     """
     Generates four data clusters which belong to two classes and cannot be 
     linearly separated.
@@ -4078,9 +4076,15 @@ def create_data_non_line_separated_four_lines( _n_samples = 50, _centers=None ):
     _centers : list, optional
         A list of two lists pointing out the centers around which points will 
         be generated. The default value is [[-2,2],[1,-1],[3,-3],[-4,4]].
+    _return_result_as_object : boolean, optional
+        Data may be raturned as an object of class DataTypeXYL, if this parameter
+        is set to True, otherwise as coordinates of points creating moons and class
+        labels.
 
     Returns
     -------
+    tc_data : object
+        An object of DataTypeXYL class.
     line_data : numpy array
         Coordinates of points creating each cluster.
     line_labels : numpy array
@@ -4131,7 +4135,16 @@ def create_data_non_line_separated_four_lines( _n_samples = 50, _centers=None ):
 
     line_labels = data_horizontal_stack(labels_d1, labels_d2)
 
-    return line_data, line_labels
+    # repack data to more structed type
+    clusters_dtype = np.dtype([('x', float), ('y', float), ('label', int)])
+    clusters_rows = np.rec.fromarrays( [ line_data[:, 0],
+                                            line_data[:, 1],
+                                            line_labels ], dtype=clusters_dtype)
+
+    tc_data = DataTypeXYL(clusters_rows)
+    
+    if _return_result_as_object: return tc_data
+    else: return line_data, line_labels
 
 # TO DO: introdce data return as object
 def create_data_separated_by_line( _n_samples = 100, _centers=None ):        
