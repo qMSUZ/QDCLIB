@@ -4146,8 +4146,8 @@ def create_data_non_line_separated_four_lines( _n_samples = 50, _centers=None, _
     if _return_result_as_object: return tc_data
     else: return line_data, line_labels
 
-# TO DO: introdce data return as object
-def create_data_separated_by_line( _n_samples = 100, _centers=None ):        
+
+def create_data_separated_by_line( _n_samples = 100, _centers=None, _return_result_as_object = False ):        
     """
     Uses numpy.random.multivariate_normal function to generate two clusters 
     with linearly separable points.
@@ -4160,22 +4160,29 @@ def create_data_separated_by_line( _n_samples = 100, _centers=None ):
         A list of two lists (e.g. [[1,2],[2,1]]) pointing out the centers 
         around which points will be generated. 
         The default value is [[0,3],[3,0]].
+    _return_result_as_object : boolean, optional
+        Data may be raturned as an object of class DataTypeXYL, if this parameter
+        is set to True, otherwise as coordinates of points creating clusters and 
+        class labels.
 
     Returns
     -------
-    tuple of four numpy arrays
-        Contains: d1 (points of the first cluster), d2 (points of the second 
-        cluster), labels_d1 (labels of points from the first cluster), and 
-        labels_d2 (labels of points from the second cluster).
+    tc_data : object
+        An object of DataTypeXYL class.
+    line_data : numpy array
+        Coordinates of points creating each cluster.
+    line_labels : numpy array
+        Class lables for each point.
         
     Example
     -------
     Creation of two linearly separable clusters (labels: 1, -1) - each 
     cluster consists of two 2-dimensional points:
     >>> qdcl.create_data_separated_by_line(2)
-    (array([[-0.26836723,  3.75937596],
-           [ 0.16146226,  2.95330434]]), array([[ 0.66130665, -1.44877126],
-           [ 3.40086471,  0.94903007]]), array([1., 1.]), array([-1., -1.]))
+    (array([[-0.38595751,  2.80586407],
+           [-1.65033422,  2.26034975],
+           [ 2.98738766,  0.32172992],
+           [ 3.02471371,  0.70126127]]), array([ 1.,  1., -1., -1.]))
     
     """
     if _centers == None:
@@ -4191,10 +4198,26 @@ def create_data_separated_by_line( _n_samples = 100, _centers=None ):
     d1 = np.random.multivariate_normal(mean_for_d1, cov, _n_samples)
     d2 = np.random.multivariate_normal(mean_for_d2, cov, _n_samples)
     
+    line_data = None
+    line_labels = None
+    
+    line_data=data_vertical_stack( d1, d2 )
+    
     labels_d1 = np.ones( shape=(_n_samples, ) )
     labels_d2 = np.multiply( np.ones( shape=(_n_samples, ) ), -1.0)
     
-    return d1, d2, labels_d1, labels_d2
+    line_labels = data_horizontal_stack(labels_d1, labels_d2)
+    
+    # repack data to more structed type
+    clusters_dtype = np.dtype([('x', float), ('y', float), ('label', int)])
+    clusters_rows = np.rec.fromarrays( [ line_data[:, 0],
+                                            line_data[:, 1],
+                                            line_labels ], dtype=clusters_dtype)
+
+    tc_data = DataTypeXYL(clusters_rows)
+    
+    if _return_result_as_object: return tc_data
+    else: return line_data, line_labels
 
 #
 # TO Correct
