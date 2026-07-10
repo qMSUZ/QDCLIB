@@ -42,7 +42,9 @@ import qdclib as qdcl
 #l = o1_labels
 
 
-circles_data = qdcl.create_two_circles_data_set(_n_samples = 200, _noise=0.02)
+circles_data = qdcl.create_two_circles_data_set( _n_samples = 200,
+                                                 _noise=0.02,
+                                                 _return_result_as_object = True)
 
 plt.plot(circles_data.coords.x,
          circles_data.coords.y, '.')
