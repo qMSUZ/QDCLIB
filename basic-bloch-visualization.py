@@ -50,8 +50,8 @@ def example1():
     ptns = np.append(ptns, [[ 0, 0, 1]], axis=0) # +z 
     ptns = np.append(ptns, [[ 0, 0,-1]], axis=0) # -z
 
+    #b.set_points( ptns, _color="blue", _marker=".")
     b.set_points( ptns )
-    b.enable_single_batch_draw()
 
     f=b.make_figure()
     f.show()
@@ -61,7 +61,7 @@ def example1():
 def example2():  
     ptns = np.empty((0,3))
 
-    for degree in range(0, 90+90+90+5, 5):
+    for degree in range(0, 90+90+90+90+5, 5):
         ptns = np.append( ptns, 
              [ qdcl.convert_spherical_coordinates_to_bloch_vector(
                                 1.0, 
@@ -271,8 +271,8 @@ def example9():
     f.show()
 
 
-example1()
-#example2()
+#example1()
+example2()
 #example3()
 #example4a()
 #example4b()

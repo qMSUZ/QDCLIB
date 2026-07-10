@@ -816,6 +816,8 @@ class BlochVisualization:
         self.point_color  = "green"
         self.vector_color = "green"
 
+        self.point_marker="."
+
         self.point_draw_mode       = 0
         self.vector_draw_mode      = 0
         self.pure_states_draw_mode = 0
@@ -949,6 +951,7 @@ class BlochVisualization:
             cp_points[row] *= (self.radius + 0.01)
             
         self.additional_points.append( [ cp_points, (_color, _marker) ] )
+        
        
     def clear_points(self):
         """
@@ -1195,10 +1198,11 @@ class BlochVisualization:
         self.axes.text(0, 0, self.zlabelpos[1], self.zlabel[1], **common_opts)
     
     def render_labels_for_points( self ):
-        common_opts = { "fontsize" : self.main_font_size,
-                        "color" : self.main_font_color,
-                        "horizontalalignment" : "center",
-                        "verticalalignment" : "center" }
+        pass
+        #common_opts = { "fontsize" : self.main_font_size,
+        #                "color" : self.main_font_color,
+        #                "horizontalalignment" : "center",
+        #                "verticalalignment" : "center" }
 
         # if self.draw_mode == POINTS_DRAW:
         #     self.axes.text(np.real(self.additional_points[0,1])-0.2, 
@@ -1217,16 +1221,27 @@ class BlochVisualization:
     def render_points( self ):
         
         if self.draw_mode == POINTS_DRAW:
+            
+            points=self.additional_points[0][0]
+            points_color=self.additional_points[0][1][0]
+            points_marker=self.additional_points[0][1][1]
+            
+            if points_color==None:
+                points_color = self.point_color
+            
+            if points_marker==None:
+                points_marker=self.point_marker
+            
             self.axes.scatter(
-                np.real(self.additional_points[:,1]),
-                np.real(self.additional_points[:,0]),
-                np.real(self.additional_points[:,2]),
+                np.real(points[:,1]),
+                np.real(points[:,0]),
+                np.real(points[:,2]),
                 s=200,
                 alpha=1,
                 edgecolor=None,
                 zdir="z",
-                color=self.point_color,
-                marker=".",
+                color=points_color,
+                marker=points_marker,
             )
             
         if self.draw_mode == POINTS_MULTI_BATCH_DRAW:
@@ -3898,7 +3913,7 @@ class DataTypeXYL:
         self.coords = rows
 
 
-def create_two_circles_data_set( _n_samples = 100, _factor = 0.75, _noise = None, _random_state = 1234, _return_result_as_object = False):
+def create_two_circles_data_set( _n_samples = 100, _shuffle = True, _factor = 0.75, _noise = None, _random_state = 1234, _return_result_as_object = False):
     """
     Generates two concentric circles.
 
@@ -3966,6 +3981,12 @@ def create_two_circles_data_set( _n_samples = 100, _factor = 0.75, _noise = None
     
     if _noise is not None:
         rslt_data += np.random.normal(scale=_noise, size=rslt_data.shape)
+    
+    
+    if _shuffle == True:
+        new_indices = np.random.permutation( _n_samples + _n_samples )
+        rslt_data = rslt_data[new_indices]
+        rslt_labels = rslt_labels[new_indices]    
     
     # repack data to more structed type
     two_circles_dtype = np.dtype([('x', float), ('y', float), ('label', int)])
