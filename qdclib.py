@@ -973,6 +973,10 @@ class BlochVisualization:
         """
         self.draw_mode = POINTS_MULTI_BATCH_DRAW
         
+        # check whether object list is created with empty list
+        if self.additional_points == None:
+            self.additional_points = [ ]
+        
         cp_points = _points.copy()
         
         for row in range(0, cp_points.shape[0]):

@@ -108,7 +108,7 @@ def example4a():
                     _width_of_cluster=0.05 )
 
     purestates = np.empty((0,2))
-    for d in probes:
+    for d in probes[0]:
         purestates =  np.append(purestates, [d], axis=0) 
 
 
@@ -238,9 +238,9 @@ def example8():
     b.enable_single_batch_draw()
     
     ptns1 = np.empty((0,3))
-    ptns1 = np.append(ptns1, [ qdcl.convert_spherical_point_to_bloch_vector(1.0, 
+    ptns1 = np.append(ptns1, [ qdcl.convert_spherical_coordinates_to_bloch_vector(1.0, 
                                                             -1.0*np.pi/9.0, 0.0) ], axis=0)
-    ptns1 = np.append(ptns1, [ qdcl.convert_spherical_point_to_bloch_vector(1.0, 
+    ptns1 = np.append(ptns1, [ qdcl.convert_spherical_coordinates_to_bloch_vector(1.0, 
                                                             3.0*np.pi/5.0, np.pi/5.0) ], axis=0)
     
     b.set_points( ptns1 ) 
@@ -271,8 +271,8 @@ def example9():
     f.show()
 
 
-#example1()
-example2()
+example1()
+#example2()
 #example3()
 #example4a()
 #example4b()
