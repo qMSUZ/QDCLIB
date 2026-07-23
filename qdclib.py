@@ -1342,8 +1342,24 @@ class BlochVisualization:
 
         return self.figure
     
-    def save_to_file(self, filename = None):
-        pass
+    def save_to_file(self, filename = "figure", filetype="png"):
+        """
+        Allows saving the visualization of the Bloch sphere to a file.
+            
+        Parameters
+        ----------
+        filename : string
+            User filename.
+        filetype : string
+            User may point out the type of file: png (default), svg, pdf, or eps. 
+        """
+        ff = self.make_figure()
+        
+        if filetype == "png": ff.savefig(filename + ".png", dpi=300, bbox_inches="tight")
+        elif filetype == "svg": ff.savefig(filename + ".svg", bbox_inches="tight")
+        elif filetype == "pdf": ff.savefig(filename + ".pdf", bbox_inches="tight")
+        elif filetype == "eps": ff.savefig(filename + ".eps", bbox_inches="tight")
+        else: raise ExtensionError("Error! Check your file extension!")
 
 
 #
