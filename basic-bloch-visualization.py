@@ -55,6 +55,7 @@ def example1():
 
     f=b.make_figure()
     f.show()
+    b.save_to_file(filename = "Fig_example1", filetype="png")
 
 # direct points
 # with spherical coords
@@ -77,6 +78,7 @@ def example2():
 
     f=b.make_figure()
     f.show()
+    b.save_to_file(filename = "Fig_example2", filetype="svg")
 
 
 # pure staes
@@ -99,6 +101,7 @@ def example3():
 
     f=b.make_figure()
     f.show()
+    b.save_to_file(filename = "Fig_example3", filetype="pdf")
 
 def example4a():
     n_clusters = 3
