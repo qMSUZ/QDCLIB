@@ -45,3 +45,8 @@ class DensityMatrixDimensionError(Exception):
     """DensityMatrixDimensionError"""
     def __init__(self, message):
         self.message = message
+
+class ExtensionError(Exception):
+    """ExtensionError"""
+    def __init__(self, message):
+        self.message = message
