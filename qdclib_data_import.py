@@ -32,6 +32,10 @@
 # ***************************************************************************/
 
 import numpy as np
+import pandas as pd
+import math as math
+import sympy as sympy
+
    
 def convert_data_to_vector_states_double_norm(inputDF, cols=0):
     """
